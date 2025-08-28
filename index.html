@@ -3,156 +3,140 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mr Fiesta – Chicotecas y Más</title>
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <title>MR FIESTA — Chicotecas, Karaoke y Shows</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root{
-      --bg-dark:#060608;
-      --primary:#00e6ff;
-      --secondary:#ff00e0;
-      --text:#ffffff;
-    }
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;scroll-behavior:smooth;}
-    body{background:var(--bg-dark);color:var(--text);}
-    /* ---  NAV  --- */
-    header{position:fixed;top:0;left:0;width:100%;background:rgba(6,6,8,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:space-between;padding:12px 24px;z-index:100;}
-    header img{height:48px;}
-    nav ul{display:flex;gap:20px;list-style:none;}
-    nav a{color:var(--text);text-decoration:none;font-weight:500;transition:.3s}
-    nav a:hover{color:var(--primary);}
-    /* ---  SECTIONS --- */
-    section{padding:120px 24px 80px;max-width:1200px;margin:auto;}
-    h1,h2{color:var(--primary);text-shadow:0 0 8px var(--primary);margin-bottom:16px;}
-    p{margin-bottom:16px;line-height:1.6;}
-    /* ---  PACKAGE CARDS --- */
-    .package-card{border:2px solid var(--secondary);border-radius:16px;padding:24px;margin-bottom:48px;box-shadow:0 0 12px var(--secondary);background:#09090c;}
-    .package-card h3{color:var(--secondary);margin-bottom:12px;}
-    .package-card ul{margin-left:20px;margin-bottom:12px;}
-    .package-card li{margin-bottom:6px;}
-    /* ---  MEDIA GRID --- */
-    .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:16px;}
-    .media-placeholder{width:100%;padding-top:177%;background:#1a1a1d;border:2px dashed #333;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#555;text-align:center;font-size:.9rem;}
-    /* ---  FOOTER --- */
-    footer{background:#0d0d0f;padding:40px;text-align:center;color:#999;font-size:.9rem;}
-    /*  SMALL DEVICES  */
-    @media(max-width:600px){
-      header img{height:40px;}
-      nav ul{gap:12px;}
-    }
+    /* ---------- FONDO & UTILIDADES ---------- */
+    body{background:#080512;}
+    .glass{background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.12);} 
+    .btn-grad{background:linear-gradient(90deg,#d946ef,#22d3ee);} 
+
+    /* ---------- TARJETAS 9:16 ---------- */
+    .v-card{position:relative;width:100%;padding-bottom:177%; /* 9:16 */ overflow:hidden;border-radius:1rem;background:#111;}
+    .v-card video,.v-card img,.v-card iframe{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border:0;}
+
+    /* ---------- ACORDEÓN ---------- */
+    details[open] summary svg{transform:rotate(180deg);}  
   </style>
 </head>
-<body>
-  <header>
-    <!-- Sustituye logo-mrfiesta.png por tu archivo real -->
-    <img src="logo-mrfiesta.png" alt="Logo Mr Fiesta">
-    <nav>
-      <ul>
-        <li><a href="#inicio">Inicio</a></li>
-        <li><a href="#paquetes">Paquetes</a></li>
-        <li><a href="#contacto">Contacto</a></li>
-      </ul>
-    </nav>
+<body class="text-white/90 scroll-smooth">
+  <!-- =================== NAVBAR =================== -->
+  <header class="sticky top-0 z-30 backdrop-blur bg-black/50 border-b border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2 font-extrabold">
+        <img src="assets/mr-fiesta-logo.webp" alt="Logo" class="w-8 h-8">
+        <span>MR FIESTA</span>
+      </a>
+      <nav class="hidden md:flex gap-6 text-sm">
+        <a href="#paquetes" class="hover:text-white">Paquetes</a>
+        <a href="#invitaciones" class="hover:text-white">Invitaciones</a>
+        <a href="#contacto" class="hover:text-white">Contacto</a>
+      </nav>
+    </div>
   </header>
 
-  <!-- ===================  HERO  =================== -->
-  <section id="inicio">
-    <h1>¡Convierte cualquier espacio en una Fiesta Inolvidable!</h1>
-    <p>Somos <strong>Mr Fiesta</strong>, especialistas en chicotecas, shows infantiles, karaoke y pistas LED. Llevamos diversión, música y luces a cumpleaños, quinceaños, graduaciones ¡y todo lo que merezca celebrarse!</p>
+  <!-- =================== HERO =================== -->
+  <section class="max-w-6xl mx-auto px-4 pt-16 pb-14 grid md:grid-cols-2 gap-10 items-center">
+    <div>
+      <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">Fiesta en casa con <span class="text-fuchsia-300">neón</span>, DJ y <span class="text-cyan-300">diversión total</span></h1>
+      <p class="mt-4 text-white/80 max-w-xl">Chicotecas, karaoke y shows con estilo. Llevamos la discoteca a tu evento: iluminación inteligente, sonido pro y animación full energía.</p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="https://wa.me/51961770164?text=Hola,%20quiero%20reservar%20una%20fecha%20con%20MR%20FIESTA%20🎉" class="btn-grad text-black font-semibold px-5 py-3 rounded-2xl hover:opacity-95">Reservar ahora</a>
+        <a href="#paquetes" class="rounded-2xl border border-white/20 px-5 py-3">Ver paquetes</a>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-3 text-sm text-center">
+      <div class="glass rounded-2xl p-6">🎚️ Sonido Pro</div>
+      <div class="glass rounded-2xl p-6">💡 Luces inteligentes</div>
+      <div class="glass rounded-2xl p-6">🎮 Just Dance</div>
+      <div class="glass rounded-2xl p-6">🎤 Karaoke</div>
+    </div>
   </section>
 
-  <!-- ===================  PACKAGES  =================== -->
-  <section id="paquetes">
-    <h2>Paquetes Destacados</h2>
+  <!-- =================== PAQUETES =================== -->
+  <section id="paquetes" class="max-w-6xl mx-auto px-4 py-12">
+    <h2 class="text-4xl font-extrabold text-center mb-10">Nuestros Paquetes</h2>
 
-    <!--  Paquete Básico  -->
-    <div class="package-card" id="basico">
-      <h3>Paquete Básico – S/490</h3>
-      <ul>
-        <li>Chicoteca básica – 90 minutos</li>
-        <li>1 animador(a), juegos modernos</li>
-        <li>1 asistente sonidista, 2 luces LED y láser</li>
-        <li>Parlante + micrófono inalámbrico</li>
-        <li>Mini hora loca con globos pencil</li>
-        <li><em>No incluye movilidad</em></li>
-      </ul>
-      <div class="media-grid">
-        <div class="media-placeholder">⬆
-          <br>Coloca aquí tu video / foto vertical</div>
-      </div>
+    <div class="space-y-6">
+      <!-- ===== Paquete Básico ===== -->
+      <details class="glass rounded-2xl overflow-hidden">
+        <summary class="cursor-pointer list-none p-5 flex justify-between items-center">
+          <span class="text-xl md:text-2xl font-semibold">Paquete Básico – S/490</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <div class="p-6 pt-0 space-y-6">
+          <ul class="list-disc ml-6 space-y-1">
+            <li>Chicoteca básica – 90 minutos</li>
+            <li>1 animador(a) + asistente sonidista</li>
+            <li>2 luces LED y láser</li>
+            <li>Parlante + micrófono inalámbrico</li>
+            <li>Mini hora loca con globos pencil</li>
+          </ul>
+        </div>
+      </details>
+
+      <!-- ===== Chicoteca en Casa ===== -->
+      <details class="glass rounded-2xl overflow-hidden">
+        <summary class="cursor-pointer list-none p-5 flex justify-between items-center">
+          <span class="text-xl md:text-2xl font-semibold">Chicoteca en Casa – S/750</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </summary>
+        <div class="p-6 pt-0 space-y-6">
+          <ul class="list-disc ml-6 space-y-1">
+            <li>2 h animación, Just Dance, mini hora loca</li>
+            <li>DJ + parlante pro, 6 luces inteligentes</li>
+            <li>Proyector + ecran, invitación virtual</li>
+            <li>Movilidad incluida (hasta 30 niños)</li>
+          </ul>
+        </div>
+      </details>
+      <!-- (Agrega los demás paquetes de forma similar) -->
     </div>
-
-    <!--  Chicoteca en Casa  -->
-    <div class="package-card" id="casa">
-      <h3>Chicoteca en Casa – S/750</h3>
-      <ul>
-        <li>2 horas de animación, Just Dance, mini hora loca</li>
-        <li>DJ + micrófonos, parlante profesional</li>
-        <li>6 luces inteligentes, proyector + ecran</li>
-        <li>Invitación virtual, movilidad incluida</li>
-        <li>Hasta 30 niños</li>
-        <li>2 animadores por S/950</li>
-      </ul>
-      <div class="media-grid">
-        <div class="media-placeholder">⬆<br>Video / foto vertical</div>
-      </div>
-    </div>
-
-    <!--  Just Dance & Karaoke  -->
-    <div class="package-card" id="justdance">
-      <h3>Just Dance & Karaoke Party</h3>
-      <ul>
-        <li>DJ, parlante 1000W, proyector y pantalla 100"</li>
-        <li>2 micrófonos, Just Dance y karaoke, 6 luces inteligentes</li>
-        <li>2h – S/420 | 3h – S/520 | 4h – S/590</li>
-        <li><em>No incluye movilidad</em></li>
-      </ul>
-      <div class="media-grid">
-        <div class="media-placeholder">⬆<br>Video / foto vertical</div>
-      </div>
-    </div>
-
-    <!--  Experiencia Neón  -->
-    <div class="package-card" id="neon">
-      <h3>Experiencia Neón – S/950</h3>
-      <ul>
-        <li>3h total: 1h glitter + tatuajes neón, 2h animación</li>
-        <li>Accesorios LED, DJ + cabina, proyector + pantalla</li>
-        <li>Sonido 1000W, luces inteligentes + luz UV</li>
-        <li>Máquina de humo o burbujas, invitación virtual</li>
-        <li>Movilidad incluida para Lima Metropolitana</li>
-      </ul>
-      <div class="media-grid">
-        <div class="media-placeholder">⬆<br>Video / foto vertical</div>
-      </div>
-    </div>
-
-    <!--  Ultra Chicoteca LED  -->
-    <div class="package-card" id="ultra">
-      <h3>Ultra Chicoteca LED – S/1490</h3>
-      <ul>
-        <li>3h fiesta (2h animación) DJ + sonido pro</li>
-        <li>Luces inteligentes + efectos, proyector + pantalla</li>
-        <li>Glitter + tatuajes neón, mini hora loca con LED</li>
-        <li>Máquina de humo o burbujas, 40 pulseras brillantes</li>
-        <li>Pista LED incluida (3×2 o 2.5×2.5 m)</li>
-        <li>Movilidad incluida</li>
-      </ul>
-      <div class="media-grid">
-        <div class="media-placeholder">⬆<br>Video / foto vertical</div>
-      </div>
-    </div>
-
   </section>
 
-  <!-- ===================  CONTACT  =================== -->
-  <section id="contacto">
-    <h2>Reserva tu Fecha</h2>
-    <p>Contáctanos al <a href="https://wa.me/51961770164" target="_blank">WhatsApp +51 961 770 164</a> o escribe a <a href="mailto:mrfiesta.pe@gmail.com">mrfiesta.pe@gmail.com</a>. ¡Respondemos en minutos!</p>
+  <!-- =================== INVITACIONES =================== -->
+  <section id="invitaciones" class="max-w-6xl mx-auto px-4 py-12">
+    <h2 class="text-4xl font-extrabold text-center mb-10">Invitaciones Digitales</h2>
+    <p class="max-w-2xl mx-auto text-center text-white/80 mb-8">Ejemplos de invitaciones verticales. Todos los archivos están en <code>media/</code>.</p>
+
+    <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <!-- Generado: enlaces codificados para espacios/ñ -->
+      <div class="v-card"><video src="media/15%20A%C3%B1os%20Otras%20Mariposas.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/15%20Mariposas.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Ajedrez%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Argentina%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Barbie%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Barcelona%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Black%20Disco%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Call%20Of%20Duty%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Coquete%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Disco%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Dragon%20Ball%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Epic%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Gamer%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Madrid%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Minecraft%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Monopoly%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Ne%C3%B3n%202%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Ne%C3%B3n%20Pixel%281%29.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Ne%C3%B3n%20Varon.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Ne%C3%B3n.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Olivia%20Rodrigo.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Roblox.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Stich.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Tiktok.mp4" controls playsinline muted></video></div>
+      <div class="v-card"><video src="media/Youtube.mp4" controls playsinline muted></video></div>
+    </div>
   </section>
 
-  <footer>
-    © 2025 Mr Fiesta. Diseño web con amor y mucho neón.
-  </footer>
+  <!-- =================== CONTACTO =================== -->
+  <section id="contacto" class="max-w-6xl mx-auto px-4 py-12 text-center">
+    <h2 class="text-3xl font-extrabold mb-6">¿Listo para reservar?</h2>
+    <a href="https://wa.me/51961770164" class="btn-grad text-black font-semibold px-8 py-4 rounded-2xl">Hablar por WhatsApp</a>
+    <p class="mt-4 text-white/70 text-xs">Pagos: Yape, Plin e Interbank</p>
+  </section>
+
+  <footer class="border-t border-white/10 py-6 text-center text-xs text-white/60">© <span id="year"></span> MR FIESTA. Todos los derechos reservados.</footer>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
 </body>
 </html>
