@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mr Fiesta – Chicotecas y Más</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-dark:#060608;
+      --primary:#00e6ff;
+      --secondary:#ff00e0;
+      --text:#ffffff;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;scroll-behavior:smooth;}
+    body{background:var(--bg-dark);color:var(--text);}
+    /* ---  NAV  --- */
+    header{position:fixed;top:0;left:0;width:100%;background:rgba(6,6,8,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:space-between;padding:12px 24px;z-index:100;}
+    header img{height:48px;}
+    nav ul{display:flex;gap:20px;list-style:none;}
+    nav a{color:var(--text);text-decoration:none;font-weight:500;transition:.3s}
+    nav a:hover{color:var(--primary);}
+    /* ---  SECTIONS --- */
+    section{padding:120px 24px 80px;max-width:1200px;margin:auto;}
+    h1,h2{color:var(--primary);text-shadow:0 0 8px var(--primary);margin-bottom:16px;}
+    p{margin-bottom:16px;line-height:1.6;}
+    /* ---  PACKAGE CARDS --- */
+    .package-card{border:2px solid var(--secondary);border-radius:16px;padding:24px;margin-bottom:48px;box-shadow:0 0 12px var(--secondary);background:#09090c;}
+    .package-card h3{color:var(--secondary);margin-bottom:12px;}
+    .package-card ul{margin-left:20px;margin-bottom:12px;}
+    .package-card li{margin-bottom:6px;}
+    /* ---  MEDIA GRID --- */
+    .media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:16px;}
+    .media-placeholder{width:100%;padding-top:177%;background:#1a1a1d;border:2px dashed #333;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#555;text-align:center;font-size:.9rem;}
+    /* ---  FOOTER --- */
+    footer{background:#0d0d0f;padding:40px;text-align:center;color:#999;font-size:.9rem;}
+    /*  SMALL DEVICES  */
+    @media(max-width:600px){
+      header img{height:40px;}
+      nav ul{gap:12px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <!-- Sustituye logo-mrfiesta.png por tu archivo real -->
+    <img src="logo-mrfiesta.png" alt="Logo Mr Fiesta">
+    <nav>
+      <ul>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#paquetes">Paquetes</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ===================  HERO  =================== -->
+  <section id="inicio">
+    <h1>¡Convierte cualquier espacio en una Fiesta Inolvidable!</h1>
+    <p>Somos <strong>Mr Fiesta</strong>, especialistas en chicotecas, shows infantiles, karaoke y pistas LED. Llevamos diversión, música y luces a cumpleaños, quinceaños, graduaciones ¡y todo lo que merezca celebrarse!</p>
+  </section>
+
+  <!-- ===================  PACKAGES  =================== -->
+  <section id="paquetes">
+    <h2>Paquetes Destacados</h2>
+
+    <!--  Paquete Básico  -->
+    <div class="package-card" id="basico">
+      <h3>Paquete Básico – S/490</h3>
+      <ul>
+        <li>Chicoteca básica – 90 minutos</li>
+        <li>1 animador(a), juegos modernos</li>
+        <li>1 asistente sonidista, 2 luces LED y láser</li>
+        <li>Parlante + micrófono inalámbrico</li>
+        <li>Mini hora loca con globos pencil</li>
+        <li><em>No incluye movilidad</em></li>
+      </ul>
+      <div class="media-grid">
+        <div class="media-placeholder">⬆
+          <br>Coloca aquí tu video / foto vertical</div>
+      </div>
+    </div>
+
+    <!--  Chicoteca en Casa  -->
+    <div class="package-card" id="casa">
+      <h3>Chicoteca en Casa – S/750</h3>
+      <ul>
+        <li>2 horas de animación, Just Dance, mini hora loca</li>
+        <li>DJ + micrófonos, parlante profesional</li>
+        <li>6 luces inteligentes, proyector + ecran</li>
+        <li>Invitación virtual, movilidad incluida</li>
+        <li>Hasta 30 niños</li>
+        <li>2 animadores por S/950</li>
+      </ul>
+      <div class="media-grid">
+        <div class="media-placeholder">⬆<br>Video / foto vertical</div>
+      </div>
+    </div>
+
+    <!--  Just Dance & Karaoke  -->
+    <div class="package-card" id="justdance">
+      <h3>Just Dance & Karaoke Party</h3>
+      <ul>
+        <li>DJ, parlante 1000W, proyector y pantalla 100"</li>
+        <li>2 micrófonos, Just Dance y karaoke, 6 luces inteligentes</li>
+        <li>2h – S/420 | 3h – S/520 | 4h – S/590</li>
+        <li><em>No incluye movilidad</em></li>
+      </ul>
+      <div class="media-grid">
+        <div class="media-placeholder">⬆<br>Video / foto vertical</div>
+      </div>
+    </div>
+
+    <!--  Experiencia Neón  -->
+    <div class="package-card" id="neon">
+      <h3>Experiencia Neón – S/950</h3>
+      <ul>
+        <li>3h total: 1h glitter + tatuajes neón, 2h animación</li>
+        <li>Accesorios LED, DJ + cabina, proyector + pantalla</li>
+        <li>Sonido 1000W, luces inteligentes + luz UV</li>
+        <li>Máquina de humo o burbujas, invitación virtual</li>
+        <li>Movilidad incluida para Lima Metropolitana</li>
+      </ul>
+      <div class="media-grid">
+        <div class="media-placeholder">⬆<br>Video / foto vertical</div>
+      </div>
+    </div>
+
+    <!--  Ultra Chicoteca LED  -->
+    <div class="package-card" id="ultra">
+      <h3>Ultra Chicoteca LED – S/1490</h3>
+      <ul>
+        <li>3h fiesta (2h animación) DJ + sonido pro</li>
+        <li>Luces inteligentes + efectos, proyector + pantalla</li>
+        <li>Glitter + tatuajes neón, mini hora loca con LED</li>
+        <li>Máquina de humo o burbujas, 40 pulseras brillantes</li>
+        <li>Pista LED incluida (3×2 o 2.5×2.5 m)</li>
+        <li>Movilidad incluida</li>
+      </ul>
+      <div class="media-grid">
+        <div class="media-placeholder">⬆<br>Video / foto vertical</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===================  CONTACT  =================== -->
+  <section id="contacto">
+    <h2>Reserva tu Fecha</h2>
+    <p>Contáctanos al <a href="https://wa.me/51961770164" target="_blank">WhatsApp +51 961 770 164</a> o escribe a <a href="mailto:mrfiesta.pe@gmail.com">mrfiesta.pe@gmail.com</a>. ¡Respondemos en minutos!</p>
+  </section>
+
+  <footer>
+    © 2025 Mr Fiesta. Diseño web con amor y mucho neón.
+  </footer>
+</body>
+</html>
