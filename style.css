@@ -1,0 +1,11 @@
+body {font-family: Arial, sans-serif; margin:0; padding:0; background:#111; color:#fff;}
+header {background:#000; padding:10px;}
+nav a {color:#fff; margin:0 10px; text-decoration:none;}
+nav a:hover {color:#0ff;}
+.hero {text-align:center; padding:50px; background:linear-gradient(45deg,#f0f,#0ff);}
+.grid, .media-grid {display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
+.grid .card, .media-grid video, .media-grid img {background:#222; padding:10px; border-radius:10px;}
+footer {text-align:center; padding:20px; background:#000; margin-top:20px;}
+h1,h2,h3 {color:#0ff;}
+button {background:#0ff; border:none; padding:10px; cursor:pointer; border-radius:5px;}
+button:hover {background:#f0f;}
