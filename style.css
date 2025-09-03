@@ -1,11 +1,134 @@
-body {font-family: Arial, sans-serif; margin:0; padding:0; background:#111; color:#fff;}
-header {background:#000; padding:10px;}
-nav a {color:#fff; margin:0 10px; text-decoration:none;}
-nav a:hover {color:#0ff;}
-.hero {text-align:center; padding:50px; background:linear-gradient(45deg,#f0f,#0ff);}
-.grid, .media-grid {display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
-.grid .card, .media-grid video, .media-grid img {background:#222; padding:10px; border-radius:10px;}
-footer {text-align:center; padding:20px; background:#000; margin-top:20px;}
-h1,h2,h3 {color:#0ff;}
-button {background:#0ff; border:none; padding:10px; cursor:pointer; border-radius:5px;}
-button:hover {background:#f0f;}
+/* Fondo general */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at top, #111 0%, #000 100%);
+  color: #fff;
+}
+
+/* Cabecera */
+header {
+  background: #000;
+  padding: 15px;
+  text-align: center;
+}
+nav a {
+  color: #0ff;
+  margin: 0 15px;
+  text-decoration: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+}
+nav a:hover {
+  color: #f0f;
+  text-shadow: 0 0 10px #f0f, 0 0 20px #f0f;
+}
+
+/* Hero principal */
+.hero {
+  text-align: center;
+  padding: 80px 20px;
+  background: linear-gradient(45deg, #0ff, #f0f, #00f);
+  background-size: 300% 300%;
+  animation: neonBG 6s infinite alternate;
+}
+.hero h1 {
+  font-size: 3em;
+  color: #fff;
+  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff;
+}
+.hero p {
+  font-size: 1.2em;
+  color: #eee;
+  text-shadow: 0 0 5px #f0f;
+}
+
+@keyframes neonBG {
+  0% { background-position: left; }
+  100% { background-position: right; }
+}
+
+/* Tarjetas de servicios */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+}
+.card {
+  background: #111;
+  border: 2px solid #0ff;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  width: 200px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
+}
+.card h3 {
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff;
+}
+.card a {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 15px;
+  border: 2px solid #f0f;
+  border-radius: 8px;
+  color: #f0f;
+  text-decoration: none;
+  text-shadow: 0 0 5px #f0f;
+}
+.card a:hover {
+  background: #f0f;
+  color: #000;
+  box-shadow: 0 0 10px #f0f, 0 0 20px #f0f;
+}
+
+/* Galería de videos/fotos */
+.media-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  padding: 20px;
+}
+.media-grid video, 
+.media-grid img {
+  width: 220px;
+  border: 2px solid #0ff;
+  border-radius: 10px;
+  box-shadow: 0 0 15px #0ff;
+}
+
+/* Testimonios */
+.testimonios {
+  background: #111;
+  padding: 40px;
+  text-align: center;
+}
+.testimonios h2 {
+  color: #f0f;
+  text-shadow: 0 0 15px #f0f, 0 0 30px #f0f;
+}
+.testimonios blockquote {
+  font-style: italic;
+  margin: 20px auto;
+  max-width: 600px;
+  color: #0ff;
+  text-shadow: 0 0 8px #0ff;
+}
+
+/* Footer */
+footer {
+  background: #000;
+  padding: 20px;
+  text-align: center;
+  color: #777;
+}
