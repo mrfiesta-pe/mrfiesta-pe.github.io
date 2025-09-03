@@ -1,134 +1,63 @@
-/* Fondo general */
-body {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: radial-gradient(circle at top, #111 0%, #000 100%);
-  color: #fff;
-}
 
-/* Cabecera */
-header {
-  background: #000;
-  padding: 15px;
-  text-align: center;
+*{box-sizing:border-box}
+:root{
+  --neon-cyan:#00f7ff;
+  --neon-pink:#ff4dff;
+  --bg1:#0b0b12;
+  --bg2:#050509;
+  --text:#eaf6ff;
 }
-nav a {
-  color: #0ff;
-  margin: 0 15px;
-  text-decoration: none;
-  font-weight: bold;
-  text-transform: uppercase;
-  text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
-}
-nav a:hover {
-  color: #f0f;
-  text-shadow: 0 0 10px #f0f, 0 0 20px #f0f;
-}
+html,body{margin:0;padding:0;background:radial-gradient(circle at 20% -10%, var(--bg1), var(--bg2));color:var(--text);font-family:system-ui,Segoe UI,Arial,Roboto}
+a{color:var(--neon-cyan);text-decoration:none}
+/* Header */
+header{position:sticky;top:0;z-index:20;background:#000;border-bottom:1px solid rgba(0,255,255,.25)}
+nav{display:flex;gap:22px;justify-content:center;align-items:center;padding:14px 16px;flex-wrap:wrap}
+nav a{color:#fff;text-transform:uppercase;font-weight:800;letter-spacing:.4px;text-shadow:0 0 6px var(--neon-cyan)}
+nav a:hover{color:var(--neon-pink);text-shadow:0 0 12px var(--neon-pink)}
+.container{max-width:1200px;margin:0 auto;padding:0 16px}
+h1,h2{margin:18px 0;text-align:center}
+h1{font-size:clamp(26px,3.2vw,40px);color:var(--neon-cyan);text-shadow:0 0 10px var(--neon-cyan),0 0 30px var(--neon-cyan)}
+h2{color:var(--neon-pink);text-shadow:0 0 8px var(--neon-pink),0 0 20px var(--neon-pink)}
+.hero{padding:64px 16px;text-align:center;background:linear-gradient(135deg, rgba(0,255,255,.08), rgba(255,0,255,.08));border-bottom:1px solid rgba(255,0,255,.25)}
+.hero p{opacity:.95}
 
-/* Hero principal */
-.hero {
-  text-align: center;
-  padding: 80px 20px;
-  background: linear-gradient(45deg, #0ff, #f0f, #00f);
-  background-size: 300% 300%;
-  animation: neonBG 6s infinite alternate;
-}
-.hero h1 {
-  font-size: 3em;
-  color: #fff;
-  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 40px #0ff;
-}
-.hero p {
-  font-size: 1.2em;
-  color: #eee;
-  text-shadow: 0 0 5px #f0f;
-}
+/* Cards & grids */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.card{background:#0d0d16;border:2px solid var(--neon-cyan);border-radius:16px;padding:16px;box-shadow:0 0 18px rgba(0,255,255,.18)}
+.card h3{margin:8px 0;color:var(--neon-pink);text-shadow:0 0 8px var(--neon-pink)}
+.card p{opacity:.95}
+.cta{display:inline-block;margin-top:10px;padding:10px 14px;border:2px solid var(--neon-cyan);border-radius:10px;color:var(--neon-cyan);text-shadow:0 0 6px var(--neon-cyan)}
+.cta:hover{background:var(--neon-cyan);color:#000}
 
-@keyframes neonBG {
-  0% { background-position: left; }
-  100% { background-position: right; }
-}
+/* Package cards (Servicios y Chicoteca) */
+.packages{padding:24px 0}
+.packages-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.package-card{background:#0b0b12;border:2px solid var(--neon-cyan);border-radius:16px;padding:16px;box-shadow:0 0 18px rgba(0,255,255,.2)}
+.package-card h3{margin:6px 0;color:var(--neon-pink);text-shadow:0 0 8px var(--neon-pink)}
+.package-card .price{color:var(--neon-cyan);font-weight:800;margin:6px 0 10px;text-shadow:0 0 8px var(--neon-cyan)}
+.package-card ul{margin:8px 0 12px 18px}
+.package-card li{margin:6px 0}
+.toggle{display:inline-block;margin:8px 0 10px;padding:8px 12px;border:2px solid var(--neon-pink);border-radius:8px;color:var(--neon-pink);text-shadow:0 0 6px var(--neon-pink);cursor:pointer}
+.toggle:hover{background:var(--neon-pink);color:#000}
 
-/* Tarjetas de servicios */
-.grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  padding: 40px;
-}
-.card {
-  background: #111;
-  border: 2px solid #0ff;
-  border-radius: 15px;
-  padding: 20px;
-  text-align: center;
-  width: 200px;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
-}
-.card h3 {
-  color: #0ff;
-  text-shadow: 0 0 10px #0ff;
-}
-.card a {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 8px 15px;
-  border: 2px solid #f0f;
-  border-radius: 8px;
-  color: #f0f;
-  text-decoration: none;
-  text-shadow: 0 0 5px #f0f;
-}
-.card a:hover {
-  background: #f0f;
-  color: #000;
-  box-shadow: 0 0 10px #f0f, 0 0 20px #f0f;
-}
+/* Video grid (Galería) */
+.section{padding:24px 0}
+.section h3{margin:8px 0;color:#9ee;text-align:left}
+.video-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.video-card{background:#0d0d16;border:1px solid var(--neon-cyan);border-radius:12px;overflow:hidden;box-shadow:0 0 12px rgba(0,255,255,.15)}
+.video-card video{width:100%;height:auto;display:block;background:#000}
+.video-card.vertical video{aspect-ratio:9/16;object-fit:cover}
+.video-card.horizontal video{aspect-ratio:16/9;object-fit:cover}
+.video-meta{padding:8px 10px;font-size:.92rem;color:#cfe}
+.hidden{display:none}
 
-/* Galería de videos/fotos */
-.media-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-  padding: 20px;
-}
-.media-grid video, 
-.media-grid img {
-  width: 220px;
-  border: 2px solid #0ff;
-  border-radius: 10px;
-  box-shadow: 0 0 15px #0ff;
-}
+/* Testimonials */
+.testimonials{padding:10px 0 40px}
+blockquote{margin:0;padding:18px;border-left:4px solid var(--neon-pink);background:#0d0d16;border-radius:8px}
+blockquote p{margin:0 0 8px}
+blockquote cite{opacity:.8}
 
-/* Testimonios */
-.testimonios {
-  background: #111;
-  padding: 40px;
-  text-align: center;
-}
-.testimonios h2 {
-  color: #f0f;
-  text-shadow: 0 0 15px #f0f, 0 0 30px #f0f;
-}
-.testimonios blockquote {
-  font-style: italic;
-  margin: 20px auto;
-  max-width: 600px;
-  color: #0ff;
-  text-shadow: 0 0 8px #0ff;
-}
-
-/* Footer */
-footer {
-  background: #000;
-  padding: 20px;
-  text-align: center;
-  color: #777;
-}
+/* Footer + WhatsApp */
+footer{padding:30px 0 60px;text-align:center;color:#8aa}
+.whatsapp{position:fixed;right:16px;bottom:16px;z-index:9999;background:#25D366;color:#fff;border-radius:999px;padding:12px 16px;font-weight:800;box-shadow:0 0 12px rgba(37,211,102,.6)}
+.whatsapp:hover{transform:scale(1.04)}

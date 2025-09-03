@@ -1,54 +1,84 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mr Fiesta | Inicio</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inicio | Mr Fiesta</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="index.html">Inicio</a>
-      <a href="nosotros.html">Nosotros</a>
-      <a href="servicios.html">Servicios</a>
-      <a href="invitaciones.html">Invitaciones</a>
-      <a href="contactenos.html">Contáctenos</a>
-    </nav>
-  </header>
 
-  <section class="hero">
-    <h1>Bienvenidos a Mr Fiesta 🎉</h1>
-    <p>Tu evento, nuestra experiencia en diversión y estilo</p>
-  </section>
+<header>
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="nosotros.html">Nosotros</a>
+    <a href="servicios.html">Servicios</a>
+    <a href="invitaciones.html">Invitaciones</a>
+    <a href="contactenos.html">Contáctenos</a>
+  </nav>
+</header>
 
-  <section class="servicios-home">
-    <h2>Servicios Destacados</h2>
-    <div class="grid">
-      <div class="card"><h3><a href="chicoteca.html">Chicoteca</a></h3></div>
-      <div class="card"><h3><a href="karaoke.html">Karaoke</a></h3></div>
-      <div class="card"><h3><a href="quinceaños.html">Quince Años</a></h3></div>
-    </div>
-  </section>
 
-  <section class="galeria">
-    <h2>Galería</h2>
-    <div class="media-grid">
-      <video controls src="media/chicoteca1.mp4"></video>
-      <video controls src="media/chicoteca2.mp4"></video>
-      <video controls src="media/karaoke1.mp4"></video>
-      <video controls src="media/quince1.mp4"></video>
-    </div>
-  </section>
+<section class="hero">
+  <h1>Mr Fiesta — Chicotecas, DJ & Shows Neon</h1>
+  <p>Shows para niños y adolescentes con animación moderna, juegos, Pista LED, Just Dance, Karaoke y Hora Loca.</p>
+</section>
 
-  <section class="testimonios">
-    <h2>Testimonios</h2>
-    <blockquote>"La mejor fiesta que hemos tenido, los niños felices y todo organizado" – Vanessa C.</blockquote>
-    <blockquote>"Servicio impecable, luces y sonido de primera" – José M.</blockquote>
-  </section>
+<section class="container section">
+  <h2>Servicios Principales</h2>
+  <div class="grid">
+    <div class="card"><h3>Chicoteca</h3><p>Competencias, juegos, DJ y luces inteligentes.</p><a class="cta" href="chicoteca.html">Ver paquetes</a></div>
+    <div class="card"><h3>Just Dance & Karaoke</h3><p>DJ en vivo, pantalla y micrófonos inalámbricos.</p><a class="cta" href="karaoke.html">Ver servicio</a></div>
+    <div class="card"><h3>Hora Loca</h3><p>Temáticas, accesorios LED y energía total.</p><a class="cta" href="hora-loca.html">Ver galería</a></div>
+    <div class="card"><h3>Decoración</h3><p>Neón, globos y ambientación temática.</p><a class="cta" href="decoracion.html">Ver servicio</a></div>
+  </div>
+</section>
 
-  <footer>
-    <p>&copy; 2025 Mr Fiesta - Todos los derechos reservados</p>
-  </footer>
+<section class="container section" id="galeria">
+  <h2>Galería (videos verticales)</h2>
+
+  <div class="section">
+    <h3>Chicoteca Básico</h3>
+    <div class="video-grid" data-videos="basico"></div>
+  </div>
+
+  <div class="section">
+    <h3>Premium Lite (Pista LED 2x2)</h3>
+    <div class="video-grid" data-videos="premiumLite"></div>
+  </div>
+
+  <div class="section">
+    <h3>Chicoteca en Casa</h3>
+    <div class="video-grid" data-videos="chicotecaCasa"></div>
+  </div>
+
+  <div class="section">
+    <h3>Experiencia Neón</h3>
+    <div class="video-grid" data-videos="experienciaNeon"></div>
+  </div>
+
+  <div class="section">
+    <h3>Ultra Chicoteca LED</h3>
+    <div class="video-grid" data-videos="ultraLed"></div>
+  </div>
+
+  <div class="section">
+    <h3>Just Dance & Karaoke</h3>
+    <div class="video-grid" data-videos="justDanceKaraoke"></div>
+  </div>
+</section>
+
+<section class="container testimonials">
+  <h2>Testimonios</h2>
+  <div class="grid">
+    <blockquote><p>“Quedamos encantados, se notó el profesionalismo y el carisma con los chicos.”</p><cite>— Carolina G.</cite></blockquote>
+    <blockquote><p>“La pista LED y la Estación Glitter se robaron el show. ¡Recontra recomendado!”</p><cite>— Henry V.</cite></blockquote>
+    <blockquote><p>“Llegaron puntuales, animación moderna, full juegos y música actual.”</p><cite>— Melissa R.</cite></blockquote>
+  </div>
+</section>
+
+<footer><small>&copy; 2025 Mr Fiesta • Hecho con brillo neón ✨</small></footer>
+<a class="whatsapp" href="https://wa.me/51902602362" target="_blank">Whatsapp 902 602 362</a>
+<script src="videos.js"></script>
 </body>
 </html>
