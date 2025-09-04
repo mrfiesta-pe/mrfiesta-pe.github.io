@@ -1,84 +1,334 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Inicio | Mr Fiesta</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mr Fiesta | Chicotecas, Quinceañeros, Shows Infantiles, Pista LED</title>
+  <meta name="description" content="Mr Fiesta: chicotecas neón, quinceañeros, shows infantiles, karaoke, Just Dance y pista LED en Lima. Animación profesional, luces inteligentes y DJ."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0b12;
+      --panel:#11121a;
+      --muted:#8d93a1;
+      --text:#f6f7fb;
+      --primary:#00F5A0;
+      --secondary:#00D9F5;
+      --accent:#B026FF;
+      --glass: rgba(255,255,255,.06);
+      --glass-border: rgba(255,255,255,.14);
+      --container: 1180px;
+      --radius: 18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:Manrope,system-ui,-apple-system,Segoe UI,Roboto}
+    a{color:inherit;text-decoration:none}
+    img, video{max-width:100%;display:block}
+    .container{max-width:var(--container);margin:auto;padding:0 20px}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 20px;border-radius:14px;font-weight:700;transition:.25s}
+    .btn--primary{background:linear-gradient(90deg,var(--primary),var(--secondary));color:#051016;box-shadow:0 8px 22px rgba(0,245,160,.25)}
+    .btn--primary:hover{transform:translateY(-2px)}
+    .btn--ghost{background:transparent;border:1px solid var(--glass-border)}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,11,18,.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--glass-border)}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+    .brand{display:flex;align-items:center;gap:10px}
+    .brand .logo-img{height:48px;width:auto;object-fit:contain;display:block;filter:drop-shadow(0 0 12px rgba(0,217,245,.35))}
+    nav ul{display:flex;gap:18px;list-style:none;margin:0;padding:0}
+    nav a{opacity:.9;padding:10px 12px;border-radius:10px}
+    nav a:hover{background:var(--glass)}
+    .hero{position:relative;overflow:hidden}
+    .hero::before{content:"";position:absolute;inset:-20% -10% auto -10%;height:480px;background:radial-gradient(closest-side, rgba(0,245,160,.18), transparent 60%), radial-gradient(closest-side, rgba(0,217,245,.18), transparent 60%);filter:blur(30px)}
+    .hero .inner{display:grid;grid-template-columns:1.2fr .9fr;gap:40px;align-items:center;padding:56px 0}
+    .hero h1{font-size:clamp(32px,5vw,54px);line-height:1.05;margin:.2rem 0}
+    .hero p{font-size:1.12rem;color:var(--muted)}
+    .section{padding:56px 0}
+    .section h2{font-size:clamp(26px,3.5vw,40px);margin:0 0 12px}
+    .lead{color:var(--muted)}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid var(--glass-border);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:12px}
+    .card .header{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+    .card h4{font-size:1.3rem;line-height:1.1;margin:0;font-weight:900}
+    .card .price{font-weight:900;font-size:1.2rem;opacity:.95;background:linear-gradient(90deg,#5e35b1,#7b1fa2);padding:6px 12px;border-radius:12px}
+    .card p{margin:.25rem 0 .5rem;color:var(--muted)}
+    .services-nav{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 20px}
+    .services-nav .svc{border:1px solid var(--glass-border);background:var(--panel);color:var(--text);padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer}
+    .services-nav .svc.is-active{background:linear-gradient(90deg,var(--primary),var(--secondary));color:#051016}
+    .services-panel{border:1px solid var(--glass-border);background:var(--panel);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+    .hidden{display:none}
+    .media-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+    .media-grid figure{margin:0;border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;background:#0f1018}
+    .media-grid figure figcaption{padding:10px 12px;color:var(--muted);font-size:.9rem}
+    .quote{background:var(--panel);border:1px solid var(--glass-border);border-radius:var(--radius);padding:22px;margin:10px 0}
+    footer{border-top:1px solid var(--glass-border);padding:30px 0;color:#bfc5d4;text-align:center}
+    .wa{position:fixed;right:18px;bottom:18px;z-index:60}
+    .wa a{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:999px;background:#25D366;color:#041b0d;font-weight:800;box-shadow:0 10px 26px rgba(37,211,102,.35)}
+    @media (max-width: 980px){
+      .hero .inner{grid-template-columns:1fr;gap:28px}
+      nav ul{display:none}
+    }
+  </style>
 </head>
 <body>
-
 <header>
-  <nav>
-    <a href="index.html">Inicio</a>
-    <a href="nosotros.html">Nosotros</a>
-    <a href="servicios.html">Servicios</a>
-    <a href="invitaciones.html">Invitaciones</a>
-    <a href="contactenos.html">Contáctenos</a>
-  </nav>
+  <div class="container nav">
+    <a class="brand" href="#">
+      <img class="logo-img" src="media/logo-mrfiesta.png" alt="Mr Fiesta"/>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#galeria">Galería</a></li>
+        <li><a href="#contacto">Contáctenos</a></li>
+      </ul>
+    </nav>
+  </div>
 </header>
 
-
 <section class="hero">
-  <h1>Mr Fiesta — Chicotecas, DJ & Shows Neon</h1>
-  <p>Shows para niños y adolescentes con animación moderna, juegos, Pista LED, Just Dance, Karaoke y Hora Loca.</p>
-</section>
-
-<section class="container section">
-  <h2>Servicios Principales</h2>
-  <div class="grid">
-    <div class="card"><h3>Chicoteca</h3><p>Competencias, juegos, DJ y luces inteligentes.</p><a class="cta" href="chicoteca.html">Ver paquetes</a></div>
-    <div class="card"><h3>Just Dance & Karaoke</h3><p>DJ en vivo, pantalla y micrófonos inalámbricos.</p><a class="cta" href="karaoke.html">Ver servicio</a></div>
-    <div class="card"><h3>Hora Loca</h3><p>Temáticas, accesorios LED y energía total.</p><a class="cta" href="hora-loca.html">Ver galería</a></div>
-    <div class="card"><h3>Decoración</h3><p>Neón, globos y ambientación temática.</p><a class="cta" href="decoracion.html">Ver servicio</a></div>
+  <div class="container inner">
+    <div>
+      <h1>Convierte tu evento en una <span style="background:linear-gradient(90deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;color:transparent">experiencia inolvidable</span></h1>
+      <p>Animación profesional, luces inteligentes, DJ, Karaoke, Just Dance y nuestra Pista LED. Diseñamos experiencias para niños, teens y quinceañeros en Lima y provincias.</p>
+      <a class="btn btn--primary" href="#contacto">Reservar fecha</a>
+    </div>
+    <div><img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=1200" style="border-radius:22px" alt="Chicoteca Mr Fiesta"/></div>
   </div>
 </section>
 
-<section class="container section" id="galeria">
-  <h2>Galería (videos verticales)</h2>
-
-  <div class="section">
-    <h3>Chicoteca Básico</h3>
-    <div class="video-grid" data-videos="basico"></div>
-  </div>
-
-  <div class="section">
-    <h3>Premium Lite (Pista LED 2x2)</h3>
-    <div class="video-grid" data-videos="premiumLite"></div>
-  </div>
-
-  <div class="section">
-    <h3>Chicoteca en Casa</h3>
-    <div class="video-grid" data-videos="chicotecaCasa"></div>
-  </div>
-
-  <div class="section">
-    <h3>Experiencia Neón</h3>
-    <div class="video-grid" data-videos="experienciaNeon"></div>
-  </div>
-
-  <div class="section">
-    <h3>Ultra Chicoteca LED</h3>
-    <div class="video-grid" data-videos="ultraLed"></div>
-  </div>
-
-  <div class="section">
-    <h3>Just Dance & Karaoke</h3>
-    <div class="video-grid" data-videos="justDanceKaraoke"></div>
+<section class="section" id="nosotros">
+  <div class="container">
+    <h2>Nosotros</h2>
+    <p class="lead">En Mr Fiesta creemos que cada celebración merece ser única, vibrante y recordada por siempre. Nuestra misión es llevar alegría y energía a cada evento a través de shows innovadores, tecnología LED y animadores profesionales.</p>
+    <div class="cards">
+      <div class="card"><h3>¿Por qué contratarnos?</h3><ul>
+        <li>Experiencia sólida en animación y entretenimiento.</li>
+        <li>Equipos propios: sonido profesional, luces inteligentes y pista LED.</li>
+        <li>Paquetes personalizables según edad, temática y espacio.</li>
+        <li>Atención cercana y cumplimiento garantizado.</li>
+      </ul></div>
+      <div class="card"><h3>Misión</h3><p>Crear momentos inolvidables que fortalezcan la unión familiar y la diversión sana de niños, adolescentes y jóvenes, combinando innovación tecnológica y pasión por el entretenimiento.</p></div>
+    </div>
   </div>
 </section>
 
-<section class="container testimonials">
-  <h2>Testimonios</h2>
-  <div class="grid">
-    <blockquote><p>“Quedamos encantados, se notó el profesionalismo y el carisma con los chicos.”</p><cite>— Carolina G.</cite></blockquote>
-    <blockquote><p>“La pista LED y la Estación Glitter se robaron el show. ¡Recontra recomendado!”</p><cite>— Henry V.</cite></blockquote>
-    <blockquote><p>“Llegaron puntuales, animación moderna, full juegos y música actual.”</p><cite>— Melissa R.</cite></blockquote>
+<section class="section" id="servicios">
+  <div class="container">
+    <h2>Servicios</h2>
+    <div class="services-nav" role="tablist" aria-label="Servicios">
+      <button class="svc is-active" data-target="#svc-chicoteca" role="tab" aria-selected="true">Chicoteca</button>
+      <button class="svc" data-target="#svc-deco" role="tab">Decoración</button>
+      <button class="svc" data-target="#svc-baby" role="tab">Baby Shower</button>
+      <button class="svc" data-target="#svc-karaoke" role="tab">Karaoke</button>
+      <button class="svc" data-target="#svc-sonido" role="tab">Equipo de sonido, DJ y luces</button>
+      <button class="svc" data-target="#svc-quince" role="tab">Quinceaños</button>
+      <button class="svc" data-target="#svc-horaloca" role="tab">Hora Loca</button>
+      <button class="svc" data-target="#svc-foto" role="tab">Fotografía y Filmación</button>
+    </div>
+
+    <!-- Chicoteca -->
+    <div class="services-panel" id="svc-chicoteca" role="tabpanel">
+      <h3>Chicoteca</h3>
+      <p class="lead">Toca un paquete para ver el detalle completo.</p>
+      <div class="cards">
+        <div class="card">
+          <div class="header">
+            <h4>Paquete Básico</h4>
+            <div class="price">S/490</div>
+          </div>
+          <p>90 min • Animador + Sonidista</p>
+          <a class="btn btn--ghost open-pkg" data-pkg="pkg-basico" href="#">Ver detalle</a>
+        </div>
+        <div class="card">
+          <div class="header">
+            <h4>Pack Premium Lite</h4>
+            <div class="price">S/790</div>
+          </div>
+          <p>Pista LED 2×2 m • Animador + Sonidista</p>
+          <a class="btn btn--ghost open-pkg" data-pkg="pkg-premium" href="#">Ver detalle</a>
+        </div>
+        <div class="card">
+          <div class="header">
+            <h4>Chicoteca en Casa</h4>
+            <div class="price">S/750</div>
+          </div>
+          <p>2h • DJ + Proyector + 6 luces</p>
+          <a class="btn btn--ghost open-pkg" data-pkg="pkg-casa" href="#">Ver detalle</a>
+        </div>
+        <div class="card">
+          <div class="header">
+            <h4>Just Dance & Karaoke Party</h4>
+            <div class="price">S/420–590</div>
+          </div>
+          <p>DJ + Proyector + 2 micros</p>
+          <a class="btn btn--ghost open-pkg" data-pkg="pkg-jdk" href="#">Ver detalle</a>
+        </div>
+        <div class="card">
+          <div class="header">
+            <h4>Neón Experience</h4>
+            <div class="price">S/950</div>
+          </div>
+          <p>3h • 1h Glitter + 2h animación</p>
+          <a class="btn btn--ghost open-pkg" data-pkg="pkg-neon" href="#">Ver detalle</a>
+        </div>
+        <div class="card">
+          <div class="header">
+            <h4>Ultra Chicoteca LED</h4>
+            <div class="price">S/1390–1490</div>
+          </div>
+          <p>3h • Pista LED 3×2 o 2.5×2.5</p>
+          <a class="btn btn--ghost open-pkg" data-pkg="pkg-ultra" href="#">Ver detalle</a>
+        </div>
+      </div>
+
+      <h4 style="margin-top:18px">Videos de referencia</h4>
+      <div class="media-grid">
+        <figure><video controls preload="metadata"><source src="media/Chicoteca%20B%C3%A1sica/chicoteca%20basica%201.mp4" type="video/mp4"></video><figcaption>Chicoteca Básica</figcaption></figure>
+        <figure><video controls preload="metadata"><source src="media/Chicoteca%20en%20Casa/Chicoteca%20En%20Casa%202.mp4" type="video/mp4"></video><figcaption>Chicoteca en Casa</figcaption></figure>
+        <figure><video controls preload="metadata"><source src="media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led.mp4" type="video/mp4"></video><figcaption>Ultra Chicoteca LED</figcaption></figure>
+        <figure><video controls preload="metadata"><source src="media/Experiencia%20Ne%C3%B3n/Experiencia%20Ne%C3%B3n1.mp4" type="video/mp4"></video><figcaption>Experiencia Neón</figcaption></figure>
+      </div>
+
+      <!-- Templates de paquetes -->
+      <template id="pkg-basico"><h3>Paquete Básico – S/490</h3><ul><li>90 minutos de show</li><li>1 animador(a), juegos modernos</li><li>1 sonidista con micrófono inalámbrico</li><li>2 luces LED y láser</li><li>Parlante amplificado</li><li>Mini hora loca con globos pencil</li><li>Invitación virtual de cortesía</li><li><b>No incluye movilidad</b></li></ul></template>
+      <template id="pkg-premium"><h3>Pack Premium Lite – S/790</h3><ul><li>Pista de baile LED 2×2 m (exclusiva)</li><li>1 animador(a), juegos modernos</li><li>1 sonidista con micrófono inalámbrico</li><li>2 luces LED y láser</li><li>Parlante amplificado</li><li>Mini hora loca con globos pencil</li><li>Invitación virtual de cortesía</li><li><b>No incluye movilidad</b></li></ul></template>
+      <template id="pkg-casa"><h3>Chicoteca en Casa – S/750</h3><ul><li>2 horas de animación moderna</li><li>1 animador(a)</li><li>DJ + cabina de sonido • Parlante profesional</li><li>6 luces inteligentes + baño de color (discoteca o neón)</li><li>Proyector + Ecran portátil para Just Dance o Karaoke</li><li>Invitación virtual de cortesía</li><li>Movilidad incluida en zonas seleccionadas</li><li>Opción con 2 animadores (Hombre y Mujer) S/950 (recomendado &gt; 30 niños/teens)</li></ul></template>
+      <template id="pkg-jdk"><h3>Just Dance & Karaoke Party</h3><ul><li>1 DJ en vivo</li><li>Parlante profesional</li><li>Proyector + Ecran con trípode portátil</li><li>2 micrófonos inalámbricos</li><li>Just Dance y Karaoke</li><li>6 luces inteligentes con trípode</li><li><b>No incluye movilidad</b></li></ul><p><b>Duraciones y precios:</b> 2h → S/420 • 3h → S/520 • 4h → S/590</p></template>
+      <template id="pkg-neon"><h3>Neón Experience – S/950</h3><ul><li>3 horas de evento</li><li>1h Estación Glitter + tatuajes neón con DJ</li><li>2h de animación con juegos + mini hora loca</li><li>Accesorios LED (limbo, soga, globos pencil)</li><li>DJ + cabina de sonido profesional (1000W)</li><li>Proyector + ecran gigante</li><li>6 luces inteligentes + luz UV</li><li>Máquina de humo o cañón de burbujas</li><li>Invitación virtual de cortesía</li><li>Movilidad incluida (zonas seleccionadas)</li><li>Opción con 2 animadores (Hombre y Mujer) S/1100 (recomendado &gt; 30 niños/teens)</li></ul></template>
+      <template id="pkg-ultra"><h3>Ultra Chicoteca LED – S/1390</h3><ul><li>3h de fiesta (2h animación + 1h Estación Glitter con tatuajes neón y DJ)</li><li>DJ y sonido profesional</li><li>6 luces inteligentes + Luz UV</li><li>Proyector + ecran gigante (Just Dance y Karaoke)</li><li>Mini hora loca con globos y accesorios LED (Limbo Led y Salta soga Led)</li><li>Máquina de humo o cañón de burbujas</li><li>Pack de 40 pulseras brillantes neón</li><li>Invitación virtual de cortesía</li><li>Movilidad incluida (Lima Metropolitana)</li><li>Pista LED 3×2 o 2.5×2.5</li></ul><p><b>Opciones:</b> Pista LED 3×3 o 4×2 m → S/1490 · + 2 animadores → +S/150 promo / +S/200 normal. <i>Recomendado para &gt; 30 niños/teens.</i></p></template>
+    </div>
+
+    <!-- Decoración -->
+    <div class="services-panel hidden" id="svc-deco" role="tabpanel" aria-hidden="true">
+      <h3>Decoración</h3>
+      <div class="media-grid">
+        <figure><video controls preload="metadata"><source src="media/Decoraci%C3%B3n/Decoraci%C3%B3n%20ne%C3%B3n.mp4" type="video/mp4"></video><figcaption>Decoración neón</figcaption></figure>
+        <figure><video controls preload="metadata"><source src="media/Decoraci%C3%B3n/DECO%20SHIMMER.mp4" type="video/mp4"></video><figcaption>Shimmer</figcaption></figure>
+        <figure><video controls preload="metadata"><source src="media/Decoraci%C3%B3n/Decoraci%C3%B3n%202.mp4" type="video/mp4"></video><figcaption>Decoración 2</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- Baby Shower -->
+    <div class="services-panel hidden" id="svc-baby" role="tabpanel" aria-hidden="true">
+      <h3>Baby Shower</h3>
+      <div class="media-grid">
+        <figure><img src="media/FOTOGRAF%C3%8DA/comprimidos/Baby%20Shower.jpg" alt="Baby Shower"><figcaption>Baby Shower</figcaption></figure>
+        <figure><img src="media/FOTOGRAF%C3%8DA/comprimidos/Baby%20shower%202.jpg" alt="Baby Shower 2"><figcaption>Baby Shower 2</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- Karaoke -->
+    <div class="services-panel hidden" id="svc-karaoke" role="tabpanel" aria-hidden="true">
+      <h3>Karaoke</h3>
+      <div class="media-grid">
+        <figure><video controls preload="metadata"><source src="media/Just%20dance%20y%20Karaoke/Just%20Dance%20Y%20Karaoke.mp4" type="video/mp4"></video><figcaption>Just Dance y Karaoke</figcaption></figure>
+        <figure><video controls preload="metadata"><source src="media/Just%20dance%20y%20Karaoke/Just%20Dance%20Y%20Karaoke%202.mp4" type="video/mp4"></video><figcaption>Just Dance & Karaoke 2</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- Equipo de sonido, DJ y luces -->
+    <div class="services-panel hidden" id="svc-sonido" role="tabpanel" aria-hidden="true">
+      <h3>Equipo de sonido, DJ y luces</h3>
+      <div class="media-grid">
+        <figure><video controls preload="metadata"><source src="media/Just%20dance%20y%20Karaoke/Jus%20Dance%20Karaoke%203.mp4" type="video/mp4"></video><figcaption>DJ + Karaoke</figcaption></figure>
+        <figure><video controls preload="metadata"><source src="media/Pista%20led/Pista%20LED.mp4" type="video/mp4"></video><figcaption>Pista LED</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- Quinceaños -->
+    <div class="services-panel hidden" id="svc-quince" role="tabpanel" aria-hidden="true">
+      <h3>Quinceaños</h3>
+      <div class="media-grid">
+        <figure><video controls preload="metadata"><source src="media/15%20a%C3%B1os/15%20A%C3%B1os%20Chicoteca.mp4" type="video/mp4"></video><figcaption>15 Años Chicoteca</figcaption></figure>
+        <figure><video controls preload="metadata"><source src="media/15%20a%C3%B1os/15%20A%C3%B1os%20Chicoteca%202.mp4" type="video/mp4"></video><figcaption>15 Años Chicoteca 2</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- Hora Loca -->
+    <div class="services-panel hidden" id="svc-horaloca" role="tabpanel" aria-hidden="true">
+      <h3>Hora Loca</h3>
+      <div class="media-grid">
+        <figure><video controls preload="metadata"><source src="media/Hora%20loca/Hora%20Loca%20Disco.mp4" type="video/mp4"></video><figcaption>Hora Loca Disco</figcaption></figure>
+        <figure><video controls preload="metadata"><source src="media/Hora%20loca/Hora%20Loca%20Donde%20Estan%20Las%20Rubias.mp4" type="video/mp4"></video><figcaption>¿Dónde están las rubias?</figcaption></figure>
+        <figure><video controls preload="metadata"><source src="media/Hora%20loca/Stickman.mp4" type="video/mp4"></video><figcaption>Stickman LED</figcaption></figure>
+      </div>
+    </div>
+
+    <!-- Fotografía y Filmación -->
+    <div class="services-panel hidden" id="svc-foto" role="tabpanel" aria-hidden="true">
+      <h3>Fotografía y Filmación</h3>
+      <div class="media-grid">
+        <figure><img src="media/FOTOGRAF%C3%8DA/comprimidos/Cumplea%C3%B1os%20Ne%C3%B3n.jpg" alt="Cumpleaños Neón"><figcaption>Cumpleaños Neón</figcaption></figure>
+        <figure><img src="media/FOTOGRAF%C3%8DA/comprimidos/Chicoteca.jpg" alt="Chicoteca"><figcaption>Chicoteca</figcaption></figure>
+        <figure><img src="media/FOTOGRAF%C3%8DA/comprimidos/Chicoteca%20Juegos.jpg" alt="Chicoteca Juegos"><figcaption>Chicoteca Juegos</figcaption></figure>
+        <figure><video controls preload="metadata"><source src="media/Publicidad%20Mister%20Fiesta.mp4" type="video/mp4"></video><figcaption>Reel Mr Fiesta</figcaption></figure>
+      </div>
+    </div>
+
   </div>
 </section>
 
-<footer><small>&copy; 2025 Mr Fiesta • Hecho con brillo neón ✨</small></footer>
-<a class="whatsapp" href="https://wa.me/51902602362" target="_blank">Whatsapp 902 602 362</a>
-<script src="videos.js"></script>
+<section class="section" id="galeria">
+  <div class="container">
+    <h2>Galería</h2>
+    <p class="lead">Tus videos y fotos están distribuidos dentro de cada servicio. Puedes duplicarlos aquí si quieres una vista general.</p>
+  </div>
+</section>
+
+<section class="section" id="contacto">
+  <div class="container">
+    <h2>Contáctenos</h2>
+    <p class="lead">WhatsApp: <b>902 602 362</b></p>
+    <p>Pagos en Interbank / BCP / Yape / Plin a nombre de José André Hidalgo Anticona. Adelanto de S/100 asegura tu fecha.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">© <script>document.write(new Date().getFullYear())</script> Mr Fiesta. Todos los derechos reservados.</div>
+</footer>
+<div class="wa"><a href="https://wa.me/51902602362">💬 WhatsApp</a></div>
+
+<!-- Modal de paquetes -->
+<div id="pkg-modal" style="position:fixed;inset:0;display:none;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);z-index:80">
+  <div style="max-width:900px;margin:60px auto;background:#11121a;border:1px solid var(--glass-border);border-radius:18px;padding:22px;position:relative">
+    <button id="pkg-close" class="btn btn--ghost" style="position:absolute;right:14px;top:14px">Cerrar</button>
+    <div id="pkg-content"></div>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn btn--primary" href="#contacto">Reservar este paquete</a>
+      <a class="btn btn--ghost" href="#contacto">Solicitar cotización</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Tabs de servicios
+  const buttons = document.querySelectorAll('.services-nav .svc');
+  const panels = document.querySelectorAll('.services-panel');
+  buttons.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      buttons.forEach(b=>b.classList.remove('is-active')); btn.classList.add('is-active');
+      panels.forEach(p=>p.classList.add('hidden'));
+      const el = document.querySelector(btn.dataset.target);
+      if(el){ el.classList.remove('hidden'); el.removeAttribute('aria-hidden'); }
+    });
+  });
+  // Modal paquetes
+  const modal = document.getElementById('pkg-modal');
+  const content = document.getElementById('pkg-content');
+  const closeBtn = document.getElementById('pkg-close');
+  document.querySelectorAll('.open-pkg').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const id = btn.getAttribute('data-pkg');
+      const tpl = document.getElementById(id);
+      if(tpl){ content.innerHTML = tpl.innerHTML; modal.style.display='block'; }
+    });
+  });
+  closeBtn.addEventListener('click', ()=> modal.style.display='none');
+  modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.style.display='none'; });
+</script>
 </body>
 </html>
