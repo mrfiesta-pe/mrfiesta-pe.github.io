@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mr Fiesta</title>
-    <link rel="canonical" href="https://mrfiesta-pe.github.io/">
-    <meta property="og:url" content="https://mrfiesta-pe.github.io/">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -24,6 +22,7 @@
             margin: 0;
             padding: 0;
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         .container {
@@ -49,27 +48,25 @@
             padding: 1rem 0;
         }
 
-        /* INICIO DE CAMBIOS EN EL LOGO */
         .logo {
-            display: flex; /* Para alinear la imagen y el texto */
+            display: flex;
             align-items: center;
         }
 
         .logo img {
-            max-width: 60px; /* Tamaño más pequeño para el logo de imagen */
+            max-width: 60px;
             height: auto;
-            margin-right: 10px; /* Espacio entre el logo de imagen y el texto */
-            vertical-align: middle; /* Alineación vertical */
+            margin-right: 10px;
+            vertical-align: middle;
         }
 
         .logo h1 {
-            font-size: 1.5rem; /* Tamaño de fuente reducido */
+            font-size: 1.5rem;
             margin: 0;
             background: linear-gradient(90deg, #FF00FF, #00FFFF);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        /* FIN DE CAMBIOS EN EL LOGO */
 
         .nav-links {
             list-style: none;
@@ -152,7 +149,7 @@
             color: var(--color-bg-dark);
             font-weight: 700;
             box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), 0 0 30px rgba(138, 43, 226, 0.5);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .cta-button:hover {
@@ -171,6 +168,17 @@
             background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+        
+        /* Animación para que los elementos aparezcan al hacer scroll */
+        .animated-section {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+        .animated-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* --- Sección Acerca de Nosotros --- */
@@ -192,7 +200,7 @@
             text-align: center;
         }
 
-        .about-image img {
+        .about-image video {
             max-width: 100%;
             height: auto;
             border-radius: 15px;
@@ -232,8 +240,37 @@
 
         /* Estilos para las subsecciones de servicios */
         .service-section {
-            padding-top: 80px;
+            padding: 80px 0;
         }
+        
+        .cotizar-wrapper {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .cotizar-button {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: var(--color-bg-dark);
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), 0 0 30px rgba(138, 43, 226, 0.5);
+            transition: transform 0.3s ease;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 255, 255, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(0, 255, 255, 0.7), 0 0 50px rgba(138, 43, 226, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 0 15px rgba(0, 255, 255, 0.5); }
+        }
+
+        .cotizar-button {
+            animation: pulse 2s infinite ease-in-out;
+        }
+
 
         .service-section h2 {
             margin-bottom: 50px;
@@ -333,7 +370,12 @@
             gap: 20px;
             justify-content: center;
         }
-
+        
+        .gallery-anchor {
+            padding-top: 80px;
+            margin-top: -80px;
+        }
+        
         .gallery-item {
             display: flex;
             flex-direction: column;
@@ -475,7 +517,6 @@
             content: '📱';
         }
 
-
         .social-links a {
             color: var(--color-text-light);
             font-size: 1.5rem;
@@ -592,7 +633,7 @@
         <div class="container">
             <nav>
                 <div class="logo">
-                    <img src="https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png" alt="Logo Mr Fiesta">
+                    <img src="https://mrfiesta-pe.github.io/logo-mrfiesta.png" alt="Logo Mr Fiesta">
                     <h1>MR FIESTA</h1>
                 </div>
                 <ul class="nav-links">
@@ -609,8 +650,8 @@
     <main>
         <section id="hero">
             <div class="hero-bg">
-                <video id="hero-video" autoplay muted loop playsinline>
-                    <source src="https://aymred.github.io/MrFiestaWeb/media/Animaci%C3%B3n%20logo/Logo%20Mr%20Fiesta%201.mp4" type="video/mp4">
+                <video id="hero-video" muted loop playsinline>
+                    <source src="https://mrfiesta-pe.github.io/media/Animaci%C3%B3n%20logo/Logo%20Mr%20Fiesta%201.mp4" type="video/mp4">
                     Tu navegador no soporta el video.
                 </video>
             </div>
@@ -621,22 +662,24 @@
             </div>
         </section>
         
-        <section id="about">
+        <section id="about" class="animated-section">
             <div class="container">
                 <h2>Nuestra Historia</h2>
                 <div class="about-content">
                     <div class="about-text">
-                        <p>En Mr Fiesta, convertimos celebraciones en recuerdos inolvidables. Nacimos con la pasión de ofrecer experiencias únicas, llenas de magia y profesionalismo. Cada evento es un lienzo en blanco donde fusionamos creatividad, tecnología y talento para superar tus expectativas.</p>
-                        <p>Nuestro equipo está comprometido a brindarte el mejor servicio, desde la planificación hasta el último detalle. Más que animadores, somos creadores de momentos que perduran en el tiempo. ¡Déjanos ser parte de tu historia!</p>
+                        <p>En Mr Fiesta, no solo organizamos eventos; creamos recuerdos. Nacimos de la pasión por transformar celebraciones en experiencias extraordinarias, llenas de magia y profesionalismo. Cada evento es una oportunidad para fusionar creatividad, tecnología y talento, garantizando que tu fiesta sea única e inolvidable. Nuestro equipo se dedica a brindarte un servicio impecable, cuidando cada detalle desde la planificación hasta el último minuto de diversión. ¡Permítenos ser parte de tu historia y hacer de tu celebración un éxito rotundo!</p>
                     </div>
                     <div class="about-image">
-                        <img src="https://placehold.co/500x350/1e1e1e/ffffff?text=Equipo+Mr+Fiesta" alt="Equipo de Mr Fiesta">
+                        <video autoplay muted loop playsinline>
+                            <source src="https://mrfiesta-pe.github.io/media/Animaci%C3%B3n%20logo/Logo%20Mr%20Fiesta%204.mp4" type="video/mp4">
+                            Tu navegador no soporta el video.
+                        </video>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="services">
+        <section id="services" class="animated-section">
             <div class="container">
                 <h2>Nuestros Servicios</h2>
                 <div class="service-grid">
@@ -646,37 +689,37 @@
                     </a>
                     <a href="#quinceanos" class="service-card">
                         <h3>QUINCEAÑOS</h3>
-                        <p>Una celebración a tu medida. Sonido de alta calidad, DJ en vivo y efectos especiales para tu gran noche.</p>
+                        <p>Celebra tus 15 años con una fiesta de ensueño. Creamos una noche inolvidable con sonido de alta calidad, DJ en vivo y efectos especiales que marcan la diferencia.</p>
                     </a>
                     <a href="#pista-led" class="service-card">
                         <h3>PISTA LED</h3>
-                        <p>Ilumina la pista de baile. Una plataforma interactiva de luces que se sincroniza con la música, creando un show visual único.</p>
+                        <p>Transforma tu pista de baile en un espectáculo de luces. Nuestra pista LED interactiva se sincroniza con la música para un show visual único.</p>
                     </a>
                     <a href="#hora-loca" class="service-card">
                         <h3>HORA LOCA</h3>
-                        <p>¡Sube la energía al máximo! Personajes temáticos, música vibrante y animación explosiva para el clímax de tu fiesta.</p>
+                        <p>Lleva la energía de tu evento al máximo. Personajes temáticos, música vibrante y una animación explosiva que hará bailar a todos tus invitados.</p>
                     </a>
                     <a href="#decoracion" class="service-card">
                         <h3>DECORACIÓN</h3>
-                        <p>Ambientes mágicos que reflejan tu estilo. Temas personalizados, globos, telas y más para un evento soñado.</p>
+                        <p>Ambientes que cobran vida. Nos encargamos de la decoración temática, desde globos y telas hasta luces, creando el escenario perfecto para tu celebración.</p>
                     </a>
                     <a href="#karaoke" class="service-card">
                         <h3>KARAOKE</h3>
-                        <p>Libera el artista que llevas dentro. Una selección musical inmensa y equipos de audio profesional para cantar sin parar.</p>
+                        <p>Un show musical donde tú eres el protagonista. Con una selección musical inmensa y equipos de audio profesional para cantar sin parar.</p>
                     </a>
                     <a href="#fotografia-filmacion" class="service-card">
                         <h3>FOTOGRAFÍA Y FILMACIÓN</h3>
-                        <p>Capturamos cada sonrisa y cada momento especial con fotos y videos de alta calidad para que revivas tu fiesta siempre.</p>
+                        <p>Capturamos cada sonrisa y cada momento especial. Revive tu fiesta una y otra vez con fotos y videos de alta calidad que atesorarás por siempre.</p>
                     </a>
                     <a href="#invitaciones" class="service-card">
                         <h3>INVITACIONES</h3>
-                        <p>Diseños exclusivos para anunciar tu fiesta de la mejor manera. Totalmente gratis o de cortesía con nuestros paquetes.</p>
+                        <p>La primera impresión cuenta. Diseñamos invitaciones virtuales exclusivas que anuncian tu fiesta con estilo y elegancia.</p>
                     </a>
                 </div>
             </div>
         </section>
 
-        <section id="chicoteca-paquetes" class="service-section">
+        <section id="chicoteca-paquetes" class="service-section animated-section">
             <div class="container">
                 <h2>Paquetes de Chicoteca</h2>
                 <div class="package-grid">
@@ -775,75 +818,686 @@
             </div>
         </section>
 
-        <section id="quinceanos" class="service-section">
+        <section id="quinceanos" class="service-section animated-section">
             <div class="container">
-                <h2>Paquetes de Quinceaños</h2>
-                <p>Celebra tus 15 años con estilo y elegancia. Nuestros paquetes de quinceaños están diseñados para una noche mágica, con la mejor música, iluminación y efectos especiales que harán de tu fiesta un evento inolvidable.</p>
+                <h2>Quinceaños</h2>
+                <p>Celebra tus 15 años con estilo y elegancia. En Mr Fiesta, convertimos tu fiesta soñada en una realidad espectacular, con la mejor música, un DJ en vivo y efectos especiales que harán de tu gran noche una experiencia inolvidable para ti y todos tus invitados.</p>
+                <div class="cotizar-wrapper">
+                    <a href="https://wa.me/51902602362?text=Hola,%20estoy%20interesado%20en%20el%20servicio%20de%20Quincea%C3%B1os.%20Me%20gustar%C3%ADa%20cotizarlo." class="cotizar-button" target="_blank">Cotizar Servicio</a>
+                </div>
             </div>
         </section>
 
-        <section id="hora-loca" class="service-section">
+        <section id="pista-led" class="service-section animated-section">
+            <div class="container">
+                <h2>Pista LED</h2>
+                <p>Ilumina tu evento con un show visual sin igual. Nuestra pista LED interactiva es el centro de la fiesta, sincronizándose con la música para crear una atmósfera vibrante que invita a todos a bailar. Sorprende a tus invitados con una experiencia que brilla con luz propia.</p>
+                <div class="cotizar-wrapper">
+                    <a href="https://wa.me/51902602362?text=Hola,%20estoy%20interesado%20en%20la%20Pista%20LED.%20Me%20gustar%C3%ADa%20cotizarla." class="cotizar-button" target="_blank">Cotizar Servicio</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="hora-loca" class="service-section animated-section">
             <div class="container">
                 <h2>Hora Loca</h2>
-                <p>¡Desata la diversión! La Hora Loca es el clímax de tu fiesta, llena de energía, personajes sorprendentes y la mejor música. Aquí tienes un vistazo a lo que podemos ofrecer:</p>
-                <div class="package-grid">
-                    <div class="package-card">
-                        <h3>Paquete de Hora Loca</h3>
-                        <p>Nuestro paquete de hora loca incluye...</p>
+                <p>¡El momento más esperado de la fiesta! Nuestra Hora Loca es una explosión de diversión y energía. Con personajes temáticos, música vibrante y una animación que no deja a nadie sentado, garantizamos el clímax perfecto para tu celebración.</p>
+                <div class="cotizar-wrapper">
+                    <a href="https://wa.me/51902602362?text=Hola,%20estoy%20interesado%20en%20la%20Hora%20Loca.%20Me%20gustar%C3%ADa%20cotizarla." class="cotizar-button" target="_blank">Cotizar Servicio</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="decoracion" class="service-section animated-section">
+            <div class="container">
+                <h2>Decoración Temática</h2>
+                <p>Cada detalle importa. Nuestro servicio de decoración convierte cualquier espacio en el escenario de tus sueños. Desde temas elegantes hasta fiestas de neón, trabajamos contigo para crear un ambiente mágico que refleje tu estilo y sorprenda a todos tus invitados.</p>
+                <div class="cotizar-wrapper">
+                    <a href="https://wa.me/51902602362?text=Hola,%20estoy%20interesado%20en%20el%20servicio%20de%20Decoraci%C3%B3n.%20Me%20gustar%C3%ADa%20cotizarlo." class="cotizar-button" target="_blank">Cotizar Servicio</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="karaoke" class="service-section animated-section">
+            <div class="container">
+                <h2>Karaoke</h2>
+                <p>¿Listo para ser una estrella por una noche? Con nuestra selección musical inmensa y equipos de audio de alta calidad, el karaoke es la actividad perfecta para que tú y tus invitados se diviertan cantando sus canciones favoritas sin parar.</p>
+                <div class="cotizar-wrapper">
+                    <a href="https://wa.me/51902602362?text=Hola,%20estoy%20interesado%20en%20el%20servicio%20de%20Karaoke.%20Me%20gustar%C3%ADa%20cotizarlo." class="cotizar-button" target="_blank">Cotizar Servicio</a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="fotografia-filmacion" class="service-section animated-section">
+            <div class="container">
+                <h2>Fotografía y Filmación</h2>
+                <p>Capturamos la esencia de tu celebración. Nuestro equipo de fotógrafos y videógrafos profesionales inmortaliza cada momento, cada sonrisa y cada emoción. Te entregamos un recuerdo de alta calidad que te permitirá revivir la magia de tu fiesta una y otra vez.</p>
+                <div class="cotizar-wrapper">
+                    <a href="https://wa.me/51902602362?text=Hola,%20estoy%20interesado%20en%20el%20servicio%20de%20Fotograf%C3%ADa%20y%20Filmaci%C3%B3n.%20Me%20gustar%C3%ADa%20cotizarlo." class="cotizar-button" target="_blank">Cotizar Servicio</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="invitaciones" class="service-section animated-section">
+            <div class="container">
+                <h2>Invitaciones</h2>
+                <p>Dale a tus invitados un adelanto de la gran fiesta que se avecina. Con nuestros diseños de invitaciones virtuales personalizadas, lograrás la primera impresión perfecta y generarás emoción antes de que el evento comience.</p>
+                <div class="cotizar-wrapper">
+                    <a href="https://wa.me/51902602362?text=Hola,%20estoy%20interesado%20en%20el%20servicio%20de%20Invitaciones.%20Me%20gustar%C3%ADa%20cotizarlo." class="cotizar-button" target="_blank">Cotizar Servicio</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery" class="animated-section">
+            <div class="container">
+                <h2>Galería de Videos y Fotos</h2>
+                
+                <div class="category-videos">
+                    <h3 id="chicoteca-gallery" class="gallery-anchor">Chicoteca</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/chicoteca%20basica%201.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20en%20Casa/Chicoteca%20En%20Casa%202.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led%203.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/chicoteca%20basica%202.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/chicoteca%20basica%203.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/Chicoteca%20b%C3%A1sica.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20en%20Casa/Chicoteca%20En%20Casa.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20en%20Casa/Chicoteca%20En%20Casa%204.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/CHICOTECA%20ULTRA%20LED%205.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led%206.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led%20Provincia.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led.mp4" type="video/mp4">
+                            </video>
+                        </div>
                     </div>
-                    <div class="package-card">
-                        <h3>Lista de Personajes</h3>
-                        <p>Agrega un personaje especial y haz de tu evento algo inolvidable:</p>
-                        <div class="characters-list">
-                            <div>
-                                <h3>🎶 Reguetón Party</h3>
-                                <ul>
-                                    <li>Daddy Yankee</li>
-                                    <li>Karol G</li>
-                                    <li>Bad Bunny</li>
-                                    <li>Ferxxo (CABEZONES)</li>
-                                </ul>
-                                <h3>🦸‍♂ Superhéroes & Villanos</h3>
-                                <ul>
-                                    <li>Deadpool</li>
-                                    <li>Harley Quinn</li>
-                                    <li>Joker</li>
-                                    <li>Spider-Man</li>
-                                    <li>Mujer Maravilla</li>
-                                    <li>La Máscara</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h3>🏴‍☠ Aventura Pirata</h3>
-                                <ul>
-                                    <li>Capitán Pirata</li>
-                                    <li>Pirata Femenina</li>
-                                </ul>
-                                <h3>🌟 Hora Loca Neón y LED</h3>
-                                <ul>
-                                    <li>Animadores fluorescentes</li>
-                                    <li>Muñeco Capibara LED</li>
-                                    <li>Stickman LED</li>
-                                    <li>Bola disco LED</li>
-                                </ul>
-                                <h3>😱 Terror Divertido</h3>
-                                <ul>
-                                    <li>Chucky</li>
-                                    <li>Freddy Krueger</li>
-                                    <li>La Monja</li>
-                                </ul>
-                                <h3>💁‍♀ ¿Dónde están las Rubias?</h3>
-                                <ul>
-                                    <li>Dos “rubias” glam con coreografías</li>
-                                </ul>
-                            </div>
+                </div>
+                <div class="category-videos">
+                    <h3 id="quinceanos-gallery" class="gallery-anchor">Quinceaños</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20A%C3%B1os%20Chicoteca%202.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20A%C3%B1os%20Chicoteca.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20a%C3%B1os%202a.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20a%C3%B1os%20ne%C3%B3n%202.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+                <div class="category-videos">
+                    <h3 id="pista-led-gallery" class="gallery-anchor">Pista LED</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Pista%20led/Pista%20Led%202.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Pista%20led/Pista%20LED.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+                <div class="category-videos">
+                    <h3 id="hora-loca-gallery" class="gallery-anchor">Hora Loca</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Bad%20Bunny%20Y%20Karol%20G.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Disco.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Donde%20Estan%20Las%20Rubias.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Horizontal.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20La%20M%C3%A1scara.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Mini%20Hora%20Loca.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Stickman.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+                <div class="category-videos">
+                    <h3 id="decoracion-gallery" class="gallery-anchor">Decoración</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/DECO%20SHIMMER.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n%202.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n%203.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n%20ne%C3%B3n.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+                <div class="category-videos">
+                    <h3 id="karaoke-gallery" class="gallery-anchor">Karaoke</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Jus%20Dance%20Karaoke%203.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Just%20Dance%20Y%20Karaoke%202.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Just%20Dance%20y%20karaoke%204.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Just%20Dance%20Y%20Karaoke.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+                <div class="category-videos">
+                    <h3 id="fotografia-filmacion-gallery" class="gallery-anchor">Fotografía y Filmación</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Cumplea%C3%B1os%20Ne%C3%B3n.jpg" alt="Cumpleaños Neón">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Chicoteca.jpg" alt="Chicoteca">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Baby%20Shower.jpg" alt="Baby Shower">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Cumplea%C3%B1os.jpg" alt="Descripción del Evento 1">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Cumplea%C3%B1os%202.jpg" alt="Descripción del Evento 2">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Miss.jpg" alt="Descripción del Evento 3">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Chicoteca%20Juego%20Canta%20y%20Gana.jpg" alt="Descripción del Evento 4">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Chicoteca%20Juegos.jpg" alt="Descripción del Evento 5">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Cumplea%C3%B1os%203.jpg" alt="Descripción del Evento 6">
+                        </div>
+                    </div>
+                </div>
+                <div class="category-videos">
+                    <h3 id="invitaciones-gallery" class="gallery-anchor">Invitaciones</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/15%20A%C3%B1os%20Otras%20Mariposas.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/15%20Mariposas.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Ajedrez%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Argentina%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Barbie%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Barcelona%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Black%20Disco%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Call%20Of%20Duty%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Coquete%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Disco%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Dragon%20Ball%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Epic%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Gamer%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Madrid%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Minecraft%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Monopoly%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Ne%C3%B3n%202%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Ne%C3%B3n%20Pixel%281%29.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Ne%C3%B3n%20Varon.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Ne%C3%B3n.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Olivia%20Rodrigo.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Roblox.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Stich.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Tiktok.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/invitaciones/Youtube.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+                <div class="category-videos">
+                    <h3 id="fotografia-filmacion-gallery" class="gallery-anchor">Fotografía y Filmación</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Cumplea%C3%B1os%20Ne%C3%B3n.jpg" alt="Cumpleaños Neón">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Chicoteca.jpg" alt="Chicoteca">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Baby%20Shower.jpg" alt="Baby Shower">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Cumplea%C3%B1os.jpg" alt="Descripción del Evento 1">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Cumplea%C3%B1os%202.jpg" alt="Descripción del Evento 2">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Miss.jpg" alt="Descripción del Evento 3">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Chicoteca%20Juego%20Canta%20y%20Gana.jpg" alt="Descripción del Evento 4">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Chicoteca%20Juegos.jpg" alt="Descripción del Evento 5">
+                        </div>
+                        <div class="gallery-item">
+                            <img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Cumplea%C3%B1os%203.jpg" alt="Descripción del Evento 6">
+                        </div>
+                    </div>
+                </div>
+                <div class="category-videos">
+                    <h3 id="equipo-sonido-gallery" class="gallery-anchor">Equipo de Sonido DJ y Luces</h3>
+                    <p>¡Pronto! Estamos preparando una galería de videos de nuestros equipos de sonido, DJ y luces en acción para que veas la calidad y el ambiente que creamos.</p>
+                </div>
+                <div class="category-videos">
+                    <h3 id="juegos-gallery" class="gallery-anchor">Juegos</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Juegos/3%20En%20Raya(1).mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Juegos/Enlazados.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Juegos/Enlazados2.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Juegos/Jenga%20Gigante.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Juegos/Las%20Torres%20Gigantes.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Juegos/Limbo%20Led.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Juegos/Minuto%20Para%20Ganar.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Juegos/Salta%20Soga%20Led.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Juegos/Tutti%20Frutti.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+                <div class="category-videos">
+                    <h3 id="experiencia-neon-gallery" class="gallery-anchor">Experiencia Neón</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Experiencia%20Ne%C3%B3n/Experiencia%20Ne%C3%B3n1.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Experiencia%20Ne%C3%B3n/Experiencia%20Ne%C3%B3n2.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Experiencia%20Ne%C3%B3n/Experiencia%20Ne%C3%B3n3.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="gallery-item vertical-video-wrapper">
+                            <video muted loop playsinline controls>
+                                <source src="https://mrfiesta-pe.github.io/media/Experiencia%20Ne%C3%B3n/Experiencia%20Ne%C3%B3n4.mp4" type="video/mp4">
+                            </video>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-        <section id="decoracion" class="service-section">
+        
+        <section id="testimonials" class="animated-section">
             <div class="container">
-                <h2>Decoración Temática</h2>
-            ... (rest of original content unchanged) ...
+                <h2>La voz de nuestros clientes</h2>
+                <div class="testimonial-carousel">
+                    <div class="testimonial-card">
+                        <p>"Quedamos encantados, se notó el profesionalismo y el carisma con los chicos."</p>
+                        <span>— Carolina G.</span>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"La pista LED y la Estación Glitter se robaron el show. ¡Recontra recomendado!"</p>
+                        <span>— Henry V.</span>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"Llegaron puntuales, animación moderna, full juegos y música actual."</p>
+                        <span>— Melissa R.</span>
+                    </div>
+                </div>
+                <div class="case-study">
+                    <h3>Nuestro éxito en Pichanaqui</h3>
+                    <p>Hemos llevado la magia de Mr Fiesta más allá de Lima. Nuestro show en Pichanaqui fue un verdadero éxito, con una recepción increíble por parte del público que quedó encantado con la energía y profesionalismo de nuestro equipo.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="animated-section">
+            <div class="container">
+                <h2>¡Hablemos de tu próximo evento!</h2>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <h3>Contáctanos</h3>
+                        <p><strong>Teléfono:</strong> 902 602 362</p>
+                        <p><strong>Correo:</strong> mrfiesta.lima@gmail.com</p>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/profile.php?id=61566828025406" class="facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://www.instagram.com/mrfiesta_lima/?hl=es" class="instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+                            <a href="https://www.tiktok.com/@mrfiesta?is_from_webapp=1&sender_device=pc" class="tiktok" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        </div>
+                        <h4>Métodos de Pago</h4>
+                        <ul>
+                            <li><strong>Tarjetas de Crédito:</strong> Aceptamos todas las tarjetas con un recargo del 5%.</li>
+                            <li><strong>Transferencia Bancaria:</strong> BCP, Interbank.</li>
+                            <li><strong>Billeteras Digitales:</strong> Yape, Plin, BIM, DALE, AGORA.</li>
+                        </ul>
+                    </div>
+                    <div class="contact-form">
+                        <form action="#" method="POST">
+                            <label for="name">Nombre</label>
+                            <input type="text" id="name" name="name" required>
+                            
+                            <label for="phone">Teléfono</label>
+                            <input type="tel" id="phone" name="phone" required>
+
+                            <label for="event-type">Tipo de Evento</label>
+                            <select id="event-type" name="event-type">
+                                <option value="cumpleanos">Cumpleaños</option>
+                                <option value="quinceanos">Quinceaños</option>
+                                <option value="hora-loca">Hora Loca</option>
+                                <option value="baby-shower">Baby Shower</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                            
+                            <label for="message">Mensaje</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                            
+                            <button type="submit">Enviar Solicitud</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Mr Fiesta. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/51902602362" class="whatsapp-button" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.animated-section');
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+            
+            const heroVideo = document.getElementById('hero-video');
+            const logoVideos = [
+                "https://mrfiesta-pe.github.io/media/Animaci%C3%B3n%20logo/Logo%20Mr%20Fiesta%201.mp4",
+                "https://mrfiesta-pe.github.io/media/Animaci%C3%B3n%20logo/Logo%20Mr%20Fiesta%202.mp4",
+                "https://mrfiesta-pe.github.io/media/Animaci%C3%B3n%20logo/Logo%20Mr%20Fiesta%203.mp4",
+                "https://mrfiesta-pe.github.io/media/Animaci%C3%B3n%20logo/Logo%20Mr%20Fiesta%204.mp4"
+            ];
+
+            let videoIndex = 0;
+            let lastScrollTop = 0;
+
+            window.addEventListener('scroll', () => {
+                const st = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (st > lastScrollTop) { // Scroll hacia abajo
+                    const heroBottom = heroVideo.getBoundingClientRect().bottom;
+                    if (heroBottom <= 0) {
+                        videoIndex = (videoIndex + 1) % logoVideos.length;
+                        heroVideo.src = logoVideos[videoIndex];
+                        heroVideo.load();
+                    }
+                } else if (st < lastScrollTop) { // Scroll hacia arriba
+                    const heroTop = heroVideo.getBoundingClientRect().top;
+                    if (heroTop > 0 && st === 0) {
+                        videoIndex = 0;
+                        heroVideo.src = logoVideos[videoIndex];
+                        heroVideo.load();
+                    }
+                }
+                lastScrollTop = st <= 0 ? 0 : st;
+            });
+        });
+    </script>
+</body>
+</html>
