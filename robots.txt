@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://mrfiesta-pe.github.io/sitemap.xml

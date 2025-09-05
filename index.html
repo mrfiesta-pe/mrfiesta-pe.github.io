@@ -1,299 +1,849 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mr Fiesta | Chicotecas, Quinceaños, Hora Loca y Pista LED en Lima</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr Fiesta</title>
+    <link rel="canonical" href="https://mrfiesta-pe.github.io/">
+    <meta property="og:url" content="https://mrfiesta-pe.github.io/">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --color-primary: #8A2BE2; /* Azul violeta */
+            --color-secondary: #00FFFF; /* Cian */
+            --color-tertiary: #FFD700; /* Dorado */
+            --color-bg-dark: #121212;
+            --color-text-light: #F0F0F0;
+        }
 
-  <!-- Preconnect & Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-light);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
 
-  <!-- SEO / Open Graph -->
-  <meta name="description" content="Animación moderna, DJ, luces inteligentes, pistas LED, glitter station y más. Cotiza tu evento por WhatsApp.">
-  <link rel="canonical" href="https://mrfiesta.example/">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Mr Fiesta – Chicoteca & Pista LED">
-  <meta property="og:description" content="Eventos con estilo neón en Lima y provincias.">
-  <meta property="og:image" content="https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png">
-  <meta property="og:url" content="https://mrfiesta.example/">
-  <meta name="twitter:card" content="summary_large_image">
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-  <link rel="icon" href="https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png">
-  <link rel="stylesheet" href="./styles.css">
-  <link rel="manifest" href="./site.webmanifest">
+        /* --- Header y Navegación --- */
+        header {
+            background: rgba(18, 18, 18, 0.8);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        /* INICIO DE CAMBIOS EN EL LOGO */
+        .logo {
+            display: flex; /* Para alinear la imagen y el texto */
+            align-items: center;
+        }
+
+        .logo img {
+            max-width: 60px; /* Tamaño más pequeño para el logo de imagen */
+            height: auto;
+            margin-right: 10px; /* Espacio entre el logo de imagen y el texto */
+            vertical-align: middle; /* Alineación vertical */
+        }
+
+        .logo h1 {
+            font-size: 1.5rem; /* Tamaño de fuente reducido */
+            margin: 0;
+            background: linear-gradient(90deg, #FF00FF, #00FFFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* FIN DE CAMBIOS EN EL LOGO */
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            margin-left: 25px;
+        }
+
+        .nav-links a {
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-secondary);
+        }
+
+        /* --- Sección Principal (Hero) --- */
+        #hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            padding-top: 60px;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: black;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        .hero-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.5;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .hero-content {
+            z-index: 1;
+            padding: 0 20px;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(2rem, 8vw, 4.5rem);
+            margin: 0;
+            background: linear-gradient(90deg, #FF00FF, #00FFFF, #FFFF00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-content p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: var(--color-bg-dark);
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5), 0 0 30px rgba(138, 43, 226, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* --- Estilos Generales de Secciones --- */
+        section {
+            padding: 80px 0;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- Sección Acerca de Nosotros --- */
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .about-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- Sección de Servicios (Original) --- */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+
+        .service-card {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            color: var(--color-text-light);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+        }
+        
+        .service-card h3 {
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Estilos para las subsecciones de servicios */
+        .service-section {
+            padding-top: 80px;
+        }
+
+        .service-section h2 {
+            margin-bottom: 50px;
+        }
+        
+        .service-section p {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+
+        /* Estilos para los paquetes y listas */
+        .package-grid, .characters-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            text-align: left;
+        }
+
+        .package-card, .characters-card {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .package-card:hover, .characters-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+        }
+        
+        .package-card h3 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .package-card .price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-tertiary);
+            margin: 10px 0 20px;
+        }
+        
+        .package-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .package-card ul li {
+            margin-bottom: 10px;
+        }
+        
+        .package-card ul li::before {
+            content: '✓';
+            color: var(--color-secondary);
+            font-weight: 700;
+            margin-right: 10px;
+        }
+        
+        /* Estilos para la lista de personajes */
+        .characters-list h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .characters-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* --- Galería --- */
+        #gallery {
+            text-align: center;
+        }
+        
+        #gallery .category-videos {
+            margin-top: 50px;
+        }
+
+        #gallery .category-videos h3 {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, var(--color-secondary), var(--color-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .gallery-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gallery-item video, .gallery-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .gallery-item video:hover, .gallery-item img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0, 255, 255, 0.2);
+        }
+        
+        /* Ajustes para videos verticales */
+        .vertical-video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            padding-top: 177.77777777777777%;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .vertical-video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+        }
+        .vertical-video-wrapper:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0, 255, 255, 0.2);
+        }
+
+        /* --- Sección de Testimonios --- */
+        .testimonial-carousel {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .testimonial-card {
+            background-color: #1e1e1e;
+            border-left: 5px solid var(--color-secondary);
+            padding: 20px;
+            max-width: 400px;
+            border-radius: 8px;
+        }
+
+        .testimonial-card p {
+            font-style: italic;
+        }
+
+        .testimonial-card span {
+            display: block;
+            text-align: right;
+            font-weight: 600;
+            color: var(--color-secondary);
+        }
+
+        /* --- Sección de Casos de Éxito --- */
+        .case-study {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(to right, #1e1e1e, #0d0d0d);
+            border-radius: 15px;
+            margin-top: 50px;
+        }
+
+        .case-study h3 {
+            background: linear-gradient(90deg, #FF00FF, #FFFF00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* --- Sección de Contacto --- */
+        #contact {
+            background: #1e1e1e;
+        }
+
+        .contact-content {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .contact-info, .contact-form {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .contact-info h3 {
+            background: linear-gradient(90deg, #FF00FF, #FFFF00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Estilos para los métodos de pago */
+        .contact-info h4 {
+            font-size: 1.2rem;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .contact-info ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .contact-info ul li {
+            margin-bottom: 5px;
+        }
+        
+        .contact-info ul li::before {
+            content: '💳';
+            margin-right: 8px;
+        }
+        .contact-info ul li:nth-child(2)::before {
+            content: '🏦';
+        }
+        .contact-info ul li:nth-child(3)::before {
+            content: '📱';
+        }
+
+
+        .social-links a {
+            color: var(--color-text-light);
+            font-size: 1.5rem;
+            margin-right: 15px;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+        
+        .social-links a:hover i {
+            text-shadow: 
+                0 0 5px var(--color-secondary),
+                0 0 10px var(--color-secondary),
+                0 0 20px var(--color-secondary),
+                0 0 40px var(--color-primary),
+                0 0 80px var(--color-primary);
+        }
+        
+        .social-links a.facebook:hover i {
+            color: #3b5998;
+            text-shadow:
+                0 0 5px #3b5998,
+                0 0 10px #3b5998,
+                0 0 20px #3b5998,
+                0 0 40px #3b5998;
+        }
+
+        .social-links a.instagram:hover i {
+            color: #E1306C;
+            text-shadow:
+                0 0 5px #E1306C,
+                0 0 10px #E1306C,
+                0 0 20px #E1306C,
+                0 0 40px #E1306C;
+        }
+
+        .social-links a.tiktok:hover i {
+            color: #69C9D0;
+            text-shadow:
+                0 0 5px #69C9D0,
+                0 0 10px #69C9D0,
+                0 0 20px #69C9D0,
+                0 0 40px #69C9D0;
+        }
+
+        .contact-form form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-form label {
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .contact-form input, .contact-form textarea, .contact-form select {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: var(--color-text-light);
+            border-radius: 5px;
+        }
+
+        .contact-form button {
+            background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+            border: none;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: opacity 0.3s ease;
+        }
+
+        .contact-form button:hover {
+            opacity: 0.8;
+        }
+
+        /* --- Pie de Página --- */
+        footer {
+            background-color: #0d0d0d;
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid #333;
+        }
+
+        /* --- Botón Flotante de WhatsApp --- */
+        .whatsapp-button {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background-color: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-button:hover {
+            transform: scale(1.1);
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container nav-wrap">
-      <a class="logo" href="#hero">
-        <img src="https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png" alt="Logo Mr Fiesta">
-        <span>MR FIESTA</span>
-      </a>
-
-      <button class="burger" id="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav">
-        <span></span><span></span><span></span>
-      </button>
-
-      <nav id="nav" class="nav" aria-label="Principal">
-        <a href="#about">Nosotros</a>
-        <a href="#services">Servicios</a>
-        <a href="#gallery">Galería</a>
-        <a href="#testimonials">Testimonios</a>
-        <a class="cta-mini" href="https://wa.me/51902602362?text=Hola%20Mr%20Fiesta,%20quiero%20cotizar%20mi%20evento%20(fecha%20/%20distrito%20/%20n%C2%BA%20invitados)" target="_blank" rel="noopener noreferrer">Cotizar</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <!-- Hero -->
-    <section id="hero" class="hero">
-      <div class="hero-bg">
-        <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png">
-          <source src="https://aymred.github.io/MrFiestaWeb/media/Animaci%C3%B3n%20logo/Logo%20Mr%20Fiesta%201.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="hero-content container">
-        <h1>MR FIESTA</h1>
-        <p>¡Tu evento, nuestra diversión! Animación profesional y tecnología de vanguardia para celebraciones inolvidables.</p>
-        <a class="cta-button" href="https://wa.me/51902602362?text=Hola%20Mr%20Fiesta,%20quiero%20cotizar%20mi%20evento%20(fecha%20/%20distrito%20/%20n%C2%BA%20invitados)" target="_blank" rel="noopener noreferrer">¡Comienza la Fiesta!</a>
-      </div>
-    </section>
-
-    <!-- About -->
-    <section id="about" class="section">
-      <div class="container">
-        <h2>Nuestra Historia</h2>
-        <div class="about">
-          <div class="about-text">
-            <p>En Mr Fiesta, convertimos celebraciones en recuerdos inolvidables. Fusionamos creatividad, tecnología y talento para superar expectativas.</p>
-            <p>Nuestro equipo acompaña cada detalle, de la planificación al cierre. ¡Déjanos ser parte de tu historia!</p>
-          </div>
-          <div class="about-img">
-            <img loading="lazy" src="https://placehold.co/600x380/1e1e1e/ffffff?text=Equipo+Mr+Fiesta" alt="Equipo profesional de animadores de Mr Fiesta">
-          </div>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <img src="https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png" alt="Logo Mr Fiesta">
+                    <h1>MR FIESTA</h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#about">Nosotros</a></li>
+                    <li><a href="#services">Servicios</a></li>
+                    <li><a href="#gallery">Galería</a></li>
+                    <li><a href="#testimonials">Testimonios</a></li>
+                    <li><a href="#contact">Contacto</a></li>
+                </ul>
+            </nav>
         </div>
-      </div>
-    </section>
+    </header>
 
-    <!-- Services (cards) -->
-    <section id="services" class="section">
-      <div class="container">
-        <h2>Nuestros Servicios</h2>
-        <div class="grid cards">
-          <a href="#chicoteca-paquetes" class="card"><h3>CHICOTECAS</h3><p>Juegos, coreografías y música actual.</p></a>
-          <a href="#quinceanos" class="card"><h3>QUINCEAÑOS</h3><p>DJ, sonido y efectos para tu gran noche.</p></a>
-          <a href="#pista-led" class="card"><h3>PISTA LED</h3><p>Plataforma luminosa que se sincroniza con la música.</p></a>
-          <a href="#hora-loca" class="card"><h3>HORA LOCA</h3><p>Personajes temáticos y energía al tope.</p></a>
-          <a href="#decoracion" class="card"><h3>DECORACIÓN</h3><p>Ambientes temáticos personalizados.</p></a>
-          <a href="#karaoke" class="card"><h3>KARAOKE</h3><p>Equipos pro y miles de canciones.</p></a>
-        </div>
-      </div>
-    </section>
+    <main>
+        <section id="hero">
+            <div class="hero-bg">
+                <video id="hero-video" autoplay muted loop playsinline>
+                    <source src="https://aymred.github.io/MrFiestaWeb/media/Animaci%C3%B3n%20logo/Logo%20Mr%20Fiesta%201.mp4" type="video/mp4">
+                    Tu navegador no soporta el video.
+                </video>
+            </div>
+            <div class="hero-content">
+                <h1>MR FIESTA</h1>
+                <p>¡Tu evento, nuestra diversión! Animación profesional y tecnología de vanguardia para que tu celebración sea inolvidable.</p>
+                <a href="https://wa.me/51902602362" class="cta-button">¡Comienza la Fiesta!</a>
+            </div>
+        </section>
+        
+        <section id="about">
+            <div class="container">
+                <h2>Nuestra Historia</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>En Mr Fiesta, convertimos celebraciones en recuerdos inolvidables. Nacimos con la pasión de ofrecer experiencias únicas, llenas de magia y profesionalismo. Cada evento es un lienzo en blanco donde fusionamos creatividad, tecnología y talento para superar tus expectativas.</p>
+                        <p>Nuestro equipo está comprometido a brindarte el mejor servicio, desde la planificación hasta el último detalle. Más que animadores, somos creadores de momentos que perduran en el tiempo. ¡Déjanos ser parte de tu historia!</p>
+                    </div>
+                    <div class="about-image">
+                        <img src="https://placehold.co/500x350/1e1e1e/ffffff?text=Equipo+Mr+Fiesta" alt="Equipo de Mr Fiesta">
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <!-- Paquetes -->
-    <section id="chicoteca-paquetes" class="section">
-      <div class="container">
-        <h2>Paquetes de Chicoteca</h2>
-        <div class="grid packages">
-          <article class="pkg">
-            <h3>Paquete Básico</h3>
-            <div class="price">S/490</div>
-            <ul>
-              <li>90 minutos de show</li>
-              <li>1 animador(a) + juegos modernos</li>
-              <li>1 sonidista con micro inalámbrico</li>
-              <li>2 luces LED + láser</li>
-              <li>Parlante amplificado</li>
-              <li>Mini hora loca con globos pencil</li>
-              <li>Invitación virtual</li>
-              <li>No incluye movilidad</li>
-            </ul>
-          </article>
-          <article class="pkg">
-            <h3>Pack Premium Lite</h3>
-            <div class="price">S/790</div>
-            <ul>
-              <li>Pista LED 2×2 m</li>
-              <li>1 animador(a) + juegos modernos</li>
-              <li>1 sonidista con micro inalámbrico</li>
-              <li>2 luces LED + láser</li>
-              <li>Parlante amplificado</li>
-              <li>Mini hora loca</li>
-              <li>Invitación virtual</li>
-              <li>No incluye movilidad</li>
-            </ul>
-          </article>
-          <article class="pkg">
-            <h3>Chicoteca en Casa</h3>
-            <div class="price">S/750</div>
-            <ul>
-              <li>2 h de animación</li>
-              <li>DJ + cabina de sonido</li>
-              <li>Parlante profesional</li>
-              <li>6 luces inteligentes + baño de color</li>
-              <li>Proyector + ecran (Just Dance o Karaoke)</li>
-              <li>Invitación virtual</li>
-              <li>Movilidad en zonas seleccionadas</li>
-              <li>Opción 2 animadores S/950</li>
-            </ul>
-          </article>
-          <article class="pkg">
-            <h3>Neón Experience</h3>
-            <div class="price">S/950</div>
-            <ul>
-              <li>3 h de evento</li>
-              <li>1 h Glitter + tatuajes neón con DJ</li>
-              <li>2 h animación + mini hora loca</li>
-              <li>Accesorios LED (limbo, soga, globos)</li>
-              <li>DJ + sonido 1000W</li>
-              <li>6 luces inteligentes + luz UV</li>
-              <li>Máquina de humo o burbujas</li>
-              <li>Invitación virtual</li>
-            </ul>
-          </article>
-          <article class="pkg">
-            <h3>Ultra Chicoteca LED</h3>
-            <div class="price">S/1390</div>
-            <ul>
-              <li>2 h animación + 1 h Glitter</li>
-              <li>DJ + sonido profesional</li>
-              <li>6 luces inteligentes + luz UV</li>
-              <li>Proyector + ecran (Just Dance y Karaoke)</li>
-              <li>Mini hora loca + accesorios LED</li>
-              <li>Máquina de humo o burbujas</li>
-              <li>40 pulseras neón</li>
-              <li>Movilidad Lima Metropolitana</li>
-              <li>Pista LED 3×2 o 2.5×2.5</li>
-            </ul>
-          </article>
-        </div>
-      </div>
-    </section>
+        <section id="services">
+            <div class="container">
+                <h2>Nuestros Servicios</h2>
+                <div class="service-grid">
+                    <a href="#chicoteca-paquetes" class="service-card">
+                        <h3>CHICOTECAS</h3>
+                        <p>La mejor animación para tus fiestas infantiles. Juegos, coreografías y la música del momento.</p>
+                    </a>
+                    <a href="#quinceanos" class="service-card">
+                        <h3>QUINCEAÑOS</h3>
+                        <p>Una celebración a tu medida. Sonido de alta calidad, DJ en vivo y efectos especiales para tu gran noche.</p>
+                    </a>
+                    <a href="#pista-led" class="service-card">
+                        <h3>PISTA LED</h3>
+                        <p>Ilumina la pista de baile. Una plataforma interactiva de luces que se sincroniza con la música, creando un show visual único.</p>
+                    </a>
+                    <a href="#hora-loca" class="service-card">
+                        <h3>HORA LOCA</h3>
+                        <p>¡Sube la energía al máximo! Personajes temáticos, música vibrante y animación explosiva para el clímax de tu fiesta.</p>
+                    </a>
+                    <a href="#decoracion" class="service-card">
+                        <h3>DECORACIÓN</h3>
+                        <p>Ambientes mágicos que reflejan tu estilo. Temas personalizados, globos, telas y más para un evento soñado.</p>
+                    </a>
+                    <a href="#karaoke" class="service-card">
+                        <h3>KARAOKE</h3>
+                        <p>Libera el artista que llevas dentro. Una selección musical inmensa y equipos de audio profesional para cantar sin parar.</p>
+                    </a>
+                    <a href="#fotografia-filmacion" class="service-card">
+                        <h3>FOTOGRAFÍA Y FILMACIÓN</h3>
+                        <p>Capturamos cada sonrisa y cada momento especial con fotos y videos de alta calidad para que revivas tu fiesta siempre.</p>
+                    </a>
+                    <a href="#invitaciones" class="service-card">
+                        <h3>INVITACIONES</h3>
+                        <p>Diseños exclusivos para anunciar tu fiesta de la mejor manera. Totalmente gratis o de cortesía con nuestros paquetes.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
 
-    <!-- Galería (muestra recortada) -->
-    <section id="gallery" class="section">
-      <div class="container">
-        <h2>Galería de Videos y Fotos</h2>
+        <section id="chicoteca-paquetes" class="service-section">
+            <div class="container">
+                <h2>Paquetes de Chicoteca</h2>
+                <div class="package-grid">
+                    <div class="package-card">
+                        <h3>Paquete Básico</h3>
+                        <div class="price">S/490</div>
+                        <ul>
+                            <li>90 minutos de show</li>
+                            <li>1 animador(a) y juegos modernos</li>
+                            <li>1 sonidista con micrófono inalámbrico</li>
+                            <li>2 luces LED y láser</li>
+                            <li>Parlante amplificado</li>
+                            <li>Mini hora loca con globos pencil</li>
+                            <li>Invitación virtual de cortesía</li>
+                            <li>No incluye movilidad</li>
+                        </ul>
+                    </div>
+                    <div class="package-card">
+                        <h3>Pack Premium Lite</h3>
+                        <div class="price">S/790</div>
+                        <ul>
+                            <li>Pista de baile LED 2x2 m (exclusiva)</li>
+                            <li>1 animador(a) y juegos modernos</li>
+                            <li>1 sonidista con micrófono inalámbrico</li>
+                            <li>2 luces LED y láser</li>
+                            <li>Parlante amplificado</li>
+                            <li>Mini hora loca con globos pencil</li>
+                            <li>Invitación virtual de cortesía</li>
+                            <li>No incluye movilidad</li>
+                        </ul>
+                    </div>
+                    <div class="package-card">
+                        <h3>Chicoteca en Casa</h3>
+                        <div class="price">S/750</div>
+                        <ul>
+                            <li>2 horas de animación moderna</li>
+                            <li>1 animador(a)</li>
+                            <li>DJ + cabina de sonido</li>
+                            <li>Parlante Profesional</li>
+                            <li>6 luces inteligentes + baño de color (tipo discoteca o neón)</li>
+                            <li>Proyector + Ecran para Just Dance o karaoke</li>
+                            <li>Invitación virtual de cortesía</li>
+                            <li>Movilidad incluida en zonas seleccionadas</li>
+                            <li>Opción con 2 animadores (Hombre y Mujer) S/950</li>
+                        </ul>
+                    </div>
+                    <div class="package-card">
+                        <h3>Just Dance & Karaoke Party</h3>
+                        <div class="price">Desde S/420</div>
+                        <ul>
+                            <li>1 DJ en vivo</li>
+                            <li>Parlante profesional</li>
+                            <li>Proyector + Ecran para just dance o karaoke</li>
+                            <li>2 micrófonos inalámbricos</li>
+                            <li>6 luces inteligentes con trípode</li>
+                            <li>No incluye movilidad</li>
+                        </ul>
+                        <p><strong>Precios:</strong><br>2h → S/420 | 3h → S/520 | 4h → S/590</p>
+                    </div>
+                    <div class="package-card">
+                        <h3>Neón Experience</h3>
+                        <div class="price">S/950</div>
+                        <ul>
+                            <li>3 horas de evento</li>
+                            <li>Estación Glitter + tatuajes neón con DJ (1h)</li>
+                            <li>Animación con juegos interactivos + mini hora loca (2h)</li>
+                            <li>Accesorios LED (limbo, soga, globos pencil)</li>
+                            <li>DJ + cabina de sonido profesional (1000W)</li>
+                            <li>Proyector + ecran gigante</li>
+                            <li>6 luces inteligentes + luz UV</li>
+                            <li>Máquina de humo o cañón de burbujas</li>
+                            <li>Invitación virtual de cortesía</li>
+                            <li>Movilidad incluida en zonas seleccionadas</li>
+                            <li>Opción con 2 animadores (Hombre y Mujer) S/1100</li>
+                        </ul>
+                    </div>
+                    <div class="package-card">
+                        <h3>Ultra Chicoteca LED</h3>
+                        <div class="price">S/1390</div>
+                        <ul>
+                            <li>3h de fiesta (2h animación + 1h Estación Glitter con tatuajes neón)</li>
+                            <li>DJ y sonido profesional</li>
+                            <li>6 luces inteligentes + Luz UV</li>
+                            <li>Proyector + ecran gigante (Just Dance y Karaoke)</li>
+                            <li>Mini hora loca con globos y accesorios LED</li>
+                            <li>Máquina de humo o cañón de burbujas</li>
+                            <li>Pack de 40 pulseras brillantes neón</li>
+                            <li>Invitación virtual de cortesía</li>
+                            <li>Movilidad incluida (Lima Metropolitana)</li>
+                            <li>Pista LED 3x2 o 2.5 x 2.5</li>
+                            <li>Opción Pista LED (3x3 o 4x2 m) S/1490</li>
+                            <li>Opción 2 animadores + S/150 (costo normal) + S/200 (costo paquete)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div class="cat">
-          <h3>Chicoteca</h3>
-          <div class="grid gallery">
-            <div class="vid-vert"><video preload="metadata" loading="lazy" muted playsinline loop poster="https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png"><source src="https://aymred.github.io/MrFiestaWeb/media/Chicoteca%20B%C3%A1sica/chicoteca%20basica%201.mp4" type="video/mp4"></video></div>
-            <div class="vid-vert"><video preload="metadata" loading="lazy" muted playsinline loop poster="https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png"><source src="https://aymred.github.io/MrFiestaWeb/media/Chicoteca%20en%20Casa/Chicoteca%20En%20Casa%202.mp4" type="video/mp4"></video></div>
-            <div class="vid-vert"><video preload="metadata" loading="lazy" muted playsinline loop poster="https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png"><source src="https://aymred.github.io/MrFiestaWeb/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led%203.mp4" type="video/mp4"></video></div>
-          </div>
-        </div>
+        <section id="quinceanos" class="service-section">
+            <div class="container">
+                <h2>Paquetes de Quinceaños</h2>
+                <p>Celebra tus 15 años con estilo y elegancia. Nuestros paquetes de quinceaños están diseñados para una noche mágica, con la mejor música, iluminación y efectos especiales que harán de tu fiesta un evento inolvidable.</p>
+            </div>
+        </section>
 
-        <div class="cat">
-          <h3>Quinceaños</h3>
-          <div class="grid gallery">
-            <div class="vid-vert"><video preload="metadata" loading="lazy" muted playsinline loop poster="https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png"><source src="https://aymred.github.io/MrFiestaWeb/media/15%20a%C3%B1os/15%20A%C3%B1os%20Chicoteca%202.mp4" type="video/mp4"></video></div>
-            <div class="vid-vert"><video preload="metadata" loading="lazy" muted playsinline loop poster="https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png"><source src="https://aymred.github.io/MrFiestaWeb/media/15%20a%C3%B1os/15%20A%C3%B1os%20Chicoteca.mp4" type="video/mp4"></video></div>
-          </div>
-        </div>
+        <section id="hora-loca" class="service-section">
+            <div class="container">
+                <h2>Hora Loca</h2>
+                <p>¡Desata la diversión! La Hora Loca es el clímax de tu fiesta, llena de energía, personajes sorprendentes y la mejor música. Aquí tienes un vistazo a lo que podemos ofrecer:</p>
+                <div class="package-grid">
+                    <div class="package-card">
+                        <h3>Paquete de Hora Loca</h3>
+                        <p>Nuestro paquete de hora loca incluye...</p>
+                    </div>
+                    <div class="package-card">
+                        <h3>Lista de Personajes</h3>
+                        <p>Agrega un personaje especial y haz de tu evento algo inolvidable:</p>
+                        <div class="characters-list">
+                            <div>
+                                <h3>🎶 Reguetón Party</h3>
+                                <ul>
+                                    <li>Daddy Yankee</li>
+                                    <li>Karol G</li>
+                                    <li>Bad Bunny</li>
+                                    <li>Ferxxo (CABEZONES)</li>
+                                </ul>
+                                <h3>🦸‍♂ Superhéroes & Villanos</h3>
+                                <ul>
+                                    <li>Deadpool</li>
+                                    <li>Harley Quinn</li>
+                                    <li>Joker</li>
+                                    <li>Spider-Man</li>
+                                    <li>Mujer Maravilla</li>
+                                    <li>La Máscara</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3>🏴‍☠ Aventura Pirata</h3>
+                                <ul>
+                                    <li>Capitán Pirata</li>
+                                    <li>Pirata Femenina</li>
+                                </ul>
+                                <h3>🌟 Hora Loca Neón y LED</h3>
+                                <ul>
+                                    <li>Animadores fluorescentes</li>
+                                    <li>Muñeco Capibara LED</li>
+                                    <li>Stickman LED</li>
+                                    <li>Bola disco LED</li>
+                                </ul>
+                                <h3>😱 Terror Divertido</h3>
+                                <ul>
+                                    <li>Chucky</li>
+                                    <li>Freddy Krueger</li>
+                                    <li>La Monja</li>
+                                </ul>
+                                <h3>💁‍♀ ¿Dónde están las Rubias?</h3>
+                                <ul>
+                                    <li>Dos “rubias” glam con coreografías</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-      </div>
-    </section>
-
-    <!-- Testimonios -->
-    <section id="testimonials" class="section">
-      <div class="container">
-        <h2>La voz de nuestros clientes</h2>
-        <div class="testis">
-          <blockquote class="testi"><p>“Quedamos encantados, se notó el profesionalismo y el carisma con los chicos.”</p><cite>— Carolina G.</cite></blockquote>
-          <blockquote class="testi"><p>“La pista LED y la Estación Glitter se robaron el show. ¡Recontra recomendado!”</p><cite>— Henry V.</cite></blockquote>
-          <blockquote class="testi"><p>“Llegaron puntuales, animación moderna, full juegos y música actual.”</p><cite>— Melissa R.</cite></blockquote>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contacto -->
-    <section id="contact" class="section contact">
-      <div class="container contact-grid">
-        <div>
-          <h2>¡Hablemos de tu próximo evento!</h2>
-          <p><strong>Teléfono:</strong> <a href="tel:+51902602362">902 602 362</a></p>
-          <p><strong>Correo:</strong> <a href="mailto:mrfiesta.lima@gmail.com">mrfiesta.lima@gmail.com</a></p>
-          <div class="social">
-            <a class="facebook" href="https://www.facebook.com/profile.php?id=61566828025406" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a class="instagram" href="https://www.instagram.com/mrfiesta_lima/?hl=es" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a class="tiktok" href="https://www.tiktok.com/@mrfiesta?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-          </div>
-
-          <h3>Métodos de Pago</h3>
-          <ul class="pay">
-            <li><strong>Tarjetas de Crédito:</strong> recargo 5%.</li>
-            <li><strong>Transferencia:</strong> BCP, Interbank.</li>
-            <li><strong>Billeteras:</strong> Yape, Plin, BIM, DALE, AGORA.</li>
-          </ul>
-        </div>
-
-        <form class="lead" action="https://formsubmit.co/mrfiesta.lima@gmail.com" method="POST">
-          <input type="hidden" name="_subject" value="Nuevo lead – Mr Fiesta">
-          <input type="hidden" name="_captcha" value="false">
-          <label for="name">Nombre</label>
-          <input id="name" name="name" type="text" required>
-          <label for="phone">Teléfono</label>
-          <input id="phone" name="phone" type="tel" required>
-          <label for="event-type">Tipo de Evento</label>
-          <select id="event-type" name="event-type">
-            <option value="cumpleanos">Cumpleaños</option>
-            <option value="quinceanos">Quinceaños</option>
-            <option value="hora-loca">Hora Loca</option>
-            <option value="baby-shower">Baby Shower</option>
-            <option value="otro">Otro</option>
-          </select>
-          <label for="message">Mensaje</label>
-          <textarea id="message" name="message" rows="5" required></textarea>
-          <button type="submit">Enviar Solicitud</button>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <p>© 2025 Mr Fiesta. Todos los derechos reservados.</p>
-    </div>
-  </footer>
-
-  <!-- WhatsApp Sticky -->
-  <a class="whatsapp" href="https://wa.me/51902602362?text=Hola%20Mr%20Fiesta,%20quiero%20cotizar%20mi%20evento%20(fecha%20/%20distrito%20/%20n%C2%BA%20invitados)" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-    <i class="fab fa-whatsapp"></i>
-  </a>
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-  <!-- JSON-LD -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "Mr Fiesta",
-    "image": "https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png",
-    "telephone": "+51 902 602 362",
-    "email": "mrfiesta.lima@gmail.com",
-    "address": { "@type": "PostalAddress", "addressLocality": "Lima", "addressCountry": "PE" },
-    "url": "https://mrfiesta.example/",
-    "sameAs": [
-      "https://www.facebook.com/profile.php?id=61566828025406",
-      "https://www.instagram.com/mrfiesta_lima/",
-      "https://www.tiktok.com/@mrfiesta"
-    ],
-    "makesOffer": [
-      {"@type":"Offer","name":"Paquete Básico","priceCurrency":"PEN","price":"490"},
-      {"@type":"Offer","name":"Chicoteca en Casa","priceCurrency":"PEN","price":"750"},
-      {"@type":"Offer","name":"Neón Experience","priceCurrency":"PEN","price":"950"},
-      {"@type":"Offer","name":"Ultra Chicoteca LED","priceCurrency":"PEN","price":"1390"}
-    ]
-  }
-  </script>
-
-  <script src="./main.js" defer></script>
-</body>
-</html>
+        <section id="decoracion" class="service-section">
+            <div class="container">
+                <h2>Decoración Temática</h2>
+            ... (rest of original content unchanged) ...

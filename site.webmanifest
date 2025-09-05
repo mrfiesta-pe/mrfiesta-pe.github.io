@@ -1,1 +1,15 @@
-{"name":"Mr Fiesta"}
+{
+  "name": "Mr Fiesta",
+  "short_name": "MrFiesta",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#8A2BE2",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/aymred/MrFiestaWeb/main/logo-mrfiesta.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
