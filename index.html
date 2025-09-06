@@ -2,121 +2,93 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#121212"/>
   <title>Mr Fiesta</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <!-- build v5 -->
+
+  <!-- build v6 -->
   <style>
     :root{
       --color-primary:#8A2BE2; --color-secondary:#00FFFF; --color-tertiary:#FFD700;
       --color-bg-dark:#121212; --color-text-light:#F0F0F0; --whats:#25D366; --header-h:64px;
     }
     html{scroll-behavior:smooth;}
-    body{font-family:'Poppins',sans-serif;background:#121212;color:#F0F0F0;margin:0;overflow-x:hidden;line-height:1.6;}
+    body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#121212;color:#F0F0F0;margin:0;overflow-x:hidden;line-height:1.6;}
     .container{max-width:1200px;margin:0 auto;padding:0 20px;}
 
-    /* Header siempre por encima */
+    /* ====== HEADER ====== */
+    #navToggle{position:fixed;opacity:0;pointer-events:none;z-index:1} /* controlador del menú */
     header{position:fixed;inset:0 auto auto 0;width:100%;background:rgba(18,18,18,.85);backdrop-filter:blur(10px);z-index:3000;}
-    nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;}
+    nav{display:flex;justify-content:space-between;align-items:center;padding:14px 0;}
     .logo{display:flex;align-items:center;}
     .logo img{max-width:60px;height:auto;margin-right:10px;}
     .logo h1{margin:0;font-size:1.5rem;background:linear-gradient(90deg,#FF00FF,#00FFFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 
-    /* Links (desktop) */
     .nav-links{list-style:none;display:flex;margin:0;padding:0;}
     .nav-links li{margin-left:25px;}
-    .nav-links a{color:#F0F0F0;text-decoration:none;font-weight:600;}
+    .nav-links a{color:#F0F0F0;text-decoration:none;font-weight:700;}
     .nav-links a:hover{color:var(--color-secondary);}
 
-    /* ====== MENÚ MÓVIL: CSS-ONLY (checkbox hack) ====== */
-    #navToggle{position:fixed;opacity:0;pointer-events:none;}
-    .hamburger{display:none;}
+    /* ====== HAMBURGUESA + SHEET (MÓVIL) ====== */
+    .hamburger{display:none}
+    .hamburger{align-items:center;gap:10px;height:42px;padding:0 12px;border:1px solid #2e2e2e;border-radius:12px;background:#1b1b1b;color:#fff;cursor:pointer;box-shadow:0 0 10px rgba(0,0,0,.35);user-select:none}
+    .hamburger .bars{display:flex;flex-direction:column;gap:5px;width:22px}
+    .hamburger .bars span{display:block;width:22px;height:2px;background:#fff;transition:.25s}
 
     @media (max-width:900px){
-      .hamburger{
-        display:inline-flex;align-items:center;gap:10px;height:42px;padding:0 12px;
-        border:1px solid #2e2e2e;border-radius:12px;background:#1b1b1b;color:#fff;cursor:pointer;
-        box-shadow:0 0 10px rgba(0,0,0,.35);user-select:none;
-      }
-      .hamburger .bars{display:flex;flex-direction:column;gap:5px;width:22px}
-      .hamburger .bars span{display:block;width:22px;height:2px;background:#fff;transition:.25s}
-      .hamburger .label{font-weight:700;letter-spacing:.2px}
+      header .nav-links{display:none !important;}  /* oculta menú horizontal */
+      .hamburger{display:inline-flex !important;}  /* muestra botón */
 
-      /* PANEL DESDE ARRIBA con efecto sheet (blur + transparencia) */
+      /* Panel tipo sheet con blur + rebote */
       #primaryNav{
-        position:fixed;
-        top:calc(var(--header-h)); left:0; right:0;
-        width:100%;
-        max-height:calc(100vh - var(--header-h));
-        overflow:auto;
-
-        /* --- estilo glass / sheet --- */
+        position:fixed;top:var(--header-h);left:0;right:0;width:100%;
+        max-height:calc(100vh - var(--header-h));overflow:auto;
+        display:flex;flex-direction:column;align-items:flex-start;padding:18px;
         background:rgba(21,21,21,.60);
         -webkit-backdrop-filter:blur(14px) saturate(140%);
         backdrop-filter:blur(14px) saturate(140%);
-        border-bottom:1px solid rgba(255,255,255,.10);
+        border-bottom:1px solid rgba(255,255,255,.1);
         box-shadow:0 28px 80px rgba(0,0,0,.55);
-
-        display:flex; flex-direction:column; align-items:flex-start;
-        padding:18px;
-
-        /* estado cerrado */
-        transform:translateY(-130%);
-        transition:transform .25s ease;
+        transform:translateY(-130%);transition:transform .25s ease;
         z-index:2950;
       }
-
-      /* “tirador” decorativo opcional */
-      #primaryNav::before{
-        content:""; align-self:center; width:60px; height:4px; border-radius:999px;
-        background:rgba(255,255,255,.18); margin:-6px 0 10px 0;
-      }
-
+      #primaryNav::before{content:"";align-self:center;width:60px;height:4px;border-radius:999px;background:rgba(255,255,255,.18);margin:-6px 0 10px}
       #primaryNav li{margin:8px 0}
       #primaryNav a{display:block;padding:10px 12px;border-radius:8px}
       #primaryNav a:active{background:rgba(255,255,255,.06)}
 
-      /* Overlay clickable que cierra el menú (label del checkbox) */
+      /* Overlay que cierra el menú */
       #navOverlay{
         position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(2px);
         opacity:0;visibility:hidden;transition:.25s;z-index:2900;
       }
 
-      /* Abierto cuando el checkbox está marcado + ANIMACIÓN con rebote */
+      /* Estados abiertos */
       #navToggle:checked ~ header #primaryNav{
         transform:translateY(0);
         animation:sheetBounce .45s cubic-bezier(.22,1.15,.33,1) both;
       }
-      #navToggle:checked ~ #navOverlay{ opacity:1;visibility:visible; }
+      #navToggle:checked ~ #navOverlay{opacity:1;visibility:visible}
 
-      /* Animación a "X" del ícono */
+      /* Animación icono a “X” */
       #navToggle:checked ~ header .hamburger .bars span:nth-child(1){transform:translateY(7px) rotate(45deg)}
       #navToggle:checked ~ header .hamburger .bars span:nth-child(2){opacity:0}
       #navToggle:checked ~ header .hamburger .bars span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
-
-      /* Oculta menú horizontal de desktop */
-      header .nav-links{display:none}
     }
 
-    /* Rebote suave */
     @keyframes sheetBounce{
-      0%   { transform:translateY(-120%); }
-      60%  { transform:translateY(0);     }
-      78%  { transform:translateY(-10px); }
-      100% { transform:translateY(0);     }
+      0%{transform:translateY(-120%)}60%{transform:translateY(0)}78%{transform:translateY(-10px)}100%{transform:translateY(0)}
     }
     @media (prefers-reduced-motion:reduce){
-      #primaryNav{ transition:none !important; }
-      #navToggle:checked ~ header #primaryNav{ animation:none !important; }
+      #primaryNav{transition:none !important}
+      #navToggle:checked ~ header #primaryNav{animation:none !important}
     }
+    @supports selector(body:has(*)){ body:has(#navToggle:checked){overflow:hidden} }
 
-    /* Bloquear scroll cuando el panel está abierto (si el navegador soporta :has) */
-    @supports selector(body:has(*)){
-      body:has(#navToggle:checked){ overflow:hidden; }
-    }
-
-    /* HERO */
+    /* ====== SECCIONES ====== */
     section{padding:80px 0;scroll-margin-top:calc(var(--header-h) + 12px);}
     #hero{position:relative;height:100vh;display:flex;justify-content:center;align-items:center;text-align:center;overflow:hidden;padding-top:60px}
     .hero-bg{position:absolute;inset:0;z-index:-1;background:#000}
@@ -129,20 +101,17 @@
 
     h2{font-size:clamp(2rem,5vw,2.5rem);text-align:center;margin-bottom:50px;background:linear-gradient(90deg,var(--color-primary),var(--color-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-    /* About */
     .about-content{display:flex;flex-wrap:wrap;align-items:center;gap:40px}
     .about-text{flex:1;min-width:300px}
     .about-image{flex:1;min-width:300px;text-align:center;overflow:hidden;border-radius:15px}
     .about-image iframe{width:100%;height:500px;border:none;box-shadow:0 5px 20px rgba(0,0,0,.5)}
 
-    /* Services */
     .service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;text-align:center}
     .service-card{background:#1e1e1e;padding:30px;border-radius:15px;box-shadow:0 0 20px rgba(0,0,0,.3);transition:.3s;text-decoration:none;color:#F0F0F0}
     .service-card:hover{transform:translateY(-10px);box-shadow:0 10px 30px rgba(0,255,255,.2)}
     .service-card h3{background:linear-gradient(90deg,var(--color-primary),var(--color-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
     .service-section p{text-align:center;max-width:900px;margin:0 auto 40px}
 
-    /* Packages */
     .package-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;text-align:left}
     .package-card{background:#1e1e1e;padding:30px;border-radius:15px;box-shadow:0 0 20px rgba(0,0,0,.3);transition:.3s;position:relative}
     .package-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,255,255,.2)}
@@ -155,7 +124,6 @@
     .cotizar-button:hover{transform:scale(1.05);animation-play-state:paused}
     @keyframes pulse{0%{transform:scale(1);box-shadow:0 0 15px rgba(0,255,255,.5)}50%{transform:scale(1.05);box-shadow:0 0 25px rgba(0,255,255,.7),0 0 50px rgba(138,43,226,.7)}100%{transform:scale(1);box-shadow:0 0 15px rgba(0,255,255,.5)}}
 
-    /* Gallery */
     #gallery{text-align:center}
     .gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;justify-content:center}
     .gallery-item{position:relative;overflow:hidden;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.5);transition:.3s;cursor:pointer}
@@ -164,14 +132,12 @@
     .vertical-video-wrapper{position:relative;width:100%;max-width:300px;margin:0 auto;padding-top:177.7778%;overflow:hidden;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.5);transition:.3s}
     .vertical-video-wrapper video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
-    /* Testimonials */
     .testimonial-carousel{display:flex;justify-content:center;flex-wrap:wrap;gap:20px}
     .testimonial-card{background:#1e1e1e;border-left:5px solid var(--color-secondary);padding:20px;max-width:400px;border-radius:8px}
     .testimonial-card span{display:block;text-align:right;font-weight:600;color:#fff;opacity:.85}
     .case-study{text-align:center;padding:40px;background:linear-gradient(to right,#1e1e1e,#0d0d0d);border-radius:15px;margin-top:50px}
     .case-study h3{background:linear-gradient(90deg,#FF00FF,#FFFF00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-    /* Contacto + pagos */
     #contact{background:#1e1e1e}
     .contact-content{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap}
     .contact-info,.contact-form{flex:1;min-width:300px}
@@ -194,10 +160,9 @@
     .contact-form input,.contact-form textarea,.contact-form select{padding:10px;margin-bottom:20px;border:1px solid #333;background:#2a2a2a;color:#F0F0F0;border-radius:5px}
     .contact-form button{background:linear-gradient(45deg,var(--color-primary),var(--color-secondary));border:none;color:#fff;padding:15px;border-radius:5px;cursor:pointer;font-weight:700}
 
-    /* Footer */
     footer{background:#0d0d0d;text-align:center;padding:2rem 0;border-top:1px solid #333}
 
-    /* WhatsApp floating */
+    /* WhatsApp flotante */
     .whatsapp-button{position:fixed;bottom:clamp(16px,2.5vw,28px);right:clamp(16px,2.5vw,28px);display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:999px;background:radial-gradient(110% 110% at 100% 0%,#25D366 0,#1ebe57 60%,#0ca140 100%);color:#fff;text-decoration:none;font-weight:700;font-size:1.05rem;z-index:2600;box-shadow:0 0 0 3px rgba(37,211,102,.30) inset,0 0 18px rgba(37,211,102,.65),0 0 42px rgba(0,255,204,.35);animation:whatsappPulse 2.1s infinite ease-in-out;transition:.25s}
     .whatsapp-button i{font-size:1.6rem;filter:drop-shadow(0 0 6px rgba(255,255,255,.35))}
     .whatsapp-button:hover{transform:scale(1.06)}
@@ -222,7 +187,7 @@
   </style>
 </head>
 <body>
-  <!-- Checkbox controlador del menú móvil -->
+  <!-- 1) MUY IMPORTANTE: el checkbox va ANTES del header -->
   <input type="checkbox" id="navToggle" />
 
   <header>
@@ -233,13 +198,13 @@
           <h1>MR FIESTA</h1>
         </div>
 
-        <!-- Botón hamburguesa: label vinculado al checkbox -->
+        <!-- Botón hamburguesa que controla el checkbox -->
         <label class="hamburger" for="navToggle" aria-label="Abrir menú">
           <span class="bars"><span></span><span></span><span></span></span>
           <span class="label">Menú</span>
         </label>
 
-        <!-- Menú principal (panel desde arriba en móvil, horizontal en desktop) -->
+        <!-- UL con id EXACTO primaryNav -->
         <ul class="nav-links" id="primaryNav">
           <li><a href="#about">Nosotros</a></li>
           <li><a href="#services">Servicios</a></li>
@@ -251,7 +216,7 @@
     </div>
   </header>
 
-  <!-- Overlay que cierra el menú al tocar (label del checkbox) -->
+  <!-- Overlay que cierra el menú -->
   <label id="navOverlay" for="navToggle" aria-hidden="true"></label>
 
   <main>
@@ -589,7 +554,7 @@
     </section>
   </main>
 
-  <footer><div class="container"><p>&copy; 2025 Mr Fiesta. Todos los derechos reservados. · build v5</p></div></footer>
+  <footer><div class="container"><p>&copy; 2025 Mr Fiesta. Todos los derechos reservados. · build v6</p></div></footer>
 
   <!-- WhatsApp flotante -->
   <a href="https://wa.me/51902602362" id="waFloat" class="whatsapp-button" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
@@ -632,14 +597,38 @@
 
   <script>
     // Recalcular --header-h por si cambia alto del header
-    function setHeaderHeightVar(){try{const h=document.querySelector('header').getBoundingClientRect().height;if(h)document.documentElement.style.setProperty('--header-h',Math.round(h)+'px')}catch(e){}}
+    function setHeaderHeightVar(){
+      try{
+        const h=document.querySelector('header').getBoundingClientRect().height;
+        if(h) document.documentElement.style.setProperty('--header-h', Math.round(h)+'px');
+      }catch(e){}
+    }
     setHeaderHeightVar(); window.addEventListener('load',setHeaderHeightVar); window.addEventListener('resize',setHeaderHeightVar);
 
     // Forzar autoplay (iOS/Android)
-    (function(){const v=document.getElementById('hero-video');if(!v)return;const tryPlay=()=>{const p=v.play&&v.play();if(p&&typeof p.then==='function'){p.catch(()=>{const once=()=>{v.play().finally(()=>document.removeEventListener('click',once))};document.addEventListener('click',once,{once:true})})}};v.muted=true;v.setAttribute('playsinline','');v.setAttribute('autoplay','');if(v.readyState>=2)tryPlay();else v.addEventListener('loadeddata',tryPlay,{once:true});})();
+    (function(){
+      const v=document.getElementById('hero-video');
+      if(!v) return;
+      const tryPlay=()=>{
+        const p=v.play&&v.play();
+        if(p&&typeof p.then==='function'){
+          p.catch(()=>{
+            const once=()=>{v.play().finally(()=>document.removeEventListener('click',once))};
+            document.addEventListener('click',once,{once:true});
+          });
+        }
+      };
+      v.muted=true; v.setAttribute('playsinline',''); v.setAttribute('autoplay','');
+      if(v.readyState>=2) tryPlay(); else v.addEventListener('loadeddata',tryPlay,{once:true});
+    })();
 
     // Galería: desmutear en play
-    document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('#gallery video').forEach(v=>{v.muted=false;v.autoplay=false;v.addEventListener('play',()=>{v.muted=false},{once:true})})});
+    document.addEventListener('DOMContentLoaded',()=>{
+      document.querySelectorAll('#gallery video').forEach(v=>{
+        v.muted=false; v.autoplay=false;
+        v.addEventListener('play',()=>{v.muted=false},{once:true});
+      });
+    });
 
     // Cerrar panel móvil al tocar un enlace
     (function(){
@@ -667,13 +656,18 @@
       const openModal=(pkg)=>{
         inpPackage.value=pkg||'Paquete/Servicio';
         modal.style.display='flex';
-        try{const tz=(new Date()).getTimezoneOffset()*60000;const today=(new Date(Date.now()-tz)).toISOString().slice(0,10);inpDate.value=today;}catch(e){}
+        try{
+          const tz=(new Date()).getTimezoneOffset()*60000;
+          const today=(new Date(Date.now()-tz)).toISOString().slice(0,10);
+          inpDate.value=today;
+        }catch(e){}
         inpName.focus();
       };
       const closeModal=()=>{modal.style.display='none'};
 
       document.addEventListener('click',e=>{
-        const btn=e.target.closest('.cotizar-button'); if(!btn) return;
+        const btn=e.target.closest('.cotizar-button');
+        if(!btn) return;
         e.preventDefault();
         const pkg=btn.getAttribute('data-package')||'Servicio';
         window._mfLastPackage=pkg;
@@ -707,7 +701,12 @@
       const obs=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting&&sectionsMap[en.target.id]){current=sectionsMap[en.target.id];update();}})},{threshold:.5});
       Object.keys(sectionsMap).forEach(id=>{const el=document.getElementById(id); if(el) obs.observe(el);});
       update();
-      waBtn.addEventListener('click',e=>{e.preventDefault();const pkg=(window._mfLastPackage&&String(window._mfLastPackage).trim())?window._mfLastPackage.trim():(current||'Mr Fiesta');const msg=`Hola, vengo desde la web y me interesa *${pkg}*. ¿Me brindas disponibilidad y costo, por favor?`;window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`,'_blank','noopener');});
+      waBtn.addEventListener('click',e=>{
+        e.preventDefault();
+        const pkg=(window._mfLastPackage&&String(window._mfLastPackage).trim())?window._mfLastPackage.trim():(current||'Mr Fiesta');
+        const msg=`Hola, vengo desde la web y me interesa *${pkg}*. ¿Me brindas disponibilidad y costo, por favor?`;
+        window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`,'_blank','noopener');
+      });
     })();
   </script>
 </body>
