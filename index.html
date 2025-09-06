@@ -14,7 +14,7 @@
       --color-bg-dark:#121212;
       --color-text-light:#F0F0F0;
       --whats:#25D366;
-      --header-h:64px; /* alto header aprox para móviles */
+      --header-h:64px; /* se recalcula por JS */
     }
     html{ scroll-behavior:smooth; }
     body{
@@ -25,8 +25,8 @@
     body.nav-open{ overflow:hidden; } /* bloquear scroll cuando el menú está abierto */
     .container{ max-width:1200px; margin:0 auto; padding:0 20px; }
 
-    /* Header */
-    header{ background:rgba(18,18,18,.8); position:fixed; width:100%; top:0; z-index:1000; backdrop-filter:blur(10px); }
+    /* Header (z-index alto para estar SIEMPRE arriba) */
+    header{ background:rgba(18,18,18,.8); position:fixed; width:100%; top:0; z-index:3000; backdrop-filter:blur(10px); }
     nav{ display:flex; justify-content:space-between; align-items:center; padding:1rem 0; }
     .logo{ display:flex; align-items:center; }
     .logo img{ max-width:60px; height:auto; margin-right:10px; }
@@ -38,31 +38,32 @@
     .nav-links a{ color:#F0F0F0; text-decoration:none; font-weight:600; }
     .nav-links a:hover{ color:var(--color-secondary); }
 
-    /* Botón hamburguesa */
+    /* Botón hamburguesa (ahora con texto) */
     .hamburger{
-      display:none; /* visible solo en móvil */
-      width:42px; height:42px; border-radius:10px;
+      display:none; /* visible solo en móvil (via media query) */
+      height:42px; border-radius:12px;
       border:1px solid #2e2e2e; background:#1b1b1b; color:#fff;
-      align-items:center; justify-content:center; cursor:pointer;
-      margin-left:12px;
+      align-items:center; gap:10px; cursor:pointer; padding:0 12px;
+      box-shadow:0 0 10px rgba(0,0,0,.35);
     }
-    .hamburger span{
-      display:block; width:22px; height:2px; background:#fff; margin:5px auto; transition:.25s;
-    }
-    .hamburger.active span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
-    .hamburger.active span:nth-child(2){ opacity:0; }
-    .hamburger.active span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+    .hamburger .bars{ display:flex; flex-direction:column; gap:5px; width:22px; }
+    .hamburger .bars span{ display:block; width:22px; height:2px; background:#fff; transition:.25s; }
+    .hamburger .label{ font-weight:700; letter-spacing:.2px; }
+    .hamburger.active .bars span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+    .hamburger.active .bars span:nth-child(2){ opacity:0; }
+    .hamburger.active .bars span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
 
-    /* Overlay para cerrar tocando fuera */
+    /* Overlay para cerrar tocando fuera (debajo del panel, encima del sitio) */
     .nav-overlay{
       position:fixed; inset:0; background:rgba(0,0,0,.45); backdrop-filter:blur(2px);
-      opacity:0; visibility:hidden; transition:.25s; z-index:999;
+      opacity:0; visibility:hidden; transition:.25s; z-index:2000;
     }
     .nav-overlay.active{ opacity:1; visibility:visible; }
 
-    /* Menú móvil (panel lateral) */
+    /* Menú móvil (panel). Importante: solo aplicamos este layout si HAY JS (clase .has-js en <html>) */
     @media (max-width: 900px){
-      .nav-links{
+      .hamburger{ display:inline-flex; }
+      html.has-js #primaryNav{
         position:fixed; top:calc(var(--header-h)); right:0;
         height:calc(100vh - var(--header-h));
         width:min(320px, 82vw);
@@ -70,13 +71,12 @@
         box-shadow:-20px 0 60px rgba(0,0,0,.55);
         flex-direction:column; align-items:flex-start; padding:18px;
         transform:translateX(110%); transition:transform .25s ease;
-        z-index:1000;
+        z-index:2500;
       }
-      .nav-links.active{ transform:translateX(0); }
-      .nav-links li{ margin:8px 0; }
-      .nav-links a{ display:block; padding:10px 12px; border-radius:8px; }
-      .nav-links a:active{ background:#1f1f1f; }
-      .hamburger{ display:inline-flex; }
+      html.has-js #primaryNav.active{ transform:translateX(0); }
+      #primaryNav li{ margin:8px 0; }
+      #primaryNav a{ display:block; padding:10px 12px; border-radius:8px; }
+      #primaryNav a:active{ background:#1f1f1f; }
     }
 
     /* Hero */
@@ -145,7 +145,7 @@
     #contact{ background:#1e1e1e; }
     .contact-content{ display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; }
     .contact-info,.contact-form{ flex:1; min-width:300px; }
-    .contact-info h3{ background:linear-gradient(90deg,#FF00FF,#FFFF00); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .contact-info h3{ background:linear-gradient(90deg,var(--color-primary),var(--color-secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 
     /* Métodos de pago mejorados */
     .pay-row{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
@@ -207,7 +207,7 @@
     /* MODAL COTIZAR RÁPIDO */
     .modal-backdrop{
       position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(2px);
-      display:none; align-items:center; justify-content:center; z-index:2000;
+      display:none; align-items:center; justify-content:center; z-index:3500;
     }
     .modal{ width:min(520px,92vw); background:#161616; border:1px solid #2a2a2a; border-radius:16px; box-shadow:0 20px 80px rgba(0,0,0,.7), 0 0 24px rgba(0,255,255,.15); }
     .modal-header{ padding:18px 22px; border-bottom:1px solid #2a2a2a; display:flex; align-items:center; justify-content:space-between; }
@@ -242,9 +242,10 @@
           <h1>MR FIESTA</h1>
         </div>
 
-        <!-- Botón hamburguesa -->
+        <!-- Botón hamburguesa (icono + texto) -->
         <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="primaryNav">
-          <span></span><span></span><span></span>
+          <span class="bars"><span></span><span></span><span></span></span>
+          <span class="label">Menú</span>
         </button>
 
         <!-- Menú principal -->
@@ -603,8 +604,8 @@
           <div class="gallery-grid">
             <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20A%C3%91os%20Chicoteca%202.mp4" type="video/mp4"></video></div>
             <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20A%C3%91os%20Chicoteca.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20a%C3%B1os%202a.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20a%C3%B1os%20ne%C3%B3n%202.mp4" type="video/mp4"></video></div>
+            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20a%C3%91os%202a.mp4" type="video/mp4"></video></div>
+            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%91os/15%20a%C3%91os%20ne%C3%B3n%202.mp4" type="video/mp4"></video></div>
           </div>
         </div>
 
@@ -819,6 +820,20 @@
   </div>
 
   <script>
+    // ==== Señalamos que HAY JS para aplicar el layout móvil correcto ====
+    document.documentElement.classList.add('has-js');
+
+    // ==== Recalcular --header-h para que el panel móvil no quede tapado ====
+    function setHeaderHeightVar(){
+      try{
+        const h = document.querySelector('header').getBoundingClientRect().height;
+        if(h) document.documentElement.style.setProperty('--header-h', Math.round(h)+'px');
+      }catch(e){}
+    }
+    setHeaderHeightVar();
+    window.addEventListener('load', setHeaderHeightVar);
+    window.addEventListener('resize', setHeaderHeightVar);
+
     // Forzar autoplay en navegadores que lo bloquean hasta interacción
     (function () {
       const v = document.getElementById('hero-video');
@@ -876,7 +891,7 @@
         if(a) closeNav();
       });
 
-      // Si se redimensiona a desktop, asegúrate de cerrar
+      // Si cambia a desktop, asegúrate de cerrar
       let lastW = window.innerWidth;
       window.addEventListener('resize', () => {
         const now = window.innerWidth;
@@ -979,9 +994,7 @@
         const target = (window._mfLastPackage && String(window._mfLastPackage).trim())
           ? window._mfLastPackage.trim()
           : (currentService || '');
-
         const finalLabel = target ? `${base} · ${trim(target)}` : base;
-
         if (waLabel) waLabel.textContent = finalLabel;
         waBtn.setAttribute('aria-label', finalLabel + ' por WhatsApp');
       }
@@ -1011,7 +1024,6 @@
         const pkg = (window._mfLastPackage && String(window._mfLastPackage).trim())
           ? window._mfLastPackage.trim()
           : (currentService || 'Mr Fiesta');
-
         const msg = `Hola, vengo desde la web y me interesa *${pkg}*. ¿Me brindas disponibilidad y costo, por favor?`;
         const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
         window.open(url, '_blank', 'noopener');
