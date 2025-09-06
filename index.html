@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-  <!-- build v6 -->
+  <!-- build v7 -->
   <style>
     :root{
       --color-primary:#8A2BE2; --color-secondary:#00FFFF; --color-tertiary:#FFD700;
@@ -20,7 +20,7 @@
     .container{max-width:1200px;margin:0 auto;padding:0 20px;}
 
     /* ====== HEADER ====== */
-    #navToggle{position:fixed;opacity:0;pointer-events:none;z-index:1} /* controlador del menú */
+    #navToggle{position:fixed;opacity:0;pointer-events:none;z-index:1}
     header{position:fixed;inset:0 auto auto 0;width:100%;background:rgba(18,18,18,.85);backdrop-filter:blur(10px);z-index:3000;}
     nav{display:flex;justify-content:space-between;align-items:center;padding:14px 0;}
     .logo{display:flex;align-items:center;}
@@ -39,10 +39,10 @@
     .hamburger .bars span{display:block;width:22px;height:2px;background:#fff;transition:.25s}
 
     @media (max-width:900px){
-      header .nav-links{display:none !important;}  /* oculta menú horizontal */
-      .hamburger{display:inline-flex !important;}  /* muestra botón */
+      /* 👇 quitamos !important para no bloquear el panel */
+      header .nav-links{display:none;}
+      .hamburger{display:inline-flex !important;}
 
-      /* Panel tipo sheet con blur + rebote */
       #primaryNav{
         position:fixed;top:var(--header-h);left:0;right:0;width:100%;
         max-height:calc(100vh - var(--header-h));overflow:auto;
@@ -60,20 +60,19 @@
       #primaryNav a{display:block;padding:10px 12px;border-radius:8px}
       #primaryNav a:active{background:rgba(255,255,255,.06)}
 
-      /* Overlay que cierra el menú */
       #navOverlay{
         position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(2px);
         opacity:0;visibility:hidden;transition:.25s;z-index:2900;
       }
 
-      /* Estados abiertos */
+      /* 👇 forzamos display cuando está abierto */
       #navToggle:checked ~ header #primaryNav{
+        display:flex !important;
         transform:translateY(0);
         animation:sheetBounce .45s cubic-bezier(.22,1.15,.33,1) both;
       }
       #navToggle:checked ~ #navOverlay{opacity:1;visibility:visible}
 
-      /* Animación icono a “X” */
       #navToggle:checked ~ header .hamburger .bars span:nth-child(1){transform:translateY(7px) rotate(45deg)}
       #navToggle:checked ~ header .hamburger .bars span:nth-child(2){opacity:0}
       #navToggle:checked ~ header .hamburger .bars span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
@@ -95,7 +94,7 @@
     .hero-bg video{width:100%;height:100%;object-fit:cover;opacity:.5}
     .hero-content{z-index:1;padding:0 20px}
     .hero-content h1{margin:0;font-size:clamp(2rem,8vw,4.5rem);background:linear-gradient(90deg,#FF00FF,#00FFFF,#FFFF00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .hero-content p{font-size:clamp(1rem,2vw,1.2rem);max-width:780px;margin:20px auto}
+    .hero-content p{font-size:clamp(1rem,2vw,1.2rem);max-width:820px;margin:20px auto}
     .cta-button{display:inline-block;background:linear-gradient(45deg,var(--color-primary),var(--color-secondary));padding:12px 30px;border-radius:50px;color:#121212;font-weight:700;text-decoration:none;box-shadow:0 0 15px rgba(0,255,255,.5),0 0 30px rgba(138,43,226,.5);transition:.3s}
     .cta-button:hover{transform:scale(1.05)}
 
@@ -110,7 +109,7 @@
     .service-card{background:#1e1e1e;padding:30px;border-radius:15px;box-shadow:0 0 20px rgba(0,0,0,.3);transition:.3s;text-decoration:none;color:#F0F0F0}
     .service-card:hover{transform:translateY(-10px);box-shadow:0 10px 30px rgba(0,255,255,.2)}
     .service-card h3{background:linear-gradient(90deg,var(--color-primary),var(--color-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .service-section p{text-align:center;max-width:900px;margin:0 auto 40px}
+    .service-section p{text-align:center;max-width:980px;margin:0 auto 40px}
 
     .package-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;text-align:left}
     .package-card{background:#1e1e1e;padding:30px;border-radius:15px;box-shadow:0 0 20px rgba(0,0,0,.3);transition:.3s;position:relative}
@@ -187,7 +186,7 @@
   </style>
 </head>
 <body>
-  <!-- 1) MUY IMPORTANTE: el checkbox va ANTES del header -->
+  <!-- controlador del menú -->
   <input type="checkbox" id="navToggle" />
 
   <header>
@@ -198,13 +197,11 @@
           <h1>MR FIESTA</h1>
         </div>
 
-        <!-- Botón hamburguesa que controla el checkbox -->
         <label class="hamburger" for="navToggle" aria-label="Abrir menú">
           <span class="bars"><span></span><span></span><span></span></span>
           <span class="label">Menú</span>
         </label>
 
-        <!-- UL con id EXACTO primaryNav -->
         <ul class="nav-links" id="primaryNav">
           <li><a href="#about">Nosotros</a></li>
           <li><a href="#services">Servicios</a></li>
@@ -216,7 +213,6 @@
     </div>
   </header>
 
-  <!-- Overlay que cierra el menú -->
   <label id="navOverlay" for="navToggle" aria-hidden="true"></label>
 
   <main>
@@ -241,7 +237,7 @@
         <div class="about-content">
           <div class="about-text">
             <p>En Mr Fiesta, convertimos celebraciones en recuerdos inolvidables. Fusionamos creatividad, tecnología y talento para superar expectativas, de la planificación al último detalle.</p>
-            <p>Déjanos ser parte de tu historia y hacer de tu celebración un éxito rotundo.</p>
+            <p>Nos apasiona diseñar shows que <strong>no paran</strong>: música actual, juegos dinámicos y efectos visuales que hacen que tus invitados quieran quedarse hasta el final.</p>
           </div>
           <div class="about-image">
             <iframe width="100%" height="500" src="https://www.tiktok.com/embed/7472458682878512389" frameborder="0" allowfullscreen></iframe>
@@ -255,14 +251,14 @@
       <div class="container">
         <h2>Nuestros Servicios</h2>
         <div class="service-grid">
-          <a href="#chicoteca-paquetes" class="service-card"><h3>CHICOTECAS</h3><p>DJ + animación + juegos + luces inteligentes.</p></a>
-          <a href="#quinceanos" class="service-card"><h3>QUINCEAÑOS</h3><p>Glamour, música y efectos especiales.</p></a>
-          <a href="#pista-led" class="service-card"><h3>PISTA LED</h3><p>Show visual que late con la música.</p></a>
-          <a href="#hora-loca" class="service-card"><h3>HORA LOCA</h3><p>Personajes, LED y coreografías.</p></a>
-          <a href="#decoracion" class="service-card"><h3>DECORACIÓN</h3><p>Ambientes temáticos instagrameables.</p></a>
-          <a href="#karaoke" class="service-card"><h3>KARAOKE</h3><p>El escenario para tus invitados.</p></a>
-          <a href="#fotografia-filmacion" class="service-card"><h3>FOTOGRAFÍA Y FILMACIÓN</h3><p>Recuerdos que emocionan.</p></a>
-          <a href="#invitaciones" class="service-card"><h3>INVITACIONES</h3><p>Primera impresión con estilo.</p></a>
+          <a href="#chicoteca-paquetes" class="service-card"><h3>CHICOTECAS</h3><p>DJ + animación + juegos + luces inteligentes. El formato más pedido para que nadie se quede sentado.</p></a>
+          <a href="#quinceanos" class="service-card"><h3>QUINCEAÑOS</h3><p>Producción con glamour, show coreográfico y efectos especiales para la noche soñada.</p></a>
+          <a href="#pista-led" class="service-card"><h3>PISTA LED</h3><p>Visuales que laten con la música. Cada foto y video se vuelve contenido épico.</p></a>
+          <a href="#hora-loca" class="service-card"><h3>HORA LOCA</h3><p>Personajes, accesorios LED y coreografías que prenden el cierre de tu evento.</p></a>
+          <a href="#decoracion" class="service-card"><h3>DECORACIÓN</h3><p>Ambientes temáticos y backings instagrameables para elevar el look & feel.</p></a>
+          <a href="#karaoke" class="service-card"><h3>KARAOKE</h3><p>Catálogo enorme + micrófonos pro. El escenario lo pones tú.</p></a>
+          <a href="#fotografia-filmacion" class="service-card"><h3>FOTOGRAFÍA Y FILMACIÓN</h3><p>Cubrimos, editamos y entregamos recuerdos que emocionan.</p></a>
+          <a href="#invitaciones" class="service-card"><h3>INVITACIONES</h3><p>La primera impresión: piezas creativas que generan expectativa.</p></a>
         </div>
       </div>
     </section>
@@ -271,7 +267,7 @@
     <section id="chicoteca-paquetes" class="service-section">
       <div class="container">
         <h2>Paquetes de Chicoteca</h2>
-        <p>DJ en vivo, animación moderna, juegos interactivos y luces inteligentes con efectos neón. <strong>Música actual, energía total y ambiente para que nadie se quede sentado.</strong></p>
+        <p>El formato juvenil que arrasa: <strong>DJ en vivo, animación moderna, juegos interactivos y luces inteligentes con efecto neón</strong>. Curamos música actual, dinámicas divertidas y ambientación de alto impacto para que <strong>nadie se quede sentado</strong>. Nos adaptamos al espacio, a la edad del grupo y al estilo que quieras (urban, pop, k-pop, electrónica, reggaetón). </p>
 
         <div class="package-grid">
           <div class="package-card">
@@ -329,7 +325,7 @@
     <section id="quinceanos" class="service-section">
       <div class="container">
         <h2>Quinceaños</h2>
-        <p>Diseñamos una fiesta que combina <strong>glamour, música, efectos especiales y animación profesional</strong>, logrando que cada detalle refleje a la quinceañera. Todos a la pista, recuerdos únicos para siempre.</p>
+        <p>Producción integral para la noche soñada: <strong>guion, música, show coreográfico y efectos especiales</strong> que resaltan la entrada, el vals y el baile sorpresa. Iluminación inteligente, pista LED opcional y coordinación de tiempos para que todo fluya perfecto. <strong>Tu historia, tu estilo, tu momento.</strong></p>
         <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Servicio de Quinceaños">Cotizar Servicio</button></div>
       </div>
     </section>
@@ -338,7 +334,7 @@
     <section id="pista-led" class="service-section">
       <div class="container">
         <h2>Pista LED</h2>
-        <p>El corazón de la fiesta: <strong>late al ritmo de la música</strong>, colores vibrantes y diseños dinámicos. Impacto visual inmediato: cada foto y video se vuelve contenido espectacular.</p>
+        <p>El corazón visual de la fiesta. Paneles de alta luminosidad con <strong>animaciones personalizadas, efectos sonorizados y combinaciones de color</strong> que elevan el ambiente al instante. Disponible en diferentes medidas; instalación rápida y segura. <strong>Fotos y videos que se ven brutales.</strong></p>
         <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Pista LED">Cotizar Servicio</button></div>
       </div>
     </section>
@@ -347,7 +343,7 @@
     <section id="hora-loca" class="service-section">
       <div class="container">
         <h2>Hora Loca</h2>
-        <p><strong>Personajes temáticos, accesorios luminosos, coreografías sorpresas y música vibrante</strong>. La pista explota en energía: risas, bailes y fotos únicas para cerrar a tope.</p>
+        <p>El pico de energía que todos esperan: <strong>personajes temáticos, accesorios luminosos, coreografías guiadas y animación explosiva</strong>. Puedes elegir estilo urbano, disco, neón o fantasía. Cerramos arriba con papel picado, humo o burbujas. <strong>Fotos memorables garantizadas.</strong></p>
         <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Hora Loca">Cotizar Servicio</button></div>
       </div>
     </section>
@@ -356,7 +352,7 @@
     <section id="decoracion" class="service-section">
       <div class="container">
         <h2>Decoración Temática</h2>
-        <p><strong>Globos, telas, estructuras, luces y detalles personalizados</strong> para crear escenarios que cuentan historias. Estilo elegante, neón o fantasía: espacios instagrameables desde el primer vistazo.</p>
+        <p>Diseñamos <strong>escenarios fotogénicos</strong> con globos, telas, estructuras metálicas, backings y neón. Paleta de color definida, tipografías y mensajes que cuentan tu historia. Ideal para fotos, recepción y mesa principal. <strong>Ambientes listos para Instagram.</strong></p>
         <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Decoración Temática">Cotizar Servicio</button></div>
       </div>
     </section>
@@ -365,7 +361,7 @@
     <section id="karaoke" class="service-section">
       <div class="container">
         <h2>Karaoke</h2>
-        <p>Con catálogo amplio, micrófonos inalámbricos y sonido profesional, tus invitados se convierten en estrellas. <strong>Rompe el hielo</strong>, une generaciones y crea momentos virales.</p>
+        <p>Convierte a tus invitados en estrellas: <strong>catálogo amplio, proyector + ecran, dos micrófonos inalámbricos y sonido nítido</strong>. Modo batalla, duetos o libre. Perfecto para romper el hielo y unir generaciones.</p>
         <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Karaoke">Cotizar Servicio</button></div>
       </div>
     </section>
@@ -374,7 +370,7 @@
     <section id="fotografia-filmacion" class="service-section">
       <div class="container">
         <h2>Fotografía y Filmación</h2>
-        <p>Capturamos cada sonrisa y abrazo con <strong>equipo profesional y mirada artística</strong>. No solo grabamos: <strong>inmortalizamos</strong> la esencia de tu celebración.</p>
+        <p>Capturamos la esencia de tu evento con <strong>equipo profesional, composición cuidada y edición atractiva</strong>. Cobertura completa, clips para redes y álbum digital. <strong>No solo registramos: contamos tu historia.</strong></p>
         <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Fotografía y Filmación">Cotizar Servicio</button></div>
       </div>
     </section>
@@ -383,7 +379,7 @@
     <section id="invitaciones" class="service-section">
       <div class="container">
         <h2>Invitaciones</h2>
-        <p>La primera impresión importa. <strong>Invitaciones virtuales creativas y temáticas</strong> que generan expectativa y reflejan el estilo de tu evento.</p>
+        <p>La previa que suma hype: <strong>diseños digitales personalizados, animaciones, mapa y dress code</strong>. Enlace para WhatsApp e Instagram con tu estilo. La experiencia empieza antes del evento.</p>
         <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Invitaciones">Cotizar Servicio</button></div>
       </div>
     </section>
@@ -554,7 +550,7 @@
     </section>
   </main>
 
-  <footer><div class="container"><p>&copy; 2025 Mr Fiesta. Todos los derechos reservados. · build v6</p></div></footer>
+  <footer><div class="container"><p>&copy; 2025 Mr Fiesta. Todos los derechos reservados. · build v7</p></div></footer>
 
   <!-- WhatsApp flotante -->
   <a href="https://wa.me/51902602362" id="waFloat" class="whatsapp-button" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
