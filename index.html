@@ -1,238 +1,229 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mr Fiesta</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <!-- build v5 -->
   <style>
     :root{
-      --color-primary:#8A2BE2;
-      --color-secondary:#00FFFF;
-      --color-tertiary:#FFD700;
-      --color-bg-dark:#121212;
-      --color-text-light:#F0F0F0;
-      --whats:#25D366;
-      --header-h:64px; /* se recalcula por JS */
+      --color-primary:#8A2BE2; --color-secondary:#00FFFF; --color-tertiary:#FFD700;
+      --color-bg-dark:#121212; --color-text-light:#F0F0F0; --whats:#25D366; --header-h:64px;
     }
-    html{ scroll-behavior:smooth; }
-    body{
-      font-family:'Poppins',sans-serif;
-      background:#121212; color:#F0F0F0;
-      margin:0; overflow-x:hidden; line-height:1.6;
-    }
-    body.nav-open{ overflow:hidden; } /* bloquear scroll cuando el menú está abierto */
-    .container{ max-width:1200px; margin:0 auto; padding:0 20px; }
+    html{scroll-behavior:smooth;}
+    body{font-family:'Poppins',sans-serif;background:#121212;color:#F0F0F0;margin:0;overflow-x:hidden;line-height:1.6;}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px;}
 
-    /* Header (z-index alto para estar SIEMPRE arriba) */
-    header{ background:rgba(18,18,18,.8); position:fixed; width:100%; top:0; z-index:3000; backdrop-filter:blur(10px); }
-    nav{ display:flex; justify-content:space-between; align-items:center; padding:1rem 0; }
-    .logo{ display:flex; align-items:center; }
-    .logo img{ max-width:60px; height:auto; margin-right:10px; }
-    .logo h1{ margin:0; font-size:1.5rem; background:linear-gradient(90deg,#FF00FF,#00FFFF); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    /* Header siempre por encima */
+    header{position:fixed;inset:0 auto auto 0;width:100%;background:rgba(18,18,18,.85);backdrop-filter:blur(10px);z-index:3000;}
+    nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;}
+    .logo{display:flex;align-items:center;}
+    .logo img{max-width:60px;height:auto;margin-right:10px;}
+    .logo h1{margin:0;font-size:1.5rem;background:linear-gradient(90deg,#FF00FF,#00FFFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 
-    /* Nav links (desktop base) */
-    .nav-links{ list-style:none; display:flex; margin:0; padding:0; }
-    .nav-links li{ margin-left:25px; }
-    .nav-links a{ color:#F0F0F0; text-decoration:none; font-weight:600; }
-    .nav-links a:hover{ color:var(--color-secondary); }
+    /* Links (desktop) */
+    .nav-links{list-style:none;display:flex;margin:0;padding:0;}
+    .nav-links li{margin-left:25px;}
+    .nav-links a{color:#F0F0F0;text-decoration:none;font-weight:600;}
+    .nav-links a:hover{color:var(--color-secondary);}
 
-    /* Botón hamburguesa (ahora con texto) */
-    .hamburger{
-      display:none; /* visible solo en móvil (via media query) */
-      height:42px; border-radius:12px;
-      border:1px solid #2e2e2e; background:#1b1b1b; color:#fff;
-      align-items:center; gap:10px; cursor:pointer; padding:0 12px;
-      box-shadow:0 0 10px rgba(0,0,0,.35);
-    }
-    .hamburger .bars{ display:flex; flex-direction:column; gap:5px; width:22px; }
-    .hamburger .bars span{ display:block; width:22px; height:2px; background:#fff; transition:.25s; }
-    .hamburger .label{ font-weight:700; letter-spacing:.2px; }
-    .hamburger.active .bars span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
-    .hamburger.active .bars span:nth-child(2){ opacity:0; }
-    .hamburger.active .bars span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+    /* ====== MENÚ MÓVIL: CSS-ONLY (checkbox hack) ====== */
+    #navToggle{position:fixed;opacity:0;pointer-events:none;}
+    .hamburger{display:none;}
 
-    /* Overlay para cerrar tocando fuera (debajo del panel, encima del sitio) */
-    .nav-overlay{
-      position:fixed; inset:0; background:rgba(0,0,0,.45); backdrop-filter:blur(2px);
-      opacity:0; visibility:hidden; transition:.25s; z-index:2000;
-    }
-    .nav-overlay.active{ opacity:1; visibility:visible; }
-
-    /* Menú móvil (panel). Importante: solo aplicamos este layout si HAY JS (clase .has-js en <html>) */
-    @media (max-width: 900px){
-      .hamburger{ display:inline-flex; }
-      html.has-js #primaryNav{
-        position:fixed; top:calc(var(--header-h)); right:0;
-        height:calc(100vh - var(--header-h));
-        width:min(320px, 82vw);
-        background:#151515; border-left:1px solid #2a2a2a;
-        box-shadow:-20px 0 60px rgba(0,0,0,.55);
-        flex-direction:column; align-items:flex-start; padding:18px;
-        transform:translateX(110%); transition:transform .25s ease;
-        z-index:2500;
+    @media (max-width:900px){
+      .hamburger{
+        display:inline-flex;align-items:center;gap:10px;height:42px;padding:0 12px;
+        border:1px solid #2e2e2e;border-radius:12px;background:#1b1b1b;color:#fff;cursor:pointer;
+        box-shadow:0 0 10px rgba(0,0,0,.35);user-select:none;
       }
-      html.has-js #primaryNav.active{ transform:translateX(0); }
-      #primaryNav li{ margin:8px 0; }
-      #primaryNav a{ display:block; padding:10px 12px; border-radius:8px; }
-      #primaryNav a:active{ background:#1f1f1f; }
+      .hamburger .bars{display:flex;flex-direction:column;gap:5px;width:22px}
+      .hamburger .bars span{display:block;width:22px;height:2px;background:#fff;transition:.25s}
+      .hamburger .label{font-weight:700;letter-spacing:.2px}
+
+      /* PANEL DESDE ARRIBA con efecto sheet (blur + transparencia) */
+      #primaryNav{
+        position:fixed;
+        top:calc(var(--header-h)); left:0; right:0;
+        width:100%;
+        max-height:calc(100vh - var(--header-h));
+        overflow:auto;
+
+        /* --- estilo glass / sheet --- */
+        background:rgba(21,21,21,.60);
+        -webkit-backdrop-filter:blur(14px) saturate(140%);
+        backdrop-filter:blur(14px) saturate(140%);
+        border-bottom:1px solid rgba(255,255,255,.10);
+        box-shadow:0 28px 80px rgba(0,0,0,.55);
+
+        display:flex; flex-direction:column; align-items:flex-start;
+        padding:18px;
+
+        /* estado cerrado */
+        transform:translateY(-130%);
+        transition:transform .25s ease;
+        z-index:2950;
+      }
+
+      /* “tirador” decorativo opcional */
+      #primaryNav::before{
+        content:""; align-self:center; width:60px; height:4px; border-radius:999px;
+        background:rgba(255,255,255,.18); margin:-6px 0 10px 0;
+      }
+
+      #primaryNav li{margin:8px 0}
+      #primaryNav a{display:block;padding:10px 12px;border-radius:8px}
+      #primaryNav a:active{background:rgba(255,255,255,.06)}
+
+      /* Overlay clickable que cierra el menú (label del checkbox) */
+      #navOverlay{
+        position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(2px);
+        opacity:0;visibility:hidden;transition:.25s;z-index:2900;
+      }
+
+      /* Abierto cuando el checkbox está marcado + ANIMACIÓN con rebote */
+      #navToggle:checked ~ header #primaryNav{
+        transform:translateY(0);
+        animation:sheetBounce .45s cubic-bezier(.22,1.15,.33,1) both;
+      }
+      #navToggle:checked ~ #navOverlay{ opacity:1;visibility:visible; }
+
+      /* Animación a "X" del ícono */
+      #navToggle:checked ~ header .hamburger .bars span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+      #navToggle:checked ~ header .hamburger .bars span:nth-child(2){opacity:0}
+      #navToggle:checked ~ header .hamburger .bars span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+      /* Oculta menú horizontal de desktop */
+      header .nav-links{display:none}
     }
 
-    /* Hero */
-    #hero{ position:relative; height:100vh; display:flex; justify-content:center; align-items:center; text-align:center; overflow:hidden; padding-top:60px; }
-    .hero-bg{ position:absolute; inset:0; z-index:-1; background:#000; }
-    .hero-bg video{ width:100%; height:100%; object-fit:cover; opacity:.5; }
-    .hero-content{ z-index:1; padding:0 20px; }
-    .hero-content h1{ margin:0; font-size:clamp(2rem,8vw,4.5rem); background:linear-gradient(90deg,#FF00FF,#00FFFF,#FFFF00); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .hero-content p{ font-size:clamp(1rem,2vw,1.2rem); max-width:780px; margin:20px auto; }
-    .cta-button{ display:inline-block; background:linear-gradient(45deg,var(--color-primary),var(--color-secondary)); padding:12px 30px; border-radius:50px; color:#121212; font-weight:700; text-decoration:none; box-shadow:0 0 15px rgba(0,255,255,.5),0 0 30px rgba(138,43,226,.5); transition:.3s; }
-    .cta-button:hover{ transform:scale(1.05); }
+    /* Rebote suave */
+    @keyframes sheetBounce{
+      0%   { transform:translateY(-120%); }
+      60%  { transform:translateY(0);     }
+      78%  { transform:translateY(-10px); }
+      100% { transform:translateY(0);     }
+    }
+    @media (prefers-reduced-motion:reduce){
+      #primaryNav{ transition:none !important; }
+      #navToggle:checked ~ header #primaryNav{ animation:none !important; }
+    }
 
-    /* Compensa header fijo al hacer scroll a anclas */
-    section{ padding:80px 0; scroll-margin-top:calc(var(--header-h) + 12px); }
-    h2{ font-size:clamp(2rem,5vw,2.5rem); text-align:center; margin-bottom:50px; background:linear-gradient(90deg,var(--color-primary),var(--color-secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    /* Bloquear scroll cuando el panel está abierto (si el navegador soporta :has) */
+    @supports selector(body:has(*)){
+      body:has(#navToggle:checked){ overflow:hidden; }
+    }
+
+    /* HERO */
+    section{padding:80px 0;scroll-margin-top:calc(var(--header-h) + 12px);}
+    #hero{position:relative;height:100vh;display:flex;justify-content:center;align-items:center;text-align:center;overflow:hidden;padding-top:60px}
+    .hero-bg{position:absolute;inset:0;z-index:-1;background:#000}
+    .hero-bg video{width:100%;height:100%;object-fit:cover;opacity:.5}
+    .hero-content{z-index:1;padding:0 20px}
+    .hero-content h1{margin:0;font-size:clamp(2rem,8vw,4.5rem);background:linear-gradient(90deg,#FF00FF,#00FFFF,#FFFF00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero-content p{font-size:clamp(1rem,2vw,1.2rem);max-width:780px;margin:20px auto}
+    .cta-button{display:inline-block;background:linear-gradient(45deg,var(--color-primary),var(--color-secondary));padding:12px 30px;border-radius:50px;color:#121212;font-weight:700;text-decoration:none;box-shadow:0 0 15px rgba(0,255,255,.5),0 0 30px rgba(138,43,226,.5);transition:.3s}
+    .cta-button:hover{transform:scale(1.05)}
+
+    h2{font-size:clamp(2rem,5vw,2.5rem);text-align:center;margin-bottom:50px;background:linear-gradient(90deg,var(--color-primary),var(--color-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
     /* About */
-    .about-content{ display:flex; flex-wrap:wrap; align-items:center; gap:40px; }
-    .about-text{ flex:1; min-width:300px; }
-    .about-image{ flex:1; min-width:300px; text-align:center; overflow:hidden; border-radius:15px; }
-    .about-image iframe{ width:100%; height:500px; border:none; box-shadow:0 5px 20px rgba(0,0,0,.5); }
+    .about-content{display:flex;flex-wrap:wrap;align-items:center;gap:40px}
+    .about-text{flex:1;min-width:300px}
+    .about-image{flex:1;min-width:300px;text-align:center;overflow:hidden;border-radius:15px}
+    .about-image iframe{width:100%;height:500px;border:none;box-shadow:0 5px 20px rgba(0,0,0,.5)}
 
-    /* Services grid */
-    .service-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:30px; text-align:center; }
-    .service-card{ background:#1e1e1e; padding:30px; border-radius:15px; box-shadow:0 0 20px rgba(0,0,0,.3); transition:.3s; text-decoration:none; color:#F0F0F0; }
-    .service-card:hover{ transform:translateY(-10px); box-shadow:0 10px 30px rgba(0,255,255,.2); }
-    .service-card h3{ background:linear-gradient(90deg,var(--color-primary),var(--color-secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-
-    .service-section p{ text-align:center; max-width:900px; margin:0 auto 40px; }
+    /* Services */
+    .service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;text-align:center}
+    .service-card{background:#1e1e1e;padding:30px;border-radius:15px;box-shadow:0 0 20px rgba(0,0,0,.3);transition:.3s;text-decoration:none;color:#F0F0F0}
+    .service-card:hover{transform:translateY(-10px);box-shadow:0 10px 30px rgba(0,255,255,.2)}
+    .service-card h3{background:linear-gradient(90deg,var(--color-primary),var(--color-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .service-section p{text-align:center;max-width:900px;margin:0 auto 40px}
 
     /* Packages */
-    .package-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:30px; text-align:left; }
-    .package-card{ background:#1e1e1e; padding:30px; border-radius:15px; box-shadow:0 0 20px rgba(0,0,0,.3); transition:.3s; position:relative; }
-    .package-card:hover{ transform:translateY(-5px); box-shadow:0 10px 30px rgba(0,255,255,.2); }
-    .package-card h3{ font-size:1.5rem; margin-top:0; background:linear-gradient(90deg,var(--color-primary),var(--color-secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .package-card ul{ list-style:none; padding:0; margin:0 0 20px; }
-    .package-card li{ margin-bottom:10px; }
-    .package-card li::before{ content:'✓'; color:var(--color-secondary); font-weight:700; margin-right:10px; }
-
-    .cotizar-wrapper{ text-align:center; }
-    .cotizar-button{ display:inline-block; background:linear-gradient(45deg,var(--color-primary),var(--color-secondary)); padding:15px 40px; border:none; border-radius:50px; color:#121212; font-weight:700; font-size:1.05rem; box-shadow:0 0 15px rgba(0,255,255,.5),0 0 30px rgba(138,43,226,.5); cursor:pointer; transition:.3s; animation:pulse 2s infinite ease-in-out; }
-    .cotizar-button:hover{ transform:scale(1.05); animation-play-state:paused; }
-    @keyframes pulse{
-      0%{ transform:scale(1); box-shadow:0 0 15px rgba(0,255,255,.5); }
-      50%{ transform:scale(1.05); box-shadow:0 0 25px rgba(0,255,255,.7),0 0 50px rgba(138,43,226,.7); }
-      100%{ transform:scale(1); box-shadow:0 0 15px rgba(0,255,255,.5); }
-    }
+    .package-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;text-align:left}
+    .package-card{background:#1e1e1e;padding:30px;border-radius:15px;box-shadow:0 0 20px rgba(0,0,0,.3);transition:.3s;position:relative}
+    .package-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,255,255,.2)}
+    .package-card h3{font-size:1.5rem;margin-top:0;background:linear-gradient(90deg,var(--color-primary),var(--color-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .package-card ul{list-style:none;padding:0;margin:0 0 20px}
+    .package-card li{margin-bottom:10px}
+    .package-card li::before{content:'✓';color:var(--color-secondary);font-weight:700;margin-right:10px}
+    .cotizar-wrapper{text-align:center}
+    .cotizar-button{display:inline-block;background:linear-gradient(45deg,var(--color-primary),var(--color-secondary));padding:15px 40px;border:none;border-radius:50px;color:#121212;font-weight:700;font-size:1.05rem;box-shadow:0 0 15px rgba(0,255,255,.5),0 0 30px rgba(138,43,226,.5);cursor:pointer;transition:.3s;animation:pulse 2s infinite ease-in-out}
+    .cotizar-button:hover{transform:scale(1.05);animation-play-state:paused}
+    @keyframes pulse{0%{transform:scale(1);box-shadow:0 0 15px rgba(0,255,255,.5)}50%{transform:scale(1.05);box-shadow:0 0 25px rgba(0,255,255,.7),0 0 50px rgba(138,43,226,.7)}100%{transform:scale(1);box-shadow:0 0 15px rgba(0,255,255,.5)}}
 
     /* Gallery */
-    #gallery{text-align:center;}
-    .gallery-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; justify-content:center; }
-    .gallery-item{ position:relative; overflow:hidden; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,.5); transition:.3s; cursor:pointer; }
-    .gallery-item:hover{ transform:scale(1.03); }
-    .gallery-item video,.gallery-item img{ width:100%; display:block; }
-    .vertical-video-wrapper{ position:relative; width:100%; max-width:300px; margin:0 auto; padding-top:177.7777778%; overflow:hidden; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,.5); transition:.3s; }
-    .vertical-video-wrapper video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    #gallery{text-align:center}
+    .gallery-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;justify-content:center}
+    .gallery-item{position:relative;overflow:hidden;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.5);transition:.3s;cursor:pointer}
+    .gallery-item:hover{transform:scale(1.03)}
+    .gallery-item video,.gallery-item img{width:100%;display:block}
+    .vertical-video-wrapper{position:relative;width:100%;max-width:300px;margin:0 auto;padding-top:177.7778%;overflow:hidden;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.5);transition:.3s}
+    .vertical-video-wrapper video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
     /* Testimonials */
-    .testimonial-carousel{ display:flex; justify-content:center; flex-wrap:wrap; gap:20px; }
-    .testimonial-card{ background:#1e1e1e; border-left:5px solid var(--color-secondary); padding:20px; max-width:400px; border-radius:8px; }
-    .testimonial-card span{ display:block; text-align:right; font-weight:600; color:#fff; opacity:.85; }
-    .case-study{ text-align:center; padding:40px; background:linear-gradient(to right,#1e1e1e,#0d0d0d); border-radius:15px; margin-top:50px; }
-    .case-study h3{ background:linear-gradient(90deg,#FF00FF,#FFFF00); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .testimonial-carousel{display:flex;justify-content:center;flex-wrap:wrap;gap:20px}
+    .testimonial-card{background:#1e1e1e;border-left:5px solid var(--color-secondary);padding:20px;max-width:400px;border-radius:8px}
+    .testimonial-card span{display:block;text-align:right;font-weight:600;color:#fff;opacity:.85}
+    .case-study{text-align:center;padding:40px;background:linear-gradient(to right,#1e1e1e,#0d0d0d);border-radius:15px;margin-top:50px}
+    .case-study h3{background:linear-gradient(90deg,#FF00FF,#FFFF00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-    /* Contact */
-    #contact{ background:#1e1e1e; }
-    .contact-content{ display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; }
-    .contact-info,.contact-form{ flex:1; min-width:300px; }
-    .contact-info h3{ background:linear-gradient(90deg,var(--color-primary),var(--color-secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-
-    /* Métodos de pago mejorados */
-    .pay-row{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
-    .payment-icon{ font-size:2rem; margin-right:6px; filter:drop-shadow(0 0 8px rgba(0,255,255,.3)); }
-    .payment-icon.visa{ color:#1a1f71; text-shadow:0 0 8px rgba(26,31,113,.6),0 0 16px rgba(0,255,255,.25); }
-    .payment-icon.mc{ color:#eb001b; background:linear-gradient(90deg,#ff5f6d 0 50%,#f8b730 50% 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 0 8px rgba(255,95,109,.6); }
-
-    .pay-badges{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px; }
-    .badge{
-      padding:6px 10px; border-radius:10px; font-weight:700; font-size:.9rem; letter-spacing:.2px;
-      box-shadow:0 0 10px rgba(0,255,255,.25), inset 0 0 0 2px rgba(255,255,255,.06);
-      display:inline-flex; align-items:center; gap:6px;
-    }
-    .badge .dot{ width:10px; height:10px; border-radius:50%; background:#fff; opacity:.9; }
-    .badge.yape{ background:#7f3bbf; }
-    .badge.plin{ background:#00b5b0; }
-    .badge.bim{ background:#2d2d2d; }
-    .badge.dale{ background:#00a3ff; }
-    .badge.agora{ background:#111827; }
-    .badge span{ color:#fff; text-shadow:0 0 6px rgba(255,255,255,.35); }
-
-    .contact-info h4{ font-size:1.2rem; margin:30px 0 10px; background:linear-gradient(90deg,var(--color-primary),var(--color-secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .contact-info ul{ list-style:none; padding:0; margin:0; }
-    .contact-info li{ margin-bottom:10px; }
-
-    .social-links a{ color:#F0F0F0; font-size:1.5rem; margin-right:15px; transition:.3s; }
+    /* Contacto + pagos */
+    #contact{background:#1e1e1e}
+    .contact-content{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap}
+    .contact-info,.contact-form{flex:1;min-width:300px}
+    .contact-info h3{background:linear-gradient(90deg,var(--color-primary),var(--color-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .pay-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .payment-icon{font-size:2rem;margin-right:6px;filter:drop-shadow(0 0 8px rgba(0,255,255,.3))}
+    .payment-icon.visa{color:#1a1f71;text-shadow:0 0 8px rgba(26,31,113,.6),0 0 16px rgba(0,255,255,.25)}
+    .payment-icon.mc{color:#eb001b;background:linear-gradient(90deg,#ff5f6d 0 50%,#f8b730 50% 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 8px rgba(255,95,109,.6)}
+    .pay-badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+    .badge{padding:6px 10px;border-radius:10px;font-weight:700;font-size:.9rem;letter-spacing:.2px;box-shadow:0 0 10px rgba(0,255,255,.25),inset 0 0 0 2px rgba(255,255,255,.06);display:inline-flex;align-items:center;gap:6px}
+    .badge .dot{width:10px;height:10px;border-radius:50%;background:#fff;opacity:.9}
+    .badge.yape{background:#7f3bbf}.badge.plin{background:#00b5b0}.badge.bim{background:#2d2d2d}.badge.dale{background:#00a3ff}.badge.agora{background:#111827}
+    .badge span{color:#fff;text-shadow:0 0 6px rgba(255,255,255,.35)}
+    .contact-info h4{font-size:1.2rem;margin:30px 0 10px;background:linear-gradient(90deg,var(--color-primary),var(--color-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .contact-info ul{list-style:none;padding:0;margin:0}
+    .contact-info li{margin-bottom:10px}
+    .social-links a{color:#F0F0F0;font-size:1.5rem;margin-right:15px;transition:.3s}
     .social-links a:hover i{ text-shadow:0 0 5px var(--color-secondary),0 0 10px var(--color-secondary),0 0 20px var(--color-secondary),0 0 40px var(--color-primary),0 0 80px var(--color-primary); }
-
-    .contact-form form{ display:flex; flex-direction:column; }
-    .contact-form label{ margin-bottom:5px; font-weight:600; }
-    .contact-form input,.contact-form textarea,.contact-form select{
-      padding:10px; margin-bottom:20px; border:1px solid #333; background:#2a2a2a; color:#F0F0F0; border-radius:5px;
-    }
-    .contact-form button{
-      background:linear-gradient(45deg,var(--color-primary),var(--color-secondary)); border:none; color:#fff; padding:15px; border-radius:5px; cursor:pointer; font-weight:700;
-    }
+    .contact-form form{display:flex;flex-direction:column}
+    .contact-form input,.contact-form textarea,.contact-form select{padding:10px;margin-bottom:20px;border:1px solid #333;background:#2a2a2a;color:#F0F0F0;border-radius:5px}
+    .contact-form button{background:linear-gradient(45deg,var(--color-primary),var(--color-secondary));border:none;color:#fff;padding:15px;border-radius:5px;cursor:pointer;font-weight:700}
 
     /* Footer */
-    footer{ background:#0d0d0d; text-align:center; padding:2rem 0; border-top:1px solid #333; }
+    footer{background:#0d0d0d;text-align:center;padding:2rem 0;border-top:1px solid #333}
 
     /* WhatsApp floating */
-    .whatsapp-button{
-      position:fixed; bottom:clamp(16px,2.5vw,28px); right:clamp(16px,2.5vw,28px);
-      display:inline-flex; align-items:center; gap:10px; padding:14px 22px; border-radius:999px;
-      background:radial-gradient(110% 110% at 100% 0%,#25D366 0,#1ebe57 60%,#0ca140 100%);
-      color:#fff; text-decoration:none; font-weight:700; font-size:1.05rem; z-index:1000;
-      box-shadow:0 0 0 3px rgba(37,211,102,.30) inset,0 0 18px rgba(37,211,102,.65),0 0 42px rgba(0,255,204,.35);
-      animation:whatsappPulse 2.1s infinite ease-in-out; transition:.25s;
-    }
-    .whatsapp-button i{ font-size:1.6rem; filter:drop-shadow(0 0 6px rgba(255,255,255,.35)); }
-    .whatsapp-button:hover{ transform:scale(1.06); }
-    @keyframes whatsappPulse{ 0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)} }
-    @media (max-width:640px){
-      .whatsapp-button{ padding:0; width:64px; height:64px; border-radius:50%; justify-content:center; font-size:0; }
-      .whatsapp-button .whatsapp-label{ display:none; }
-      .whatsapp-button i{ font-size:1.9rem; }
-    }
+    .whatsapp-button{position:fixed;bottom:clamp(16px,2.5vw,28px);right:clamp(16px,2.5vw,28px);display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:999px;background:radial-gradient(110% 110% at 100% 0%,#25D366 0,#1ebe57 60%,#0ca140 100%);color:#fff;text-decoration:none;font-weight:700;font-size:1.05rem;z-index:2600;box-shadow:0 0 0 3px rgba(37,211,102,.30) inset,0 0 18px rgba(37,211,102,.65),0 0 42px rgba(0,255,204,.35);animation:whatsappPulse 2.1s infinite ease-in-out;transition:.25s}
+    .whatsapp-button i{font-size:1.6rem;filter:drop-shadow(0 0 6px rgba(255,255,255,.35))}
+    .whatsapp-button:hover{transform:scale(1.06)}
+    @keyframes whatsappPulse{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+    @media (max-width:640px){.whatsapp-button{padding:0;width:64px;height:64px;border-radius:50%;justify-content:center;font-size:0}.whatsapp-button .whatsapp-label{display:none}.whatsapp-button i{font-size:1.9rem}}
 
-    /* MODAL COTIZAR RÁPIDO */
-    .modal-backdrop{
-      position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(2px);
-      display:none; align-items:center; justify-content:center; z-index:3500;
-    }
-    .modal{ width:min(520px,92vw); background:#161616; border:1px solid #2a2a2a; border-radius:16px; box-shadow:0 20px 80px rgba(0,0,0,.7), 0 0 24px rgba(0,255,255,.15); }
-    .modal-header{ padding:18px 22px; border-bottom:1px solid #2a2a2a; display:flex; align-items:center; justify-content:space-between; }
-    .modal-title{ font-weight:700; background:linear-gradient(90deg,var(--color-primary),var(--color-secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    .modal-close{ background:none; border:none; color:#bbb; font-size:1.4rem; cursor:pointer; }
-    .modal-body{ padding:22px; }
-    .modal-body form{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-    .modal-body form .full{ grid-column:1 / -1; }
-    .modal-body label{ font-size:.9rem; opacity:.9; }
-    .modal-body input, .modal-body select{
-      width:100%; padding:12px; border-radius:10px; background:#222; color:#fff; border:1px solid #2e2e2e;
-    }
-    .modal-footer{ padding:18px 22px; border-top:1px solid #2a2a2a; display:flex; gap:10px; justify-content:flex-end; }
-    .btn{ padding:12px 18px; border-radius:10px; border:none; cursor:pointer; font-weight:700; }
-    .btn-secondary{ background:#2a2a2a; color:#eee; }
-    .btn-secondary:hover{ background:#333; }
-    .btn-primary{
-      background:linear-gradient(45deg,var(--color-primary),var(--color-secondary));
-      color:#121212; box-shadow:0 0 14px rgba(0,255,255,.35),0 0 32px rgba(138,43,226,.25);
-    }
-    .btn-primary:hover{ filter:brightness(1.05); }
-    .small-note{ font-size:.85rem; opacity:.75; margin-top:6px; }
+    /* MODAL COTIZAR */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;z-index:3500}
+    .modal{width:min(520px,92vw);background:#161616;border:1px solid #2a2a2a;border-radius:16px;box-shadow:0 20px 80px rgba(0,0,0,.7),0 0 24px rgba(0,255,255,.15)}
+    .modal-header{padding:18px 22px;border-bottom:1px solid #2a2a2a;display:flex;align-items:center;justify-content:space-between}
+    .modal-title{font-weight:700;background:linear-gradient(90deg,var(--color-primary),var(--color-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .modal-close{background:none;border:none;color:#bbb;font-size:1.4rem;cursor:pointer}
+    .modal-body{padding:22px}
+    .modal-body form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .modal-body form .full{grid-column:1/-1}
+    .modal-body input,.modal-body select{width:100%;padding:12px;border-radius:10px;background:#222;color:#fff;border:1px solid #2e2e2e}
+    .modal-footer{padding:18px 22px;border-top:1px solid #2a2a2a;display:flex;gap:10px;justify-content:flex-end}
+    .btn{padding:12px 18px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .btn-secondary{background:#2a2a2a;color:#eee}.btn-secondary:hover{background:#333}
+    .btn-primary{background:linear-gradient(45deg,var(--color-primary),var(--color-secondary));color:#121212;box-shadow:0 0 14px rgba(0,255,255,.35),0 0 32px rgba(138,43,226,.25)}
+    .btn-primary:hover{filter:brightness(1.05)}
   </style>
 </head>
 <body>
+  <!-- Checkbox controlador del menú móvil -->
+  <input type="checkbox" id="navToggle" />
 
   <header>
     <div class="container">
@@ -242,42 +233,38 @@
           <h1>MR FIESTA</h1>
         </div>
 
-        <!-- Botón hamburguesa (icono + texto) -->
-        <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="primaryNav">
+        <!-- Botón hamburguesa: label vinculado al checkbox -->
+        <label class="hamburger" for="navToggle" aria-label="Abrir menú">
           <span class="bars"><span></span><span></span><span></span></span>
           <span class="label">Menú</span>
-        </button>
+        </label>
 
-        <!-- Menú principal -->
+        <!-- Menú principal (panel desde arriba en móvil, horizontal en desktop) -->
         <ul class="nav-links" id="primaryNav">
-          <li><a href="#about" data-close="nav">Nosotros</a></li>
-          <li><a href="#services" data-close="nav">Servicios</a></li>
-          <li><a href="#gallery" data-close="nav">Galería</a></li>
-          <li><a href="#testimonials" data-close="nav">Testimonios</a></li>
-          <li><a href="#contact" data-close="nav">Contacto</a></li>
+          <li><a href="#about">Nosotros</a></li>
+          <li><a href="#services">Servicios</a></li>
+          <li><a href="#gallery">Galería</a></li>
+          <li><a href="#testimonials">Testimonios</a></li>
+          <li><a href="#contact">Contacto</a></li>
         </ul>
       </nav>
     </div>
   </header>
-  <!-- Overlay para móvil -->
-  <div class="nav-overlay" id="navOverlay"></div>
+
+  <!-- Overlay que cierra el menú al tocar (label del checkbox) -->
+  <label id="navOverlay" for="navToggle" aria-hidden="true"></label>
 
   <main>
     <!-- HERO -->
     <section id="hero">
       <div class="hero-bg">
-        <!-- autoplay + playsinline + muted (policy móvil) -->
         <video id="hero-video" muted autoplay loop playsinline>
           <source src="https://mrfiesta-pe.github.io/media/Publicidad%20Mister%20Fiesta.mp4" type="video/mp4">
         </video>
       </div>
       <div class="hero-content">
         <h1>MR FIESTA</h1>
-        <p>
-          Somos especialistas en <strong>chicotecas, quinceaños y experiencias neón</strong> que encienden la pista y mantienen a todos bailando.
-          Combinamos <strong>animación moderna + DJ en vivo + luces inteligentes + pista LED</strong> para crear un show que se ve y se siente profesional.
-          <br>¿El resultado? <strong>Niños, teens y adultos conectados con la fiesta de principio a fin</strong> — sin silencios incómodos, sin improvisaciones.
-        </p>
+        <p>Somos especialistas en <strong>chicotecas, quinceaños y experiencias neón</strong> que encienden la pista y mantienen a todos bailando. Combinamos <strong>animación moderna + DJ en vivo + luces inteligentes + pista LED</strong> para un show profesional. <strong>Sin silencios, sin improvisaciones</strong>.</p>
         <a href="https://wa.me/51902602362" class="cta-button" target="_blank" rel="noopener">¡Comienza la Fiesta!</a>
       </div>
     </section>
@@ -288,8 +275,8 @@
         <h2>Nuestra Historia</h2>
         <div class="about-content">
           <div class="about-text">
-            <p>En Mr Fiesta, convertimos celebraciones en recuerdos inolvidables. Nacimos con la pasión de ofrecer experiencias únicas, llenas de magia y profesionalismo. Cada evento es un lienzo en blanco donde fusionamos creatividad, tecnología y talento para superar tus expectativas.</p>
-            <p>Nuestro equipo está comprometido a brindarte el mejor servicio, desde la planificación hasta el último detalle. ¡Déjanos ser parte de tu historia y hacer de tu celebración un éxito rotundo!</p>
+            <p>En Mr Fiesta, convertimos celebraciones en recuerdos inolvidables. Fusionamos creatividad, tecnología y talento para superar expectativas, de la planificación al último detalle.</p>
+            <p>Déjanos ser parte de tu historia y hacer de tu celebración un éxito rotundo.</p>
           </div>
           <div class="about-image">
             <iframe width="100%" height="500" src="https://www.tiktok.com/embed/7472458682878512389" frameborder="0" allowfullscreen></iframe>
@@ -303,38 +290,14 @@
       <div class="container">
         <h2>Nuestros Servicios</h2>
         <div class="service-grid">
-          <a href="#chicoteca-paquetes" class="service-card">
-            <h3>CHICOTECAS</h3>
-            <p>DJ + animación + juegos + luces inteligentes. Energía al 100%.</p>
-          </a>
-          <a href="#quinceanos" class="service-card">
-            <h3>QUINCEAÑOS</h3>
-            <p>Glamour, música y efectos especiales con fluidez total.</p>
-          </a>
-          <a href="#pista-led" class="service-card">
-            <h3>PISTA LED</h3>
-            <p>Show visual que late al ritmo de la música.</p>
-          </a>
-          <a href="#hora-loca" class="service-card">
-            <h3>HORA LOCA</h3>
-            <p>Explosión de energía con personajes y accesorios LED.</p>
-          </a>
-          <a href="#decoracion" class="service-card">
-            <h3>DECORACIÓN</h3>
-            <p>Ambientes temáticos instagrameables.</p>
-          </a>
-          <a href="#karaoke" class="service-card">
-            <h3>KARAOKE</h3>
-            <p>El escenario para tus invitados–artistas.</p>
-          </a>
-          <a href="#fotografia-filmacion" class="service-card">
-            <h3>FOTOGRAFÍA Y FILMACIÓN</h3>
-            <p>Recuerdos de alta calidad que emocionan.</p>
-          </a>
-          <a href="#invitaciones" class="service-card">
-            <h3>INVITACIONES</h3>
-            <p>Primera impresión con sello propio.</p>
-          </a>
+          <a href="#chicoteca-paquetes" class="service-card"><h3>CHICOTECAS</h3><p>DJ + animación + juegos + luces inteligentes.</p></a>
+          <a href="#quinceanos" class="service-card"><h3>QUINCEAÑOS</h3><p>Glamour, música y efectos especiales.</p></a>
+          <a href="#pista-led" class="service-card"><h3>PISTA LED</h3><p>Show visual que late con la música.</p></a>
+          <a href="#hora-loca" class="service-card"><h3>HORA LOCA</h3><p>Personajes, LED y coreografías.</p></a>
+          <a href="#decoracion" class="service-card"><h3>DECORACIÓN</h3><p>Ambientes temáticos instagrameables.</p></a>
+          <a href="#karaoke" class="service-card"><h3>KARAOKE</h3><p>El escenario para tus invitados.</p></a>
+          <a href="#fotografia-filmacion" class="service-card"><h3>FOTOGRAFÍA Y FILMACIÓN</h3><p>Recuerdos que emocionan.</p></a>
+          <a href="#invitaciones" class="service-card"><h3>INVITACIONES</h3><p>Primera impresión con estilo.</p></a>
         </div>
       </div>
     </section>
@@ -343,121 +306,55 @@
     <section id="chicoteca-paquetes" class="service-section">
       <div class="container">
         <h2>Paquetes de Chicoteca</h2>
-        <p>
-          Convierte tu casa o local en una verdadera discoteca juvenil. Nuestras chicotecas integran
-          <strong>DJ en vivo, animación moderna, juegos interactivos y luces inteligentes con efectos neón</strong>
-          que transforman cualquier espacio en una pista vibrante. Los chicos bailan, juegan y disfrutan al máximo con
-          dinámicas que los mantienen conectados de principio a fin. Con nuestra propuesta, la diversión no decae ni un minuto:
-          <strong>música actual, energía total y un ambiente diseñado para que nadie se quede sentado</strong>.
-        </p>
+        <p>DJ en vivo, animación moderna, juegos interactivos y luces inteligentes con efectos neón. <strong>Música actual, energía total y ambiente para que nadie se quede sentado.</strong></p>
 
         <div class="package-grid">
           <div class="package-card">
             <h3>Paquete Básico</h3>
             <ul>
-              <li>90 minutos de show</li>
-              <li>1 animador(a) y juegos modernos</li>
-              <li>1 sonidista con micrófono inalámbrico</li>
-              <li>2 luces LED y láser</li>
-              <li>Parlante amplificado</li>
-              <li>Mini hora loca con globos pencil</li>
-              <li>Invitación virtual de cortesía</li>
-              <li>No incluye movilidad</li>
+              <li>90 minutos de show</li><li>1 animador(a) + juegos modernos</li><li>1 sonidista con micrófono inalámbrico</li><li>2 luces LED y láser</li><li>Parlante amplificado</li><li>Mini hora loca</li><li>Invitación virtual</li><li>No incluye movilidad</li>
             </ul>
-            <div class="cotizar-wrapper">
-              <button class="cotizar-button" data-package="Paquete Básico">Cotizar Paquete</button>
-            </div>
+            <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Paquete Básico">Cotizar Paquete</button></div>
           </div>
 
           <div class="package-card">
             <h3>Pack Premium Lite</h3>
             <ul>
-              <li>Pista de baile LED 2x2 m (exclusiva)</li>
-              <li>1 animador(a) y juegos modernos</li>
-              <li>1 sonidista con micrófono inalámbrico</li>
-              <li>2 luces LED y láser</li>
-              <li>Parlante amplificado</li>
-              <li>Mini hora loca con globos pencil</li>
-              <li>Invitación virtual de cortesía</li>
-              <li>No incluye movilidad</li>
+              <li>Pista LED 2x2 m</li><li>1 animador(a) + juegos</li><li>1 sonidista</li><li>2 luces LED y láser</li><li>Parlante amplificado</li><li>Mini hora loca</li><li>Invitación virtual</li><li>No incluye movilidad</li>
             </ul>
-            <div class="cotizar-wrapper">
-              <button class="cotizar-button" data-package="Pack Premium Lite">Cotizar Paquete</button>
-            </div>
+            <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Pack Premium Lite">Cotizar Paquete</button></div>
           </div>
 
           <div class="package-card">
             <h3>Chicoteca en Casa</h3>
             <ul>
-              <li>2 horas de animación moderna</li>
-              <li>1 animador(a)</li>
-              <li>DJ + cabina de sonido</li>
-              <li>Parlante profesional</li>
-              <li>6 luces inteligentes + baño de color</li>
-              <li>Proyector + Ecran (Just Dance o Karaoke)</li>
-              <li>Invitación virtual de cortesía</li>
-              <li>Movilidad incluida en zonas seleccionadas</li>
-              <li>Opción con 2 animadores</li>
+              <li>2 horas de animación</li><li>1 animador(a)</li><li>DJ + cabina</li><li>Parlante profesional</li><li>6 luces inteligentes + baño de color</li><li>Proyector + Ecran (Just Dance/Karaoke)</li><li>Invitación virtual</li><li>Movilidad (zonas seleccionadas)</li><li>Opción 2 animadores</li>
             </ul>
-            <div class="cotizar-wrapper">
-              <button class="cotizar-button" data-package="Chicoteca en Casa">Cotizar Paquete</button>
-            </div>
+            <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Chicoteca en Casa">Cotizar Paquete</button></div>
           </div>
 
           <div class="package-card">
             <h3>Just Dance & Karaoke Party</h3>
             <ul>
-              <li>1 DJ en vivo</li>
-              <li>Parlante profesional</li>
-              <li>Proyector + Ecran</li>
-              <li>2 micrófonos inalámbricos</li>
-              <li>6 luces inteligentes</li>
-              <li>No incluye movilidad</li>
+              <li>DJ en vivo</li><li>Parlante profesional</li><li>Proyector + Ecran</li><li>2 micrófonos inalámbricos</li><li>6 luces inteligentes</li><li>No incluye movilidad</li>
             </ul>
-            <div class="cotizar-wrapper">
-              <button class="cotizar-button" data-package="Just Dance & Karaoke Party">Cotizar Paquete</button>
-            </div>
+            <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Just Dance & Karaoke Party">Cotizar Paquete</button></div>
           </div>
 
           <div class="package-card">
             <h3>Neón Experience</h3>
             <ul>
-              <li>3 horas de evento</li>
-              <li>1h Estación Glitter + tatuajes neón</li>
-              <li>2h Animación + mini hora loca</li>
-              <li>Accesorios LED (limbo, soga, globos)</li>
-              <li>DJ + cabina 1000W</li>
-              <li>Proyector + ecran gigante</li>
-              <li>6 luces inteligentes + luz UV</li>
-              <li>Humo o burbujas</li>
-              <li>Invitación virtual de cortesía</li>
-              <li>Movilidad incluida (zonas seleccionadas)</li>
-              <li>Opción 2 animadores</li>
+              <li>3 horas de evento</li><li>1h Estación Glitter + tattoos neón</li><li>2h Animación + mini hora loca</li><li>Accesorios LED</li><li>DJ + cabina 1000W</li><li>Proyector + ecran</li><li>6 luces + UV</li><li>Humo o burbujas</li><li>Invitación virtual</li><li>Movilidad (zonas seleccionadas)</li><li>Opción 2 animadores</li>
             </ul>
-            <div class="cotizar-wrapper">
-              <button class="cotizar-button" data-package="Neón Experience">Cotizar Paquete</button>
-            </div>
+            <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Neón Experience">Cotizar Paquete</button></div>
           </div>
 
           <div class="package-card">
             <h3>Ultra Chicoteca LED</h3>
             <ul>
-              <li>3h (2h animación + 1h Glitter con tatuajes neón)</li>
-              <li>DJ y sonido profesional</li>
-              <li>6 luces inteligentes + Luz UV</li>
-              <li>Proyector + ecran (Just Dance y Karaoke)</li>
-              <li>Mini hora loca + accesorios LED</li>
-              <li>Máquina de humo o burbujas</li>
-              <li>Pack 40 pulseras brillantes</li>
-              <li>Invitación virtual de cortesía</li>
-              <li>Movilidad incluida (Lima Metropolitana)</li>
-              <li>Pista LED 3x2 o 2.5x2.5</li>
-              <li>Opción Pista LED 3x3 o 4x2</li>
-              <li>Opción 2 animadores</li>
+              <li>3h (2h animación + 1h Glitter)</li><li>DJ y sonido profesional</li><li>6 luces + UV</li><li>Proyector + ecran</li><li>Mini hora loca + accesorios LED</li><li>Humo o burbujas</li><li>Pack 40 pulseras</li><li>Invitación virtual</li><li>Movilidad Lima</li><li>Pista LED 3x2 o 2.5x2.5 (opciones 3x3/4x2)</li><li>Opción 2 animadores</li>
             </ul>
-            <div class="cotizar-wrapper">
-              <button class="cotizar-button" data-package="Ultra Chicoteca LED">Cotizar Paquete</button>
-            </div>
+            <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Ultra Chicoteca LED">Cotizar Paquete</button></div>
           </div>
         </div>
       </div>
@@ -467,16 +364,8 @@
     <section id="quinceanos" class="service-section">
       <div class="container">
         <h2>Quinceaños</h2>
-        <p>
-          Ese día tan especial merece algo inolvidable. En Mr Fiesta diseñamos una fiesta que combina
-          <strong>glamour, música, efectos especiales y animación profesional</strong>, logrando que cada detalle
-          refleje la personalidad de la quinceañera. Desde la entrada triunfal hasta el último baile, cuidamos que
-          todo fluya con estilo y emoción. Nuestro equipo asegura que familiares y amigos se integren a la pista,
-          creando recuerdos únicos que quedarán grabados para siempre.
-        </p>
-        <div class="cotizar-wrapper">
-          <button class="cotizar-button" data-package="Servicio de Quinceaños">Cotizar Servicio</button>
-        </div>
+        <p>Diseñamos una fiesta que combina <strong>glamour, música, efectos especiales y animación profesional</strong>, logrando que cada detalle refleje a la quinceañera. Todos a la pista, recuerdos únicos para siempre.</p>
+        <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Servicio de Quinceaños">Cotizar Servicio</button></div>
       </div>
     </section>
 
@@ -484,15 +373,8 @@
     <section id="pista-led" class="service-section">
       <div class="container">
         <h2>Pista LED</h2>
-        <p>
-          No es solo un piso, es el corazón de la fiesta. Nuestras pistas LED convierten la pista de baile en un show visual que
-          <strong>late al ritmo de la música</strong>. Con diseños dinámicos y colores vibrantes, logran que todos quieran estar ahí.
-          La experiencia es digna de una discoteca de alto nivel, pero en tu propio evento. El impacto visual es inmediato:
-          <strong>cada foto y video se transforma en contenido espectacular</strong> que inmortaliza la fiesta.
-        </p>
-        <div class="cotizar-wrapper">
-          <button class="cotizar-button" data-package="Pista LED">Cotizar Servicio</button>
-        </div>
+        <p>El corazón de la fiesta: <strong>late al ritmo de la música</strong>, colores vibrantes y diseños dinámicos. Impacto visual inmediato: cada foto y video se vuelve contenido espectacular.</p>
+        <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Pista LED">Cotizar Servicio</button></div>
       </div>
     </section>
 
@@ -500,16 +382,8 @@
     <section id="hora-loca" class="service-section">
       <div class="container">
         <h2>Hora Loca</h2>
-        <p>
-          La explosión de energía que eleva tu evento a otro nivel. Traemos
-          <strong>personajes temáticos, accesorios luminosos, coreografías sorpresas y música vibrante</strong>
-          que disparan la emoción al máximo. En pocos minutos, toda la pista se llena de risas, bailes y fotos únicas.
-          Es el momento más esperado de la noche, donde todos se sueltan y se suman a la diversión.
-          Con la Hora Loca de Mr Fiesta, aseguramos un cierre inolvidable para tu celebración.
-        </p>
-        <div class="cotizar-wrapper">
-          <button class="cotizar-button" data-package="Hora Loca">Cotizar Servicio</button>
-        </div>
+        <p><strong>Personajes temáticos, accesorios luminosos, coreografías sorpresas y música vibrante</strong>. La pista explota en energía: risas, bailes y fotos únicas para cerrar a tope.</p>
+        <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Hora Loca">Cotizar Servicio</button></div>
       </div>
     </section>
 
@@ -517,15 +391,8 @@
     <section id="decoracion" class="service-section">
       <div class="container">
         <h2>Decoración Temática</h2>
-        <p>
-          Creamos ambientes que cuentan historias. Con
-          <strong>globos, telas, estructuras, luces y detalles personalizados</strong>, diseñamos un escenario que refuerza la temática
-          de tu fiesta. Sea un estilo elegante, neón vibrante o fantasía juvenil, transformamos el espacio para que desde el primer
-          vistazo tus invitados se sorprendan. Cada rincón es instagrameable, porque sabemos que los recuerdos empiezan desde la decoración.
-        </p>
-        <div class="cotizar-wrapper">
-          <button class="cotizar-button" data-package="Decoración Temática">Cotizar Servicio</button>
-        </div>
+        <p><strong>Globos, telas, estructuras, luces y detalles personalizados</strong> para crear escenarios que cuentan historias. Estilo elegante, neón o fantasía: espacios instagrameables desde el primer vistazo.</p>
+        <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Decoración Temática">Cotizar Servicio</button></div>
       </div>
     </section>
 
@@ -533,14 +400,8 @@
     <section id="karaoke" class="service-section">
       <div class="container">
         <h2>Karaoke</h2>
-        <p>
-          El show donde tus invitados son las estrellas. Con un catálogo musical amplio, micrófonos inalámbricos y sonido profesional,
-          convertimos el evento en un concierto interactivo. El karaoke rompe el hielo, une generaciones y saca a relucir el artista que
-          todos llevan dentro. Risas, aplausos y momentos virales garantizados.
-        </p>
-        <div class="cotizar-wrapper">
-          <button class="cotizar-button" data-package="Karaoke">Cotizar Servicio</button>
-        </div>
+        <p>Con catálogo amplio, micrófonos inalámbricos y sonido profesional, tus invitados se convierten en estrellas. <strong>Rompe el hielo</strong>, une generaciones y crea momentos virales.</p>
+        <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Karaoke">Cotizar Servicio</button></div>
       </div>
     </section>
 
@@ -548,15 +409,8 @@
     <section id="fotografia-filmacion" class="service-section">
       <div class="container">
         <h2>Fotografía y Filmación</h2>
-        <p>
-          Tu fiesta pasa en horas, pero los recuerdos quedan para siempre. Nuestro equipo de fotógrafos y videógrafos captura cada sonrisa,
-          cada abrazo y cada instante especial con <strong>equipos profesionales y mirada artística</strong>. No se trata solo de grabar,
-          sino de inmortalizar la esencia de la celebración para que puedas revivirla una y otra vez. Entregamos material de alta calidad
-          que emociona al verlo, incluso años después.
-        </p>
-        <div class="cotizar-wrapper">
-          <button class="cotizar-button" data-package="Fotografía y Filmación">Cotizar Servicio</button>
-        </div>
+        <p>Capturamos cada sonrisa y abrazo con <strong>equipo profesional y mirada artística</strong>. No solo grabamos: <strong>inmortalizamos</strong> la esencia de tu celebración.</p>
+        <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Fotografía y Filmación">Cotizar Servicio</button></div>
       </div>
     </section>
 
@@ -564,19 +418,12 @@
     <section id="invitaciones" class="service-section">
       <div class="container">
         <h2>Invitaciones</h2>
-        <p>
-          La primera impresión marca la diferencia. Diseñamos
-          <strong>invitaciones virtuales creativas, dinámicas y adaptadas a la temática de tu evento</strong>, que generan expectativa desde
-          el momento en que tus invitados las reciben. Modernas, prácticas y con estilo: anuncian tu fiesta con un sello único que refleja
-          la experiencia que está por venir.
-        </p>
-        <div class="cotizar-wrapper">
-          <button class="cotizar-button" data-package="Invitaciones">Cotizar Servicio</button>
-        </div>
+        <p>La primera impresión importa. <strong>Invitaciones virtuales creativas y temáticas</strong> que generan expectativa y reflejan el estilo de tu evento.</p>
+        <div class="cotizar-wrapper"><button class="cotizar-button" data-package="Invitaciones">Cotizar Servicio</button></div>
       </div>
     </section>
 
-    <!-- GALLERY -->
+    <!-- GALERÍA -->
     <section id="gallery">
       <div class="container">
         <h2>Galería de Videos y Fotos</h2>
@@ -584,75 +431,75 @@
         <div class="category-videos">
           <h3 id="chicoteca-gallery" class="gallery-anchor">Chicoteca</h3>
           <div class="gallery-grid">
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/chicoteca%20basica%201.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20en%20Casa/Chicoteca%20En%20Casa%202.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led%203.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/chicoteca%20basica%202.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/chicoteca%20basica%203.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/Chicoteca%20b%C3%A1sica.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20en%20Casa/Chicoteca%20En%20Casa.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20en%20Casa/Chicoteca%20En%20Casa%204.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/CHICOTECA%20ULTRA%20LED%205.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led%206.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led%20Provincia.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/chicoteca%20basica%201.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20en%20Casa/Chicoteca%20En%20Casa%202.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led%203.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/chicoteca%20basica%202.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/chicoteca%20basica%203.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20B%C3%A1sica/Chicoteca%20b%C3%A1sica.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20en%20Casa/Chicoteca%20En%20Casa.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20en%20Casa/Chicoteca%20En%20Casa%204.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/CHICOTECA%20ULTRA%20LED%205.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led%206.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led%20Provincia.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Chicoteca%20Ultra%20Led/Chicoteca%20Ultra%20Led.mp4" type="video/mp4"></video></div>
           </div>
         </div>
 
         <div class="category-videos">
-          <h3 id="quinceanos-gallery" class="gallery-anchor">Quinceaños</h3>
+          <h3 id="quinceanos-gallery">Quinceaños</h3>
           <div class="gallery-grid">
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20A%C3%91os%20Chicoteca%202.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20A%C3%91os%20Chicoteca.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20a%C3%91os%202a.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%91os/15%20a%C3%91os%20ne%C3%B3n%202.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20A%C3%91os%20Chicoteca%202.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%B1os/15%20A%C3%91os%20Chicoteca.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%91os/15%20a%C3%91os%202a.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/15%20a%C3%91os/15%20a%C3%91os%20ne%C3%B3n%202.mp4" type="video/mp4"></video></div>
           </div>
         </div>
 
         <div class="category-videos">
-          <h3 id="pista-led-gallery" class="gallery-anchor">Pista LED</h3>
+          <h3 id="pista-led-gallery">Pista LED</h3>
           <div class="gallery-grid">
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Pista%20led/Pista%20Led%202.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Pista%20led/Pista%20LED.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Pista%20led/Pista%20Led%202.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Pista%20led/Pista%20LED.mp4" type="video/mp4"></video></div>
           </div>
         </div>
 
         <div class="category-videos">
-          <h3 id="hora-loca-gallery" class="gallery-anchor">Hora Loca</h3>
+          <h3 id="hora-loca-gallery">Hora Loca</h3>
           <div class="gallery-grid">
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Bad%20Bunny%20Y%20Karol%20G.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Disco.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Donde%20Estan%20Las%20Rubias.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Horizontal.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20La%20M%C3%A1scara.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Mini%20Hora%20Loca.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Stickman.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Bad%20Bunny%20Y%20Karol%20G.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Disco.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Donde%20Estan%20Las%20Rubias.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20Horizontal.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Hora%20Loca%20La%20M%C3%A1scara.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Mini%20Hora%20Loca.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Hora%20loca/Stickman.mp4" type="video/mp4"></video></div>
           </div>
         </div>
 
         <div class="category-videos">
-          <h3 id="decoracion-gallery" class="gallery-anchor">Decoración</h3>
+          <h3 id="decoracion-gallery">Decoración</h3>
           <div class="gallery-grid">
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/DECO%20SHIMMER.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n%202.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n%203.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n%20ne%C3%B3n.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/DECO%20SHIMMER.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n%202.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n%203.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n%20ne%C3%B3n.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Decoraci%C3%B3n/Decoraci%C3%B3n.mp4" type="video/mp4"></video></div>
           </div>
         </div>
 
         <div class="category-videos">
-          <h3 id="karaoke-gallery" class="gallery-anchor">Karaoke</h3>
+          <h3 id="karaoke-gallery">Karaoke</h3>
           <div class="gallery-grid">
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Jus%20Dance%20Karaoke%203.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Just%20Dance%20Y%20Karaoke%202.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Just%20Dance%20y%20karaoke%204.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Just%20Dance%20Y%20Karaoke.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Jus%20Dance%20Karaoke%203.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Just%20Dance%20Y%20Karaoke%202.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Just%20Dance%20y%20karaoke%204.mp4" type="video/mp4"></video></div>
+            <div class="vertical-video-wrapper gallery-item"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Just%20dance%20y%20Karaoke/Just%20Dance%20Y%20Karaoke.mp4" type="video/mp4"></video></div>
           </div>
         </div>
 
         <div class="category-videos">
-          <h3 id="fotografia-filmacion-gallery" class="gallery-anchor">Fotografía y Filmación</h3>
+          <h3 id="fotografia-filmacion-gallery">Fotografía y Filmación</h3>
           <div class="gallery-grid">
             <div class="gallery-item"><img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Cumplea%C3%B1os%20Ne%C3%B3n.jpg" alt="Cumpleaños Neón"></div>
             <div class="gallery-item"><img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Chicoteca.jpg" alt="Chicoteca"></div>
@@ -665,36 +512,6 @@
             <div class="gallery-item"><img src="https://mrfiesta-pe.github.io/media/FOTOGRAF%C3%8DA%20y%20FILMACI%C3%93N/Cumplea%C3%B1os%203.jpg" alt="Cumpleaños 3"></div>
           </div>
         </div>
-
-        <div class="category-videos">
-          <h3 id="equipo-sonido-gallery" class="gallery-anchor">Equipo de Sonido DJ y Luces</h3>
-          <p>¡Pronto! Estamos preparando una galería de videos de nuestros equipos de sonido, DJ y luces en acción para que veas la calidad y el ambiente que creamos.</p>
-        </div>
-
-        <div class="category-videos">
-          <h3 id="juegos-gallery" class="gallery-anchor">Juegos</h3>
-          <div class="gallery-grid">
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Juegos/3%20En%20Raya(1).mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Juegos/Enlazados.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Juegos/Enlazados2.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Juegos/Jenga%20Gigante.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Juegos/Las%20Torres%20Gigantes.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Juegos/Limbo%20Led.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Juegos/Minuto%20Para%20Ganar.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Juegos/Salta%20Soga%20Led.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Juegos/Tutti%20Frutti.mp4" type="video/mp4"></video></div>
-          </div>
-        </div>
-
-        <div class="category-videos">
-          <h3 id="experiencia-neon-gallery" class="gallery-anchor">Experiencia Neón</h3>
-          <div class="gallery-grid">
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Experiencia%20Ne%C3%B3n/Experiencia%20Ne%C3%B3n1.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Experiencia%20Ne%C3%B3n/Experiencia%20Ne%C3%B3n2.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Experiencia%20Ne%C3%B3n/Experiencia%20Ne%C3%B3n3.mp4" type="video/mp4"></video></div>
-            <div class="gallery-item vertical-video-wrapper"><video muted playsinline controls><source src="https://mrfiesta-pe.github.io/media/Experiencia%20Ne%C3%B3n/Experiencia%20Ne%C3%B3n4.mp4" type="video/mp4"></video></div>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -703,9 +520,9 @@
       <div class="container">
         <h2>La voz de nuestros clientes</h2>
         <div class="testimonial-carousel">
-          <div class="testimonial-card"><p>"Quedamos encantados, se notó el profesionalismo y el carisma con los chicos."</p><span>— Carolina G.</span></div>
-          <div class="testimonial-card"><p>"La pista LED y la Estación Glitter se robaron el show. ¡Recontra recomendado!"</p><span>— Henry V.</span></div>
-          <div class="testimonial-card"><p>"Llegaron puntuales, animación moderna, full juegos y música actual."</p><span>— Melissa R.</span></div>
+          <div class="testimonial-card"><p>"Quedamos encantados, profesionalismo y carisma con los chicos."</p><span>— Carolina G.</span></div>
+          <div class="testimonial-card"><p>"La pista LED y la Estación Glitter se robaron el show."</p><span>— Henry V.</span></div>
+          <div class="testimonial-card"><p>"Puntuales, animación moderna, juegos y música actual."</p><span>— Melissa R.</span></div>
           <div class="testimonial-card"><p>"El DJ puso a bailar a todos, justo lo que pedimos."</p><span>— Juan P.</span></div>
         </div>
         <div class="case-study">
@@ -733,8 +550,8 @@
             <h4>Métodos de Pago</h4>
             <ul>
               <li class="pay-row">
-                <i class="fab fa-cc-visa payment-icon visa" aria-hidden="true" title="Visa"></i>
-                <i class="fab fa-cc-mastercard payment-icon mc" aria-hidden="true" title="Mastercard"></i>
+                <i class="fab fa-cc-visa payment-icon visa" title="Visa"></i>
+                <i class="fab fa-cc-mastercard payment-icon mc" title="Mastercard"></i>
                 <span>Aceptamos todas las tarjetas (recargo 5%).</span>
               </li>
             </ul>
@@ -752,10 +569,8 @@
             <form action="https://formspree.io/f/mandladz" method="POST">
               <label for="name">Nombre</label>
               <input type="text" id="name" name="name" required>
-
               <label for="phone">Teléfono</label>
               <input type="tel" id="phone" name="phone" required>
-
               <label for="event-type">Tipo de Evento</label>
               <select id="event-type" name="event-type">
                 <option value="cumpleanos">Cumpleaños</option>
@@ -764,10 +579,8 @@
                 <option value="baby-shower">Baby Shower</option>
                 <option value="otro">Otro</option>
               </select>
-
               <label for="message">Mensaje</label>
               <textarea id="message" name="message" rows="5" required></textarea>
-
               <button type="submit">Enviar Solicitud</button>
             </form>
           </div>
@@ -776,11 +589,9 @@
     </section>
   </main>
 
-  <footer>
-    <div class="container"><p>&copy; 2025 Mr Fiesta. Todos los derechos reservados.</p></div>
-  </footer>
+  <footer><div class="container"><p>&copy; 2025 Mr Fiesta. Todos los derechos reservados. · build v5</p></div></footer>
 
-  <!-- Botón flotante WhatsApp (id para JS dinámico) -->
+  <!-- WhatsApp flotante -->
   <a href="https://wa.me/51902602362" id="waFloat" class="whatsapp-button" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
     <i class="fab fa-whatsapp"></i><span class="whatsapp-label">Escríbenos</span>
   </a>
@@ -820,214 +631,83 @@
   </div>
 
   <script>
-    // ==== Señalamos que HAY JS para aplicar el layout móvil correcto ====
-    document.documentElement.classList.add('has-js');
+    // Recalcular --header-h por si cambia alto del header
+    function setHeaderHeightVar(){try{const h=document.querySelector('header').getBoundingClientRect().height;if(h)document.documentElement.style.setProperty('--header-h',Math.round(h)+'px')}catch(e){}}
+    setHeaderHeightVar(); window.addEventListener('load',setHeaderHeightVar); window.addEventListener('resize',setHeaderHeightVar);
 
-    // ==== Recalcular --header-h para que el panel móvil no quede tapado ====
-    function setHeaderHeightVar(){
-      try{
-        const h = document.querySelector('header').getBoundingClientRect().height;
-        if(h) document.documentElement.style.setProperty('--header-h', Math.round(h)+'px');
-      }catch(e){}
-    }
-    setHeaderHeightVar();
-    window.addEventListener('load', setHeaderHeightVar);
-    window.addEventListener('resize', setHeaderHeightVar);
+    // Forzar autoplay (iOS/Android)
+    (function(){const v=document.getElementById('hero-video');if(!v)return;const tryPlay=()=>{const p=v.play&&v.play();if(p&&typeof p.then==='function'){p.catch(()=>{const once=()=>{v.play().finally(()=>document.removeEventListener('click',once))};document.addEventListener('click',once,{once:true})})}};v.muted=true;v.setAttribute('playsinline','');v.setAttribute('autoplay','');if(v.readyState>=2)tryPlay();else v.addEventListener('loadeddata',tryPlay,{once:true});})();
 
-    // Forzar autoplay en navegadores que lo bloquean hasta interacción
-    (function () {
-      const v = document.getElementById('hero-video');
-      if (!v) return;
-      const tryPlay = () => {
-        const p = v.play && v.play();
-        if (p && typeof p.then === 'function') {
-          p.catch(() => {
-            const once = () => { v.play().finally(() => document.removeEventListener('click', once)); };
-            document.addEventListener('click', once, { once: true });
-          });
-        }
-      };
-      v.muted = true; v.setAttribute('playsinline',''); v.setAttribute('autoplay','');
-      if (v.readyState >= 2) tryPlay(); else v.addEventListener('loadeddata', tryPlay, { once:true });
+    // Galería: desmutear en play
+    document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('#gallery video').forEach(v=>{v.muted=false;v.autoplay=false;v.addEventListener('play',()=>{v.muted=false},{once:true})})});
+
+    // Cerrar panel móvil al tocar un enlace
+    (function(){
+      const toggle=document.getElementById('navToggle');
+      const nav=document.getElementById('primaryNav');
+      if(toggle&&nav){
+        nav.addEventListener('click',e=>{
+          if(e.target.closest('a')) toggle.checked=false;
+        });
+      }
     })();
 
-    // Quitar mute por defecto en galería
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('#gallery video').forEach(v => {
-        v.muted = false; v.autoplay = false;
-        v.addEventListener('play', () => { v.muted = false; }, { once:true });
-      });
-    });
-
-    // ------ MENÚ HAMBURGUESA ------
+    // Modal "Cotizar"
     (function(){
-      const btn = document.getElementById('hamburger');
-      const nav = document.getElementById('primaryNav');
-      const overlay = document.getElementById('navOverlay');
+      const modal=document.getElementById('quoteModal');
+      const inpPackage=document.getElementById('q-package');
+      const inpName=document.getElementById('q-name');
+      const inpDate=document.getElementById('q-date');
+      const inpDistrict=document.getElementById('q-district');
+      const btnSend=document.getElementById('quoteSend');
+      const btnClose=document.getElementById('quoteClose');
+      const btnCancel=document.getElementById('quoteCancel');
+      const WA_NUMBER='51902602362';
 
-      function openNav(){
-        document.body.classList.add('nav-open');
-        btn.classList.add('active');
-        nav.classList.add('active');
-        overlay.classList.add('active');
-        btn.setAttribute('aria-expanded','true');
-      }
-      function closeNav(){
-        document.body.classList.remove('nav-open');
-        btn.classList.remove('active');
-        nav.classList.remove('active');
-        overlay.classList.remove('active');
-        btn.setAttribute('aria-expanded','false');
-      }
-      function toggleNav(){ (nav.classList.contains('active') ? closeNav() : openNav()); }
-
-      btn.addEventListener('click', toggleNav);
-      overlay.addEventListener('click', closeNav);
-      document.addEventListener('keydown', e => { if(e.key === 'Escape') closeNav(); });
-
-      // Cerrar al hacer click en cualquier enlace del menú
-      nav.addEventListener('click', (e)=>{
-        const a = e.target.closest('a[data-close="nav"]');
-        if(a) closeNav();
-      });
-
-      // Si cambia a desktop, asegúrate de cerrar
-      let lastW = window.innerWidth;
-      window.addEventListener('resize', () => {
-        const now = window.innerWidth;
-        if (lastW <= 900 && now > 900) closeNav();
-        lastW = now;
-      });
-    })();
-
-    // Modal "Cotizar rápido"
-    (function(){
-      const modal = document.getElementById('quoteModal');
-      const inpPackage = document.getElementById('q-package');
-      const inpName = document.getElementById('q-name');
-      const inpDate = document.getElementById('q-date');
-      const inpDistrict = document.getElementById('q-district');
-      const btnSend = document.getElementById('quoteSend');
-      const btnClose = document.getElementById('quoteClose');
-      const btnCancel = document.getElementById('quoteCancel');
-      const WA_NUMBER = '51902602362';
-
-      const openModal = (pkg) => {
-        inpPackage.value = pkg || 'Paquete/Servicio';
-        modal.style.display = 'flex';
-        try{
-          const tzOffset = (new Date()).getTimezoneOffset()*60000;
-          const todayLocal = (new Date(Date.now() - tzOffset)).toISOString().slice(0,10);
-          inpDate.value = todayLocal;
-        }catch(e){}
+      const openModal=(pkg)=>{
+        inpPackage.value=pkg||'Paquete/Servicio';
+        modal.style.display='flex';
+        try{const tz=(new Date()).getTimezoneOffset()*60000;const today=(new Date(Date.now()-tz)).toISOString().slice(0,10);inpDate.value=today;}catch(e){}
         inpName.focus();
       };
-      const closeModal = () => { modal.style.display = 'none'; };
+      const closeModal=()=>{modal.style.display='none'};
 
-      document.addEventListener('click', (e) => {
-        const btn = e.target.closest('.cotizar-button');
-        if(!btn) return;
+      document.addEventListener('click',e=>{
+        const btn=e.target.closest('.cotizar-button'); if(!btn) return;
         e.preventDefault();
-        const pkg = btn.getAttribute('data-package') || 'Servicio';
-        window._mfLastPackage = pkg;                 // recordamos el último paquete/servicio
-        if (window._mfUpdateWALabel) window._mfUpdateWALabel(); // actualiza etiqueta del botón WA
+        const pkg=btn.getAttribute('data-package')||'Servicio';
+        window._mfLastPackage=pkg;
+        if(window._mfUpdateWALabel) window._mfUpdateWALabel();
         openModal(pkg);
       });
 
-      btnClose.addEventListener('click', closeModal);
-      btnCancel.addEventListener('click', closeModal);
-      modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+      btnClose.addEventListener('click',closeModal);
+      btnCancel.addEventListener('click',closeModal);
+      modal.addEventListener('click',e=>{if(e.target===modal) closeModal()});
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.style.display==='flex') closeModal()});
 
-      btnSend.addEventListener('click', () => {
-        const name = inpName.value.trim();
-        const date = inpDate.value;
-        const district = inpDistrict.value.trim();
-        const pkg = inpPackage.value.trim();
-        if(!name || !date || !district){
-          alert('Por favor completa Nombre, Fecha y Distrito.');
-          return;
-        }
-        const msg = `Hola, quiero cotizar *${pkg}*.\n` +
-                    `• Nombre: ${name}\n` +
-                    `• Fecha: ${date}\n` +
-                    `• Distrito/Ciudad: ${district}\n` +
-                    `¿Me brindas la disponibilidad y el costo, por favor?`;
-        const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-        window.open(url, '_blank', 'noopener');
+      btnSend.addEventListener('click',()=>{
+        const name=inpName.value.trim(), date=inpDate.value, district=inpDistrict.value.trim(), pkg=inpPackage.value.trim();
+        if(!name||!date||!district){alert('Por favor completa Nombre, Fecha y Distrito.');return;}
+        const msg=`Hola, quiero cotizar *${pkg}*.\n• Nombre: ${name}\n• Fecha: ${date}\n• Distrito/Ciudad: ${district}\n¿Me brindas la disponibilidad y el costo, por favor?`;
+        window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank','noopener');
         closeModal();
       });
-
-      document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modal.style.display === 'flex') closeModal(); });
     })();
 
-    // Botón WhatsApp: detecta sección visible, prefija servicio/paquete y CAMBIA ETIQUETA dinámicamente
+    // Botón WhatsApp inteligente
     (function(){
-      const waBtn = document.getElementById('waFloat') || document.querySelector('.whatsapp-button');
-      if(!waBtn) return;
-      const waLabel = waBtn.querySelector('.whatsapp-label');
-
-      // Tomamos el número desde el href del botón para evitar duplicar configuración
-      const href = waBtn.getAttribute('href') || '';
-      const match = href.match(/wa\.me\/(\d+)/);
-      const WA_NUMBER = (match && match[1]) || '51902602362';
-
-      // Secciones que queremos detectar -> etiqueta legible
-      const sectionsMap = {
-        'chicoteca-paquetes': 'Paquetes de Chicoteca',
-        'quinceanos': 'Servicio de Quinceaños',
-        'pista-led': 'Pista LED',
-        'hora-loca': 'Hora Loca',
-        'decoracion': 'Decoración Temática',
-        'karaoke': 'Karaoke',
-        'fotografia-filmacion': 'Fotografía y Filmación',
-        'invitaciones': 'Invitaciones'
-      };
-
-      let currentService = null;
-
-      // Utilidad para recortar etiquetas largas en el botón
-      const trim = (s, n=28) => (s && s.length > n) ? (s.slice(0, n-1) + '…') : s;
-
-      // Función que arma el texto del botón y el aria-label
-      function updateLabel(){
-        const base = 'Escríbenos';
-        const target = (window._mfLastPackage && String(window._mfLastPackage).trim())
-          ? window._mfLastPackage.trim()
-          : (currentService || '');
-        const finalLabel = target ? `${base} · ${trim(target)}` : base;
-        if (waLabel) waLabel.textContent = finalLabel;
-        waBtn.setAttribute('aria-label', finalLabel + ' por WhatsApp');
-      }
-      window._mfUpdateWALabel = updateLabel; // para que otros scripts puedan invocarla
-
-      // Observador para actualizar "currentService" según la sección visible
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting && sectionsMap[entry.target.id]) {
-            currentService = sectionsMap[entry.target.id];
-            updateLabel();
-          }
-        });
-      }, { threshold: 0.5 });
-
-      Object.keys(sectionsMap).forEach(id => {
-        const el = document.getElementById(id);
-        if (el) observer.observe(el);
-      });
-
-      // Inicializa etiqueta al cargar
-      updateLabel();
-
-      // Click del botón: prioriza el último paquete clicado; si no, usa la sección actual
-      waBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const pkg = (window._mfLastPackage && String(window._mfLastPackage).trim())
-          ? window._mfLastPackage.trim()
-          : (currentService || 'Mr Fiesta');
-        const msg = `Hola, vengo desde la web y me interesa *${pkg}*. ¿Me brindas disponibilidad y costo, por favor?`;
-        const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-        window.open(url, '_blank', 'noopener');
-      });
+      const waBtn=document.getElementById('waFloat'); if(!waBtn) return;
+      const waLabel=waBtn.querySelector('.whatsapp-label');
+      const href=waBtn.getAttribute('href')||''; const m=href.match(/wa\.me\/(\d+)/); const WA=(m&&m[1])||'51902602362';
+      const sectionsMap={'chicoteca-paquetes':'Paquetes de Chicoteca','quinceanos':'Servicio de Quinceaños','pista-led':'Pista LED','hora-loca':'Hora Loca','decoracion':'Decoración Temática','karaoke':'Karaoke','fotografia-filmacion':'Fotografía y Filmación','invitaciones':'Invitaciones'};
+      let current=null; const trim=(s,n=28)=>s&&s.length>n?(s.slice(0,n-1)+'…'):s;
+      function update(){const base='Escríbenos';const tgt=(window._mfLastPackage&&String(window._mfLastPackage).trim())?window._mfLastPackage.trim():(current||'');const final=tgt?`${base} · ${trim(tgt)}`:base; if(waLabel) waLabel.textContent=final; waBtn.setAttribute('aria-label',final+' por WhatsApp');}
+      window._mfUpdateWALabel=update;
+      const obs=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting&&sectionsMap[en.target.id]){current=sectionsMap[en.target.id];update();}})},{threshold:.5});
+      Object.keys(sectionsMap).forEach(id=>{const el=document.getElementById(id); if(el) obs.observe(el);});
+      update();
+      waBtn.addEventListener('click',e=>{e.preventDefault();const pkg=(window._mfLastPackage&&String(window._mfLastPackage).trim())?window._mfLastPackage.trim():(current||'Mr Fiesta');const msg=`Hola, vengo desde la web y me interesa *${pkg}*. ¿Me brindas disponibilidad y costo, por favor?`;window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`,'_blank','noopener');});
     })();
   </script>
 </body>
