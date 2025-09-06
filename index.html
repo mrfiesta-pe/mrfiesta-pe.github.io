@@ -14,12 +14,15 @@
       --color-bg-dark:#121212;
       --color-text-light:#F0F0F0;
       --whats:#25D366;
+      --header-h:64px; /* alto header aprox para móviles */
     }
+    html{ scroll-behavior:smooth; }
     body{
       font-family:'Poppins',sans-serif;
       background:#121212; color:#F0F0F0;
       margin:0; overflow-x:hidden; line-height:1.6;
     }
+    body.nav-open{ overflow:hidden; } /* bloquear scroll cuando el menú está abierto */
     .container{ max-width:1200px; margin:0 auto; padding:0 20px; }
 
     /* Header */
@@ -28,10 +31,53 @@
     .logo{ display:flex; align-items:center; }
     .logo img{ max-width:60px; height:auto; margin-right:10px; }
     .logo h1{ margin:0; font-size:1.5rem; background:linear-gradient(90deg,#FF00FF,#00FFFF); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+    /* Nav links (desktop base) */
     .nav-links{ list-style:none; display:flex; margin:0; padding:0; }
     .nav-links li{ margin-left:25px; }
     .nav-links a{ color:#F0F0F0; text-decoration:none; font-weight:600; }
     .nav-links a:hover{ color:var(--color-secondary); }
+
+    /* Botón hamburguesa */
+    .hamburger{
+      display:none; /* visible solo en móvil */
+      width:42px; height:42px; border-radius:10px;
+      border:1px solid #2e2e2e; background:#1b1b1b; color:#fff;
+      align-items:center; justify-content:center; cursor:pointer;
+      margin-left:12px;
+    }
+    .hamburger span{
+      display:block; width:22px; height:2px; background:#fff; margin:5px auto; transition:.25s;
+    }
+    .hamburger.active span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+    .hamburger.active span:nth-child(2){ opacity:0; }
+    .hamburger.active span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+    /* Overlay para cerrar tocando fuera */
+    .nav-overlay{
+      position:fixed; inset:0; background:rgba(0,0,0,.45); backdrop-filter:blur(2px);
+      opacity:0; visibility:hidden; transition:.25s; z-index:999;
+    }
+    .nav-overlay.active{ opacity:1; visibility:visible; }
+
+    /* Menú móvil (panel lateral) */
+    @media (max-width: 900px){
+      .nav-links{
+        position:fixed; top:calc(var(--header-h)); right:0;
+        height:calc(100vh - var(--header-h));
+        width:min(320px, 82vw);
+        background:#151515; border-left:1px solid #2a2a2a;
+        box-shadow:-20px 0 60px rgba(0,0,0,.55);
+        flex-direction:column; align-items:flex-start; padding:18px;
+        transform:translateX(110%); transition:transform .25s ease;
+        z-index:1000;
+      }
+      .nav-links.active{ transform:translateX(0); }
+      .nav-links li{ margin:8px 0; }
+      .nav-links a{ display:block; padding:10px 12px; border-radius:8px; }
+      .nav-links a:active{ background:#1f1f1f; }
+      .hamburger{ display:inline-flex; }
+    }
 
     /* Hero */
     #hero{ position:relative; height:100vh; display:flex; justify-content:center; align-items:center; text-align:center; overflow:hidden; padding-top:60px; }
@@ -43,7 +89,8 @@
     .cta-button{ display:inline-block; background:linear-gradient(45deg,var(--color-primary),var(--color-secondary)); padding:12px 30px; border-radius:50px; color:#121212; font-weight:700; text-decoration:none; box-shadow:0 0 15px rgba(0,255,255,.5),0 0 30px rgba(138,43,226,.5); transition:.3s; }
     .cta-button:hover{ transform:scale(1.05); }
 
-    section{ padding:80px 0; }
+    /* Compensa header fijo al hacer scroll a anclas */
+    section{ padding:80px 0; scroll-margin-top:calc(var(--header-h) + 12px); }
     h2{ font-size:clamp(2rem,5vw,2.5rem); text-align:center; margin-bottom:50px; background:linear-gradient(90deg,var(--color-primary),var(--color-secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 
     /* About */
@@ -194,16 +241,25 @@
           <img src="https://mrfiesta-pe.github.io/logo-mrfiesta.png" alt="Logo Mr Fiesta">
           <h1>MR FIESTA</h1>
         </div>
-        <ul class="nav-links">
-          <li><a href="#about">Nosotros</a></li>
-          <li><a href="#services">Servicios</a></li>
-          <li><a href="#gallery">Galería</a></li>
-          <li><a href="#testimonials">Testimonios</a></li>
-          <li><a href="#contact">Contacto</a></li>
+
+        <!-- Botón hamburguesa -->
+        <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false" aria-controls="primaryNav">
+          <span></span><span></span><span></span>
+        </button>
+
+        <!-- Menú principal -->
+        <ul class="nav-links" id="primaryNav">
+          <li><a href="#about" data-close="nav">Nosotros</a></li>
+          <li><a href="#services" data-close="nav">Servicios</a></li>
+          <li><a href="#gallery" data-close="nav">Galería</a></li>
+          <li><a href="#testimonials" data-close="nav">Testimonios</a></li>
+          <li><a href="#contact" data-close="nav">Contacto</a></li>
         </ul>
       </nav>
     </div>
   </header>
+  <!-- Overlay para móvil -->
+  <div class="nav-overlay" id="navOverlay"></div>
 
   <main>
     <!-- HERO -->
@@ -787,6 +843,47 @@
         v.addEventListener('play', () => { v.muted = false; }, { once:true });
       });
     });
+
+    // ------ MENÚ HAMBURGUESA ------
+    (function(){
+      const btn = document.getElementById('hamburger');
+      const nav = document.getElementById('primaryNav');
+      const overlay = document.getElementById('navOverlay');
+
+      function openNav(){
+        document.body.classList.add('nav-open');
+        btn.classList.add('active');
+        nav.classList.add('active');
+        overlay.classList.add('active');
+        btn.setAttribute('aria-expanded','true');
+      }
+      function closeNav(){
+        document.body.classList.remove('nav-open');
+        btn.classList.remove('active');
+        nav.classList.remove('active');
+        overlay.classList.remove('active');
+        btn.setAttribute('aria-expanded','false');
+      }
+      function toggleNav(){ (nav.classList.contains('active') ? closeNav() : openNav()); }
+
+      btn.addEventListener('click', toggleNav);
+      overlay.addEventListener('click', closeNav);
+      document.addEventListener('keydown', e => { if(e.key === 'Escape') closeNav(); });
+
+      // Cerrar al hacer click en cualquier enlace del menú
+      nav.addEventListener('click', (e)=>{
+        const a = e.target.closest('a[data-close="nav"]');
+        if(a) closeNav();
+      });
+
+      // Si se redimensiona a desktop, asegúrate de cerrar
+      let lastW = window.innerWidth;
+      window.addEventListener('resize', () => {
+        const now = window.innerWidth;
+        if (lastW <= 900 && now > 900) closeNav();
+        lastW = now;
+      });
+    })();
 
     // Modal "Cotizar rápido"
     (function(){
