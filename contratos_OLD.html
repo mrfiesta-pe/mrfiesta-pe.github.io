@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. Fiesta - Generador Pro V10</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff007f;
+            --bg-dark: #090a0f;
+            --bg-card: rgba(15, 15, 25, 0.95);
+            --text-light: #e0e0e0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(255, 0, 127, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.15) 0%, transparent 50%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-logo { text-align: center; margin-bottom: 20px; }
+        .header-logo img { max-width: 250px; filter: drop-shadow(0 0 10px var(--neon-pink)); }
+
+        .container { display: flex; flex-wrap: wrap; gap: 20px; width: 100%; max-width: 1200px; justify-content: center; }
+
+        .card {
+            background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px;
+            padding: 25px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(255, 0, 127, 0.05);
+            backdrop-filter: blur(10px); flex: 1; min-width: 320px; max-width: 600px;
+        }
+
+        h2 { color: #fff; text-align: center; margin-bottom: 20px; text-transform: uppercase; font-weight: 800; letter-spacing: 2px; text-shadow: 0 0 10px var(--neon-blue); }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: var(--neon-blue); font-size: 0.9rem; font-weight: 600; }
+        
+        input, select, textarea {
+            width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 8px; color: #fff; font-size: 1rem; transition: all 0.3s ease;
+        }
+        
+        textarea { resize: vertical; min-height: 120px; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 127, 0.3); }
+
+        .row { display: flex; gap: 15px; }
+        .row .form-group { flex: 1; }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        button { flex: 1; min-width: 140px; padding: 12px; border: none; border-radius: 8px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; font-size: 0.85rem; }
+        .btn-primary { background: linear-gradient(45deg, var(--neon-pink), #ff5e00); color: white; box-shadow: 0 0 15px rgba(255, 0, 127, 0.4); }
+        .btn-primary:hover { box-shadow: 0 0 25px rgba(255, 0, 127, 0.8); transform: translateY(-2px); }
+        
+        .btn-whatsapp { background: linear-gradient(45deg, #25D366, #128C7E); color: white; box-shadow: 0 0 15px rgba(37, 211, 102, 0.4); }
+        .btn-whatsapp:hover { box-shadow: 0 0 25px rgba(37, 211, 102, 0.8); transform: translateY(-2px); }
+        
+        /* NUEVO BOTON CALENDAR */
+        .btn-calendar { background: linear-gradient(45deg, #4285F4, #0b51c5); color: white; box-shadow: 0 0 15px rgba(66, 133, 244, 0.4); }
+        .btn-calendar:hover { box-shadow: 0 0 25px rgba(66, 133, 244, 0.8); transform: translateY(-2px); }
+
+        .btn-secondary { background: transparent; border: 1px solid var(--neon-blue); color: var(--neon-blue); width: 100%; margin-top: 10px; }
+        .btn-secondary:hover { background: rgba(0, 243, 255, 0.1); }
+
+        .agenda-list { list-style: none; max-height: 400px; overflow-y: auto; padding-right: 5px; }
+        .agenda-list::-webkit-scrollbar { width: 8px; }
+        .agenda-list::-webkit-scrollbar-thumb { background: var(--neon-pink); border-radius: 4px; }
+        .agenda-item { background: rgba(0, 0, 0, 0.6); border-left: 4px solid var(--neon-blue); padding: 15px; margin-bottom: 10px; border-radius: 0 8px 8px 0; display: flex; justify-content: space-between; align-items: center; }
+        .agenda-item.urgent { border-left-color: var(--neon-pink); }
+        .agenda-info strong { color: #fff; display: block; font-size: 1.1rem; }
+        .agenda-info span { color: #aaa; font-size: 0.85rem; }
+        .delete-btn { background: transparent; border: none; color: #ff4444; cursor: pointer; font-size: 1.2rem; padding: 5px; }
+        .delete-btn:hover { color: #ff0000; transform: scale(1.1); }
+
+        #saldoContainer { margin-top: 10px; padding: 10px; background: rgba(0, 243, 255, 0.1); border: 1px dashed var(--neon-blue); border-radius: 5px; text-align: center; font-size: 1.2rem; font-weight: bold; color: var(--neon-blue); }
+        .footer-info { margin-top: 30px; text-align: center; font-size: 0.8rem; color: #888; }
+    </style>
+</head>
+<body>
+
+    <div class="header-logo">
+        <img id="logoImg" src="prueba de logo fiel.webp" alt="Mr. Fiesta Logo" onerror="this.style.display='none'">
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h2>Generar Contrato Pro</h2>
+            <form id="contratoForm">
+                <div class="form-group">
+                    <label>Nombre del Cliente (o del agasajado)</label>
+                    <input type="text" id="cliente" placeholder="Ej: Milley Pérez">
+                </div>
+                
+                <div class="row">
+                    <div class="form-group">
+                        <label>DNI</label>
+                        <input type="text" id="dni" placeholder="12345678">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono Cliente</label>
+                        <input type="text" id="telefonoCli" placeholder="987654321">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Fecha del Evento</label>
+                        <input type="date" id="fechaEvento">
+                    </div>
+                    <div class="form-group">
+                        <label>Hora Inicio</label>
+                        <input type="time" id="horaEvento">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Distrito / Zona</label>
+                    <input type="text" id="lugar" placeholder="Ej: VMT, Surco...">
+                </div>
+
+                <div class="form-group">
+                    <label>Dirección Exacta</label>
+                    <input type="text" id="direccion" placeholder="Av. Siempre Viva 123">
+                </div>
+
+                <div class="form-group">
+                    <label>Paquete a Contratar</label>
+                    <select id="paqueteSelect" onchange="actualizarPaquete()">
+                        <option value="">-- Selecciona un Paquete --</option>
+                        <option value="Just Dance & Karaoke Party">Just Dance & Karaoke Party</option>
+                        <option value="Chicoteca en casa">Chicoteca en casa</option>
+                        <option value="Experiencia Neón">Experiencia Neón</option>
+                        <option value="Ultra Chicoteca LED">Ultra Chicoteca LED</option>
+                        <option value="Ultra Chicoteca + Decoración">Ultra Chicoteca + Decoración</option>
+                        <option value="Personalizado">✏️ Personalizado (Llenado manual)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Detalle del Servicio (Editable)</label>
+                    <textarea id="detalleServicio" placeholder="Los detalles del paquete aparecerán aquí..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Adicionales / Requerimientos Extra (Opcional)</label>
+                    <textarea id="adicionales" placeholder="Ej: Decoración temática, toldo, sillas, proyector extra..."></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Costo Total (S/)</label>
+                        <input type="number" id="total" placeholder="500" oninput="calcularSaldo()">
+                    </div>
+                    <div class="form-group">
+                        <label>Adelanto (S/)</label>
+                        <input type="number" id="adelanto" placeholder="100" oninput="calcularSaldo()">
+                    </div>
+                </div>
+
+                <div id="saldoContainer">Saldo Pendiente: S/ 0.00</div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn-primary" onclick="generarYGuardarPDF()">📄 Descargar PDF</button>
+                    <button type="button" class="btn-whatsapp" onclick="enviarWhatsApp()">📲 WhatsApp</button>
+                    <button type="button" class="btn-calendar" onclick="agendarEnGoogle()">🗓️ Google Calendar</button>
+                </div>
+                <button type="button" class="btn-secondary" onclick="limpiarFormulario()">Limpiar Campos</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>📅 Agenda Local</h2>
+            <ul class="agenda-list" id="agendaList"></ul>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        Mr. Fiesta | 📱 902 602 362 | <a href="https://mrfiesta-pe.github.io/" style="color:var(--neon-blue);">Web</a>
+    </div>
+
+    <script>
+        let jsPDF;
+        let logoBase64 = ""; 
+        let firmaBase64 = "";
+
+        function optimizarImagen(url, maxWidth, callback) {
+            const img = new Image();
+            img.crossOrigin = "Anonymous"; 
+            
+            img.onload = function() {
+                const canvas = document.createElement("canvas");
+                let width = img.width;
+                let height = img.height;
+                
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                
+                ctx.clearRect(0, 0, width, height);
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                callback(canvas.toDataURL("image/png"));
+            };
+            
+            img.onerror = function() { callback(""); };
+            img.src = url;
+        }
+
+        window.onload = () => {
+            if (window.jspdf && window.jspdf.jsPDF) { jsPDF = window.jspdf.jsPDF; }
+            optimizarImagen("prueba de logo fiel.webp", 400, (b64) => { logoBase64 = b64; });
+            optimizarImagen("firma_andre.png", 300, (b64) => { firmaBase64 = b64; });
+            cargarAgenda();
+        };
+
+        const descripcionesPaquetes = {
+            "Just Dance & Karaoke Party": "• 1 DJ en vivo\n• Parlante profesional\n• Proyector + ecran con trípode portátil\n• 2 micrófonos inalámbricos\n• Just Dance y Karaoke\n• 6 luces inteligentes con trípode\n\n*Nota: No incluye movilidad.*",
+            "Chicoteca en casa": "• 2 horas de animación\n• Animador(a) + DJ\n• Juegos y bailes guiados\n• Luces tipo discoteca y neón\n• Just Dance o Karaoke\n• Invitación virtual\n• Mini hora loca (incluye globos pencil, pulseras neón y accesorios LED)\n• Movilidad incluida (zonas seleccionadas)",
+            "Experiencia Neón": "• 3 horas de evento (1 hr glitter y tatuajes neón + 2 hrs animación con animador/a)\n• Juegos modernos + mini hora loca\n• Accesorios LED\n• DJ + sonido profesional\n• Luces inteligentes + luz UV\n• Proyector gigante (Just dance y Karaoke)\n• Máquina de humo o burbujas\n• Movilidad incluida",
+            "Ultra Chicoteca LED": "• 3 horas de experiencia (1 hr estación Glitter + 2 hrs show Chicoteca LED)\n• Pista LED 3x2 metros\n• 1 Animador(a) + 1 Staff + DJ + Maquilladora\n• Luces inteligentes + láser\n• Proyección láser del nombre\n• Proyector + ecran gigante para Just Dance y Karaoke\n• Juegos de competencia de acuerdo a la edad\n• Máquina de humo o burbujas\n• Mini hora loca LED (Globos pencil, pulseras neón, limbo, salta soga, burbujas)\n• Movilidad incluida",
+            "Ultra Chicoteca + Decoración": "• 4 horas de experiencia (1 hr estación Glitter + 2 hrs animación + 1 hr de DJ extra)\n• Decoración temática base Neón / Glow (Backing con cartel neón happy birthday, 3 mesas acrílicas o cilindros decorativos, accesorios para torta y bocaditos)\n• Pista LED 3x2 metros\n• Animador(a) + staff + DJ + maquilladora\n• Proyector + ecran para Just Dance y Karaoke\n• Mini hora loca LED (globos pencil, pulseras neón y accesorios LED, limbo y salta soga)\n• Movilidad incluida",
+            "Personalizado": ""
+        };
+
+        function actualizarPaquete() {
+            const select = document.getElementById("paqueteSelect");
+            const textarea = document.getElementById("detalleServicio");
+            const paquete = select.value;
+
+            if (paquete && descripcionesPaquetes[paquete] !== undefined) {
+                textarea.value = descripcionesPaquetes[paquete];
+                if (paquete === "Personalizado") {
+                    textarea.placeholder = "Describe aquí detalladamente todo lo que incluye el servicio...";
+                }
+            } else {
+                textarea.value = "";
+            }
+        }
+
+        function calcularSaldo() {
+            const total = parseFloat(document.getElementById("total").value) || 0;
+            const adelanto = parseFloat(document.getElementById("adelanto").value) || 0;
+            const saldo = total - adelanto;
+            document.getElementById("saldoContainer").innerText = `Saldo Pendiente: S/ ${saldo.toFixed(2)}`;
+            return saldo;
+        }
+
+        function generarNumeroContrato() {
+            const fecha = new Date();
+            const año = fecha.getFullYear().toString().slice(-2);
+            const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+            const aleatorio = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `MRF-${año}${mes}-${aleatorio}`;
+        }
+
+        function formatearFecha(fechaStr) {
+            const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
+            const fecha = new Date(fechaStr + 'T00:00:00');
+            return fecha.toLocaleDateString('es-ES', opciones);
+        }
+
+        // ==========================================
+        // NUEVA FUNCIÓN: GOOGLE CALENDAR
+        // ==========================================
+        function agendarEnGoogle() {
+            const cliente = document.getElementById('cliente').value.trim();
+            const fechaStr = document.getElementById('fechaEvento').value;
+            const horaStr = document.getElementById('horaEvento').value;
+            const lugar = document.getElementById('lugar').value;
+            const direccion = document.getElementById('direccion').value;
+            const paquete = document.getElementById('paqueteSelect').value || "Evento";
+            const saldo = calcularSaldo().toFixed(2);
+
+            if(!cliente || !fechaStr || !horaStr) {
+                alert("❌ Para agendar en Google necesitas llenar el Nombre, la Fecha y la Hora del evento.");
+                return;
+            }
+
+            // Crear fechas para Google (Formato YYYYMMDDTHHMMSS)
+            // Calculamos 4 horas de duración promedio por defecto
+            const fechaInicio = new Date(`${fechaStr}T${horaStr}:00`);
+            const fechaFin = new Date(fechaInicio.getTime() + (4 * 60 * 60 * 1000));
+
+            const formatGoogleDate = (date) => {
+                return date.toISOString().replace(/-|:|\.\d\d\d/g, "");
+            };
+
+            const startDate = formatGoogleDate(fechaInicio);
+            const endDate = formatGoogleDate(fechaFin);
+
+            const titulo = encodeURIComponent(`MR FIESTA: ${paquete} - ${cliente}`);
+            const locacion = encodeURIComponent(`${direccion}, ${lugar}`);
+            const descripcion = encodeURIComponent(
+                `🎉 EVENTO CONFIRMADO\n` +
+                `👤 Cliente: ${cliente}\n` +
+                `📦 Paquete: ${paquete}\n` +
+                `💰 Saldo a cobrar al llegar: S/ ${saldo}\n` +
+                `📞 Teléfono: ${document.getElementById("telefonoCli").value}\n\n` +
+                `*Generado desde Mr. Fiesta App*`
+            );
+
+            // Armar URL de Google Calendar
+            const urlCalendar = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${titulo}&dates=${startDate}/${endDate}&details=${descripcion}&location=${locacion}`;
+
+            // Abrir en nueva pestaña
+            window.open(urlCalendar, '_blank');
+            
+            // Guardar localmente también
+            const datosLocal = { id: Date.now(), cliente, fechaRaw: fechaStr, fechaFormato: formatearFecha(fechaStr), lugar, saldo };
+            guardarEnAgenda(datosLocal);
+        }
+
+        // ==========================================
+        // PDF Y WHATSAPP 
+        // ==========================================
+        function generarPDF(descargar = true) {
+            const clienteVal = document.getElementById('cliente').value.trim();
+            const lugarVal = document.getElementById('lugar').value.trim();
+            const paqueteVal = document.getElementById("paqueteSelect").value || document.getElementById("detalleServicio").value.trim();
+            
+            if(!clienteVal) { alert("❌ FALTA DATO: Por favor, ingresa el nombre del cliente."); return null; }
+            if(!lugarVal) { alert("❌ FALTA DATO: Por favor, ingresa el distrito o lugar."); return null; }
+            if(!paqueteVal) { alert("❌ FALTA DATO: Selecciona un paquete o escribe el detalle del servicio."); return null; }
+
+            try {
+                const numContrato = generarNumeroContrato();
+                const cliente = clienteVal.toUpperCase();
+                const dni = document.getElementById("dni").value || "No especificado";
+                const fechaEventoStr = document.getElementById("fechaEvento").value;
+                const fechaEvento = fechaEventoStr ? formatearFecha(fechaEventoStr) : "No especificada";
+                const horaEvento = document.getElementById("horaEvento").value || "No especificada";
+                const lugar = lugarVal;
+                const direccion = document.getElementById("direccion").value || "No especificada";
+                
+                const paqueteNombre = document.getElementById("paqueteSelect").value || "Personalizado";
+                const detalleServicio = document.getElementById("detalleServicio").value || "Servicios acordados mutuamente.";
+                const adicionales = document.getElementById("adicionales").value;
+
+                const total = (parseFloat(document.getElementById("total").value) || 0).toFixed(2);
+                const adelanto = (parseFloat(document.getElementById("adelanto").value) || 0).toFixed(2);
+                const saldo = calcularSaldo().toFixed(2);
+
+                const doc = new jsPDF();
+                
+                const addFooter = (docInst) => {
+                    const totalPages = docInst.internal.getNumberOfPages();
+                    for (let i = 1; i <= totalPages; i++) {
+                        docInst.setPage(i);
+                        docInst.setFillColor(13, 13, 18);
+                        docInst.rect(0, 275, 210, 22, "F");
+                        docInst.setFillColor(255, 0, 127);
+                        docInst.rect(0, 275, 210, 1, "F");
+                        
+                        docInst.setTextColor(255, 255, 255);
+                        docInst.setFont("helvetica", "normal");
+                        docInst.setFontSize(8);
+                        docInst.text("Web: mrfiesta-pe.github.io | Tel: 961 770 164 - 902 602 362 | Correo: mrfiesta.lima@gmail.com", 105, 282, {align: "center"});
+                        docInst.text("Facebook: Mr. Fiesta Lima | Instagram: @mrfiesta_lima | TikTok: @mrfiesta", 105, 287, {align: "center"});
+                        docInst.text(`Página ${i} de ${totalPages}`, 195, 292, {align: "right"});
+                    }
+                };
+
+                doc.setFillColor(13, 13, 18);
+                doc.rect(0, 0, 210, 40, "F");
+
+                if (logoBase64) {
+                    try { doc.addImage(logoBase64, 'PNG', 15, 5, 40, 30, 'logo', 'FAST'); } catch(e) { }
+                }
+
+                doc.setTextColor(255, 0, 127);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(24);
+                doc.text("MR. FIESTA", 70, 20);
+                
+                doc.setTextColor(0, 243, 255);
+                doc.setFontSize(12);
+                doc.text("Contrato de Prestación de Servicios", 70, 28);
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(10);
+                doc.text(`N° ${numContrato}`, 160, 20);
+
+                doc.setTextColor(30, 30, 30);
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(10);
+                
+                const hoy = new Date().toLocaleDateString('es-ES');
+                let y = 50;
+                doc.text(`Fecha de emisión: ${hoy}`, 15, y); y+=8;
+
+                doc.setFont("helvetica", "bold");
+                doc.text("1. DATOS DEL CLIENTE Y EVENTO", 15, y); y+=6;
+                doc.setFont("helvetica", "normal");
+                doc.text(`Cliente / Agasajado: ${cliente}`, 15, y); y+=5;
+                doc.text(`DNI/RUC: ${dni}`, 15, y); y+=5;
+                doc.text(`Fecha del evento: ${fechaEvento} | Hora de inicio: ${horaEvento}`, 15, y); y+=5;
+                doc.text(`Lugar: ${lugar} - ${direccion}`, 15, y); y+=8;
+
+                doc.setFont("helvetica", "bold");
+                doc.text(`2. DETALLES DEL PAQUETE: ${paqueteNombre.toUpperCase()}`, 15, y); y+=6;
+                doc.setFont("helvetica", "normal");
+                
+                doc.setFontSize(9);
+                const detalleLineas = doc.splitTextToSize(`Incluye:\n${detalleServicio}`, 180);
+                doc.text(detalleLineas, 15, y);
+                y += (detalleLineas.length * 4.5) + 3;
+
+                if (adicionales.trim() !== "") {
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Servicios Adicionales:", 15, y); y+=5;
+                    doc.setFont("helvetica", "normal");
+                    const adicLineas = doc.splitTextToSize(adicionales, 180);
+                    doc.text(adicLineas, 15, y);
+                    y += (adicLineas.length * 4.5) + 3;
+                }
+
+                doc.setFontSize(10);
+                y += 5; 
+                doc.setFillColor(245, 245, 245);
+                doc.rect(15, y, 180, 20, "F");
+                doc.setDrawColor(0, 243, 255);
+                doc.rect(15, y, 180, 20, "S");
+                y+=6;
+
+                doc.setFont("helvetica", "bold");
+                doc.text("3. CONDICIONES ECONÓMICAS", 20, y); y+=7;
+                doc.setFont("helvetica", "normal");
+                doc.text(`Costo Total: S/ ${total}`, 20, y); 
+                doc.text(`Adelanto: S/ ${adelanto}`, 80, y); 
+                doc.setTextColor(255, 0, 0);
+                doc.setFont("helvetica", "bold");
+                doc.text(`Saldo a Pagar: S/ ${saldo}`, 140, y); 
+                
+                y += 20;
+                doc.setTextColor(80, 80, 80);
+                doc.setFont("helvetica", "italic");
+                doc.setFontSize(8);
+                doc.text("* Las cláusulas y términos de este contrato se encuentran detalladas en la Página 2 del presente documento.", 15, y);
+
+                y = 245; 
+                if (firmaBase64) {
+                    try { doc.addImage(firmaBase64, 'PNG', 125, 222, 50, 22, 'firma', 'FAST'); } catch(e) {}
+                }
+                doc.setDrawColor(0,0,0);
+                doc.line(25, y, 95, y); 
+                doc.line(115, y, 185, y); 
+                
+                y += 5;
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(9);
+                doc.setTextColor(30, 30, 30);
+                
+                doc.text(cliente, 60, y, {align: "center", maxWidth: 70}); 
+                doc.text("JOSÉ ANDRÉ HIDALGO A.", 150, y, {align: "center"}); 
+                
+                y += 4;
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(8);
+                doc.text("EL CLIENTE", 60, y, {align: "center"}); 
+                doc.text("MR. FIESTA", 150, y, {align: "center"}); 
+
+                doc.addPage();
+                
+                doc.setFillColor(13, 13, 18);
+                doc.rect(0, 0, 210, 15, "F");
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(10);
+                doc.text(`ANEXO DE TÉRMINOS Y CONDICIONES - Contrato N° ${numContrato}`, 105, 10, {align: "center"});
+
+                doc.setTextColor(30, 30, 30);
+                y = 30; 
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(11);
+                doc.text("4. TÉRMINOS Y CONDICIONES DEL SERVICIO", 15, y); y+=8;
+                
+                doc.setFontSize(9.5); 
+
+                const clausulas = [
+                    { t: "1. PAGOS Y CANCELACIONES", b: true },
+                    { t: "1.1. Reserva y Saldo: La reserva se confirma con un pago adelantado. El cliente cancelará el saldo el mismo día del evento, OBLIGATORIAMENTE antes de instalar los equipos.", b: false },
+                    { t: "1.2. Cancelaciones: En caso de anulación por el cliente, el dinero de la reserva NO SERÁ REEMBOLSADO bajo ninguna circunstancia.", b: false },
+                    { t: "2. PUNTUALIDAD Y EVENTO", b: true },
+                    { t: "2.1. Hora de Inicio: El tiempo comienza a la hora estipulada en este documento. Se brindará una tolerancia máxima de 10 minutos a favor del cliente para iniciar el show.", b: false },
+                    { t: "3. MOVILIDAD Y LOGÍSTICA", b: true },
+                    { t: "3.1. Traslado: La movilidad se rige según el paquete contratado. Si el paquete indica movilidad incluida, cubre zonas seleccionadas. Para paquetes que no la incluyen o distritos alejados, se coordinará un recargo adicional previamente.", b: false },
+                    { t: "4. OBLIGACIONES DEL CLIENTE (ESPACIO Y ENERGÍA)", b: true },
+                    { t: "4.1. Suministro Eléctrico y Daños: El cliente debe proveer energía estable. Nuestra empresa no se responsabiliza por cortes o variaciones de voltaje del local. Si nuestros equipos sufren daños por esto, el cliente asumirá el 100% de la reparación.", b: false },
+                    { t: "5. RESPONSABILIDAD Y SEGURIDAD", b: true },
+                    { t: "5.1. Protección y Daños: En caso de que algún equipo resulte dañado (golpes, derrames), robado o extraviado por acción de invitados, el cliente deberá asumir la totalidad de los costos de reparación.", b: false }
+                ];
+
+                clausulas.forEach(item => {
+                    doc.setFont("helvetica", item.b ? "bold" : "normal");
+                    const lines = doc.splitTextToSize(item.t, 180);
+                    doc.text(lines, 15, y);
+                    y += (lines.length * 5) + 2.5; 
+                });
+
+                addFooter(doc);
+
+                if (descargar) {
+                    let safeName = cliente.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                    doc.save(`Contrato_${safeName}_${numContrato}.pdf`);
+                }
+
+                return { id: Date.now(), cliente, fechaRaw: fechaEventoStr, fechaFormato: fechaEvento, lugar, saldo };
+                
+            } catch (error) {
+                alert("Hubo un error al crear el PDF. Detalles técnicos: " + error.message);
+                return null;
+            }
+        }
+
+        function generarYGuardarPDF() {
+            if (!window.jspdf) return alert("Cargando el generador... espera un segundo o recarga la página.");
+            const datos = generarPDF(true);
+            if(datos) { guardarEnAgenda(datos); alert("✅ Contrato generado con éxito."); }
+        }
+
+        function enviarWhatsApp() {
+            const cliente = document.getElementById("cliente").value;
+            const telefonoCli = document.getElementById("telefonoCli").value;
+            
+            if(!cliente || !telefonoCli) { alert("❌ FALTA DATO: Se necesita el nombre y número de teléfono del cliente para WhatsApp."); return; }
+
+            const paquete = document.getElementById("paqueteSelect").value || "Personalizado";
+            const detalle = document.getElementById("detalleServicio").value;
+            const adicionales = document.getElementById("adicionales").value;
+            const fechaStr = document.getElementById("fechaEvento").value;
+            const hora = document.getElementById("horaEvento").value;
+            const saldo = calcularSaldo().toFixed(2);
+            
+            const fechaFormat = fechaStr ? formatearFecha(fechaStr) : "No especificada";
+            let textoAdicional = adicionales ? `\n➕ *Adicionales:* ${adicionales}` : "";
+
+            const mensaje = `¡Hola ${cliente}! 🎉\nSomos *MR. FIESTA* 🪩\n\nTu reserva ha sido registrada exitosamente.\n📋 *Detalles:*\n- Paquete: ${paquete}\n- Fecha: ${fechaFormat} a las ${hora}\n\n🔐 *Para confirmar la reserva al 100%, recuerda realizar tu adelanto (S/ 100 Económico / S/ 200 Ultra) mediante:*\n\n✅ *Yape o Plin:* 961770164\n(A nombre de: José André Hidalgo Anticona)\n\n🏦 *Transferencia BCP:*\nCuenta: 19378091874079\nCCI: 00219317809187407912\n\n⚠️ *Saldo pendiente a cancelar el día del evento:* S/ ${saldo}\n\n¡Gracias por confiar en nosotros para armar la fiesta! 🚀\n\n🌐 Conócenos más: https://mrfiesta-pe.github.io/`;
+
+            const urlWA = `https://wa.me/51${telefonoCli}?text=${encodeURIComponent(mensaje)}`;
+            window.open(urlWA, '_blank');
+            
+            const datos = generarPDF(false); 
+            if(datos) guardarEnAgenda(datos);
+        }
+
+        function guardarEnAgenda(datos) {
+            try {
+                let agenda = JSON.parse(localStorage.getItem('mrfiesta_agenda')) || [];
+                agenda.push(datos);
+                agenda.sort((a, b) => new Date(a.fechaRaw) - new Date(b.fechaRaw));
+                localStorage.setItem('mrfiesta_agenda', JSON.stringify(agenda));
+                cargarAgenda();
+            } catch(e) {}
+        }
+
+        function cargarAgenda() {
+            try {
+                const lista = document.getElementById('agendaList');
+                lista.innerHTML = '';
+                const agenda = JSON.parse(localStorage.getItem('mrfiesta_agenda')) || [];
+                const hoy = new Date(); hoy.setHours(0,0,0,0);
+
+                if(agenda.length === 0) {
+                    lista.innerHTML = '<li style="text-align:center; color:#888;">No hay eventos próximos</li>'; return;
+                }
+
+                agenda.forEach(evento => {
+                    const fechaEvento = new Date(evento.fechaRaw + 'T00:00:00');
+                    const diffDias = Math.ceil((fechaEvento - hoy) / (1000 * 60 * 60 * 24));
+                    if(diffDias < -1) return; 
+
+                    const claseUrgent = (diffDias >= 0 && diffDias <= 3) ? 'urgent' : '';
+                    const li = document.createElement('li');
+                    li.className = `agenda-item ${claseUrgent}`;
+                    li.innerHTML = `
+                        <div class="agenda-info">
+                            <strong>${evento.cliente} - ${evento.lugar}</strong>
+                            <span>📅 ${evento.fechaFormato} | Saldo: S/${evento.saldo}</span>
+                        </div>
+                        <button class="delete-btn" onclick="borrarEvento(${evento.id})">✖</button>
+                    `;
+                    lista.appendChild(li);
+                });
+            } catch(e) {}
+        }
+
+        function borrarEvento(id) {
+            if(confirm("¿Eliminar este evento?")) {
+                let agenda = JSON.parse(localStorage.getItem('mrfiesta_agenda')) || [];
+                agenda = agenda.filter(e => e.id !== id);
+                localStorage.setItem('mrfiesta_agenda', JSON.stringify(agenda));
+                cargarAgenda();
+            }
+        }
+
+        function limpiarFormulario() {
+            document.getElementById("contratoForm").reset();
+            document.getElementById("detalleServicio").value = "";
+            document.getElementById("saldoContainer").innerText = "Saldo Pendiente: S/ 0.00";
+        }
+    </script>
+</body>
+</html>
