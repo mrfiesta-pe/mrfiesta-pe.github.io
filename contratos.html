@@ -21,692 +21,1191 @@
       --yellow: #ffcb3d;
       --red: #ff5d6c;
       --shadow: 0 10px 35px rgba(0,0,0,0.35);
-      --radius: 12px;
-      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --radius: 18px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--bg);
-      background-image: 
-        radial-gradient(circle at 15% 0%, rgba(255, 47, 146, 0.12) 0%, transparent 40%),
-        radial-gradient(circle at 85% 100%, rgba(0, 234, 255, 0.12) 0%, transparent 40%);
+      font-family: 'Poppins', sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,47,146,0.18), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(0,234,255,0.15), transparent 30%),
+        linear-gradient(180deg, #07080d 0%, #090b13 100%);
       color: var(--text);
       min-height: 100vh;
+      padding: 24px;
+    }
+
+    .app {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+    }
+
+    .topbar {
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      padding: 20px;
+      gap: 16px;
+      flex-wrap: wrap;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px 22px;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
     }
 
-    .brand-header {
-      text-align: center;
-      margin-bottom: 25px;
-      animation: fadeInDown 0.8s ease;
-    }
-    .brand-header img {
-      max-width: 200px;
-      filter: drop-shadow(0 0 15px rgba(255, 47, 146, 0.4));
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
-    .app-container {
-      width: 100%;
-      max-width: 1000px;
+    .brand-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--pink), var(--blue));
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 0 22px rgba(255,47,146,0.35);
+    }
+
+    .brand h1 {
+      font-size: 1.4rem;
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 20px;
+    }
+
+    .card {
       background: var(--card);
       border: 1px solid var(--line);
       border-radius: var(--radius);
+      padding: 22px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(15px);
-      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .card-title {
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
-    /* TABS */
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid var(--line);
-      background: rgba(0,0,0,0.2);
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 18px;
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-size: 1rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: var(--transition);
-      position: relative;
-    }
-    .tab-btn::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; width: 100%; height: 3px;
-      background: linear-gradient(90deg, var(--pink), var(--blue));
-      transform: scaleX(0);
-      transition: transform 0.3s ease;
-    }
-    .tab-btn.active { color: #fff; }
-    .tab-btn.active::after { transform: scaleX(1); }
-    .tab-btn:hover:not(.active) { color: #fff; background: rgba(255,255,255,0.03); }
-
-    /* CONTENT PANELS */
-    .panel { display: none; padding: 30px; animation: fadeIn 0.4s ease; }
-    .panel.active { display: block; }
-
-    /* FORM GROUPS & GRIDS */
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-    .form-group.full { grid-column: 1 / -1; }
-    
-    label { font-size: 0.85rem; color: var(--blue); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    
-    input, select, textarea {
-      width: 100%; padding: 14px 16px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px; color: #fff; font-size: 0.95rem; transition: var(--transition);
-    }
-    textarea { resize: vertical; min-height: 100px; }
-    input:focus, select:focus, textarea:focus { 
-      outline: none; border-color: var(--pink); box-shadow: 0 0 15px rgba(255, 47, 146, 0.2); background: rgba(0,0,0,0.5);
-    }
-
-    /* SALDO BADGE */
-    .saldo-badge {
-      background: rgba(0, 234, 255, 0.08);
-      border: 1px dashed var(--blue);
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-      font-size: 1.3rem;
+    .card-title h2 {
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
       font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .grid-2, .grid-3, .grid-4 {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
       color: var(--blue);
-      margin: 20px 0;
-      letter-spacing: 1px;
     }
 
-    /* BUTTONS */
-    .action-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px; }
+    input, select, textarea {
+      width: 100%;
+      background: rgba(5, 7, 15, 0.7);
+      color: white;
+      border: 1px solid rgba(0,234,255,0.18);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: inherit;
+      transition: 0.2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(255,47,146,0.13);
+    }
+
+    textarea {
+      min-height: 118px;
+      resize: vertical;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 14px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+    }
+
+    .stat strong {
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .status-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .badge.reservado { background: rgba(255,203,61,0.13); color: #ffd45b; border-color: rgba(255,203,61,0.25); }
+    .badge.pagado { background: rgba(39,209,127,0.12); color: #6df0aa; border-color: rgba(39,209,127,0.24); }
+    .badge.pendiente { background: rgba(255,93,108,0.12); color: #ff7d89; border-color: rgba(255,93,108,0.22); }
+
     .btn {
-      padding: 14px 20px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.95rem;
-      text-transform: uppercase; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: var(--transition);
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+      color: white;
     }
-    .btn:active { transform: scale(0.98); }
-    
-    .btn-pdf { background: linear-gradient(135deg, var(--pink), #cc156b); color: white; box-shadow: 0 5px 15px rgba(255, 47, 146, 0.3); }
-    .btn-pdf:hover { box-shadow: 0 8px 25px rgba(255, 47, 146, 0.5); transform: translateY(-2px); }
-    
-    .btn-wa { background: linear-gradient(135deg, #25D366, #1da851); color: white; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); }
-    .btn-wa:hover { box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5); transform: translateY(-2px); }
-    
-    .btn-cal { background: linear-gradient(135deg, #4285F4, #2a65c9); color: white; box-shadow: 0 5px 15px rgba(66, 133, 244, 0.3); }
-    .btn-cal:hover { box-shadow: 0 8px 25px rgba(66, 133, 244, 0.5); transform: translateY(-2px); }
 
-    .btn-clear { background: transparent; border: 1px solid var(--muted); color: var(--muted); grid-column: 1 / -1; }
-    .btn-clear:hover { background: rgba(255,255,255,0.05); color: #fff; border-color: #fff; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn.primary { background: linear-gradient(135deg, var(--pink), #ff7b31); box-shadow: 0 0 18px rgba(255,47,146,0.35); }
+    .btn.blue { background: linear-gradient(135deg, #2e7cff, #00c7ff); box-shadow: 0 0 18px rgba(0,199,255,0.25); }
+    .btn.green { background: linear-gradient(135deg, #16c95d, #25d366); box-shadow: 0 0 18px rgba(37,211,102,0.24); }
+    .btn.dark { background: rgba(255,255,255,0.03); border: 1px solid var(--line); color: var(--text); }
+    .btn.red { background: linear-gradient(135deg, #ff4e63, #df2841); }
 
-    /* AGENDA STYLES */
-    .agenda-tools { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px; flex-wrap: wrap;}
-    .search-bar { flex: 1; min-width: 250px; position: relative; }
-    .search-bar input { padding-left: 35px; border-radius: 20px; }
-    .search-bar::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; opacity: 0.6; }
-    
-    .data-tools button { padding: 8px 15px; font-size: 0.8rem; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--line); color: var(--muted); cursor: pointer; transition: 0.2s;}
-    .data-tools button:hover { background: rgba(255,255,255,0.1); color: #fff; }
-
-    .agenda-grid { display: grid; gap: 15px; max-height: 60vh; overflow-y: auto; padding-right: 5px; }
-    .agenda-grid::-webkit-scrollbar { width: 6px; }
-    .agenda-grid::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
-
-    .event-card {
-      background: rgba(0,0,0,0.4); border-left: 4px solid var(--blue); border-radius: 8px; padding: 18px;
-      display: flex; justify-content: space-between; align-items: center; transition: var(--transition);
+    .actions, .mini-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .event-card:hover { background: rgba(0,0,0,0.6); transform: translateX(5px); }
-    .event-card.urgent { border-left-color: var(--pink); }
-    .event-card.past { border-left-color: var(--muted); opacity: 0.6; }
-    
-    .ev-info h3 { margin: 0 0 5px 0; font-size: 1.1rem; color: #fff; }
-    .ev-details { font-size: 0.85rem; color: var(--muted); display: flex; gap: 15px; flex-wrap: wrap; }
-    .ev-details span { display: flex; align-items: center; gap: 5px; }
-    .ev-tag { font-size: 0.7rem; padding: 3px 8px; border-radius: 12px; background: rgba(255,255,255,0.1); font-weight: 600; text-transform: uppercase; }
-    .tag-urgent { background: rgba(255, 47, 146, 0.2); color: var(--pink); }
 
-    .ev-actions button { background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.6; transition: 0.2s; padding: 5px;}
-    .ev-actions button:hover { opacity: 1; transform: scale(1.1); }
-    .btn-del { color: var(--red); }
-    .btn-wa-small { color: var(--green); }
+    .actions .btn { flex: 1 1 180px; }
 
-    /* FOOTER */
-    .footer-links { text-align: center; margin-top: 30px; font-size: 0.8rem; color: var(--muted); }
-    .footer-links a { color: var(--blue); text-decoration: none; }
-    .footer-links a:hover { text-decoration: underline; }
+    .saldo-box {
+      margin-top: 14px;
+      background: rgba(0,234,255,0.08);
+      border: 1px dashed rgba(0,234,255,0.35);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    .saldo-box strong {
+      font-size: 1.15rem;
+    }
 
-    @media (max-width: 600px) {
-      .panel { padding: 20px 15px; }
-      .action-bar { grid-template-columns: 1fr; }
-      .event-card { flex-direction: column; align-items: flex-start; gap: 15px; }
-      .ev-actions { width: 100%; display: flex; justify-content: flex-end; border-top: 1px solid var(--line); padding-top: 10px; }
+    .saldo-box small {
+      color: var(--muted);
+      display: block;
+      margin-top: 4px;
+    }
+
+    .recomendacion {
+      margin-top: 14px;
+      border: 1px solid rgba(255,47,146,0.18);
+      background: rgba(255,47,146,0.06);
+      border-radius: 14px;
+      padding: 14px;
+      color: #ffd6e8;
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .agenda-list {
+      display: grid;
+      gap: 12px;
+      max-height: 760px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .agenda-item {
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--blue);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(255,255,255,0.02);
+      display: grid;
+      gap: 10px;
+    }
+
+    .agenda-item.urgent { border-left-color: var(--pink); }
+    .agenda-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 10px;
+    }
+
+    .agenda-top strong {
+      font-size: 1rem;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .agenda-meta {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .agenda-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 22px;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.84rem;
+      padding-bottom: 6px;
+    }
+
+    @media (max-width: 1150px) {
+      .layout { grid-template-columns: 1fr; }
+      .stat-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 14px; }
+      .grid-2, .grid-3, .grid-4, .stat-grid { grid-template-columns: 1fr; }
+      .topbar { padding: 16px; }
+      .card { padding: 16px; }
     }
   </style>
 </head>
 <body>
-
-  <div class="brand-header">
-    <img id="logoImg" src="prueba de logo fiel.webp" alt="Mr. Fiesta" onerror="this.style.display='none'">
-    <img id="imgFirma" src="firma_andre.png" alt="Firma" style="display:none;">
-  </div>
-
-  <div class="app-container">
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('tab-nuevo', this)">📝 Nuevo Contrato</button>
-      <button class="tab-btn" onclick="switchTab('tab-agenda', this)">📅 Agenda</button>
-    </div>
-
-    <div id="tab-nuevo" class="panel active">
-      <form id="contratoForm">
-        <div class="form-grid">
-          <div class="form-group full">
-            <label>👤 Cliente / Agasajado</label>
-            <input type="text" id="cliente" placeholder="Ej: Milley Pérez" autocomplete="off">
-          </div>
-          
-          <div class="form-group">
-            <label>🆔 DNI / RUC</label>
-            <input type="text" id="dni" placeholder="Opcional" autocomplete="off">
-          </div>
-          
-          <div class="form-group">
-            <label>📱 Teléfono / WhatsApp</label>
-            <input type="text" id="telefono" placeholder="987654321" autocomplete="off">
-          </div>
-
-          <div class="form-group">
-            <label>📅 Fecha del Evento</label>
-            <input type="date" id="fechaEvento">
-          </div>
-
-          <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div>
-              <label>🕒 Inicio</label>
-              <input type="time" id="horaInicio">
-            </div>
-            <div>
-              <label>⏳ Fin (Aprox)</label>
-              <input type="time" id="horaFin">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>📍 Distrito / Zona</label>
-            <input type="text" id="lugar" placeholder="Ej: Surco, VMT...">
-          </div>
-
-          <div class="form-group">
-            <label>🏠 Dirección Exacta</label>
-            <input type="text" id="direccion" placeholder="Av. Los Rosales 123">
-          </div>
-
-          <div class="form-group full">
-            <label>📦 Paquete Principal</label>
-            <select id="paqueteSelect" onchange="autoFillPaquete()">
-              <option value="">-- Seleccionar --</option>
-              <option value="Just Dance & Karaoke Party">Just Dance & Karaoke Party</option>
-              <option value="Chicoteca en casa">Chicoteca en casa</option>
-              <option value="Experiencia Neón">Experiencia Neón</option>
-              <option value="Ultra Chicoteca LED">Ultra Chicoteca LED</option>
-              <option value="Ultra Chicoteca + Decoración">Ultra Chicoteca + Decoración</option>
-              <option value="Personalizado">✏️ Personalizado (Escribir abajo)</option>
-            </select>
-          </div>
-
-          <div class="form-group full">
-            <label>📋 Detalle del Servicio (Editable)</label>
-            <textarea id="detalleServicio" placeholder="Descripción de lo que incluye..."></textarea>
-          </div>
-
-          <div class="form-group full">
-            <label>➕ Adicionales / Notas Extras</label>
-            <textarea id="adicionales" placeholder="Hora loca extra, toldo, sillas, proyector..."></textarea>
-          </div>
-
-          <div class="form-group">
-            <label>💵 Costo Total (S/)</label>
-            <input type="number" id="costoTotal" placeholder="0.00" oninput="calcSaldo()">
-          </div>
-
-          <div class="form-group">
-            <label>💳 Adelanto / Reserva (S/)</label>
-            <input type="number" id="adelanto" placeholder="0.00" oninput="calcSaldo()">
-          </div>
-        </div>
-
-        <div class="saldo-badge" id="saldoContainer">
-          SALDO A COBRAR: S/ 0.00
-        </div>
-
-        <div class="action-bar">
-          <button type="button" class="btn btn-pdf" onclick="generarContrato('pdf')">📄 Crear PDF</button>
-          <button type="button" class="btn btn-wa" onclick="generarContrato('wa')">📲 Enviar WA</button>
-          <button type="button" class="btn btn-cal" onclick="agendarGoogle()">🗓️ Calendar</button>
-          <button type="button" class="btn btn-clear" onclick="limpiarForm()">🧹 Limpiar Todo</button>
-        </div>
-      </form>
-    </div>
-
-    <div id="tab-agenda" class="panel">
-      <div class="agenda-tools">
-        <div class="search-bar">
-          <input type="text" id="searchInput" placeholder="Buscar cliente o distrito..." onkeyup="filtrarAgenda()">
-        </div>
-        <div class="data-tools">
-          <button onclick="exportarAgendaJSON()">⬇️ Respaldar Datos</button>
-          <button onclick="importarAgendaJSON()">⬆️ Restaurar</button>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">MF</div>
+        <div>
+          <h1>MR FIESTA<br />EVENT MANAGER V2</h1>
+          <p>Gestor de contratos, agenda, clientes y pagos</p>
         </div>
       </div>
-      
-      <div class="agenda-grid" id="agendaList">
-        </div>
-    </div>
-  </div>
+      <div class="top-actions">
+        <button class="btn dark" type="button" onclick="exportarAgendaJSON()">⬇ Exportar agenda</button>
+        <button class="btn dark" type="button" onclick="importarAgendaJSON()">⬆ Importar agenda</button>
+      </div>
+    </header>
 
-  <div class="footer-links">
-    MR. FIESTA © 2026 | <a href="https://mrfiesta-pe.github.io/" target="_blank">Web Oficial</a> | Lima, Perú
+    <section class="card">
+      <div class="card-title">
+        <div>
+          <h2>Panel general</h2>
+          <p class="sub">Resumen automático de tus eventos guardados</p>
+        </div>
+        <div class="status-badges">
+          <span class="badge reservado">🟡 Reservado</span>
+          <span class="badge pagado">🟢 Pagado</span>
+          <span class="badge pendiente">🔴 Pendiente</span>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><span>Eventos registrados</span><strong id="statEventos">0</strong></div>
+        <div class="stat"><span>Total facturado</span><strong id="statFacturado">S/ 0</strong></div>
+        <div class="stat"><span>Total adelantado</span><strong id="statAdelantos">S/ 0</strong></div>
+        <div class="stat"><span>Saldo pendiente</span><strong id="statPendiente">S/ 0</strong></div>
+      </div>
+    </section>
+
+    <main class="layout">
+      <div class="stack">
+        <section class="card">
+          <div class="card-title">
+            <div>
+              <h2>Nuevo contrato / evento</h2>
+              <p class="sub">Llena los datos y genera contrato, resumen, agenda y recordatorio</p>
+            </div>
+          </div>
+
+          <form id="contratoForm">
+            <div class="grid-2">
+              <div class="field">
+                <label for="cliente">Nombre del cliente</label>
+                <input type="text" id="cliente" placeholder="Ej: María Pérez" />
+              </div>
+              <div class="field">
+                <label for="agasajado">Nombre del agasajado</label>
+                <input type="text" id="agasajado" placeholder="Ej: Valeria" />
+              </div>
+            </div>
+
+            <div class="grid-3" style="margin-top:14px;">
+              <div class="field">
+                <label for="dni">DNI / RUC</label>
+                <input type="text" id="dni" placeholder="12345678" />
+              </div>
+              <div class="field">
+                <label for="telefonoCli">Teléfono</label>
+                <input type="text" id="telefonoCli" placeholder="987654321" />
+              </div>
+              <div class="field">
+                <label for="tipoEvento">Tipo de evento</label>
+                <select id="tipoEvento">
+                  <option value="Cumpleaños">Cumpleaños</option>
+                  <option value="Quinceañero">Quinceañero</option>
+                  <option value="Promoción">Promoción</option>
+                  <option value="Baby Shower">Baby Shower</option>
+                  <option value="Evento personalizado">Evento personalizado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-4" style="margin-top:14px;">
+              <div class="field">
+                <label for="edad">Edad</label>
+                <input type="number" id="edad" placeholder="10" oninput="recomendarPaquete()" />
+              </div>
+              <div class="field">
+                <label for="invitados">Invitados aprox.</label>
+                <input type="number" id="invitados" placeholder="20" oninput="recomendarPaquete()" />
+              </div>
+              <div class="field">
+                <label for="fechaEvento">Fecha del evento</label>
+                <input type="date" id="fechaEvento" />
+              </div>
+              <div class="field">
+                <label for="horaEvento">Hora de inicio</label>
+                <input type="time" id="horaEvento" />
+              </div>
+            </div>
+
+            <div class="grid-2" style="margin-top:14px;">
+              <div class="field">
+                <label for="lugar">Distrito / zona</label>
+                <input type="text" id="lugar" placeholder="Ej: Surco" />
+              </div>
+              <div class="field">
+                <label for="direccion">Dirección exacta</label>
+                <input type="text" id="direccion" placeholder="Av. Siempre Viva 123" />
+              </div>
+            </div>
+
+            <div class="grid-3" style="margin-top:14px;">
+              <div class="field">
+                <label for="paqueteSelect">Paquete</label>
+                <select id="paqueteSelect" onchange="actualizarPaquete()">
+                  <option value="">-- Selecciona un paquete --</option>
+                  <option value="Just Dance & Karaoke Party">Just Dance & Karaoke Party</option>
+                  <option value="Chicoteca en casa">Chicoteca en casa</option>
+                  <option value="Experiencia Neón">Experiencia Neón</option>
+                  <option value="Ultra Chicoteca LED">Ultra Chicoteca LED</option>
+                  <option value="Ultra Chicoteca + Decoración">Ultra Chicoteca + Decoración</option>
+                  <option value="Personalizado">✏️ Personalizado</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="estadoPago">Estado de pago</label>
+                <select id="estadoPago">
+                  <option value="Reservado">Reservado</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="Pagado">Pagado</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="movilidad">Movilidad</label>
+                <select id="movilidad">
+                  <option value="Incluida">Incluida</option>
+                  <option value="No incluida">No incluida</option>
+                  <option value="Por coordinar">Por coordinar</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:14px;">
+              <label for="detalleServicio">Detalle del servicio</label>
+              <textarea id="detalleServicio" placeholder="Aquí aparece el detalle del paquete o lo puedes editar manualmente"></textarea>
+            </div>
+
+            <div class="grid-2" style="margin-top:14px;">
+              <div class="field">
+                <label for="adicionales">Adicionales / requerimientos</label>
+                <textarea id="adicionales" placeholder="Ej: glitter, tatuajes neón, maestro de ceremonia, 2 personajes, etc."></textarea>
+              </div>
+              <div class="field">
+                <label for="observaciones">Observaciones internas</label>
+                <textarea id="observaciones" placeholder="Notas solo para ti: piso 4, terraza, escalera angosta, cliente exigente, etc."></textarea>
+              </div>
+            </div>
+
+            <div class="grid-3" style="margin-top:14px;">
+              <div class="field">
+                <label for="total">Costo total (S/)</label>
+                <input type="number" id="total" placeholder="750" oninput="calcularSaldo()" />
+              </div>
+              <div class="field">
+                <label for="adelanto">Adelanto (S/)</label>
+                <input type="number" id="adelanto" placeholder="200" oninput="calcularSaldo()" />
+              </div>
+              <div class="field">
+                <label for="saldoManual">Saldo manual opcional</label>
+                <input type="number" id="saldoManual" placeholder="Déjalo vacío para cálculo automático" oninput="calcularSaldo()" />
+              </div>
+            </div>
+
+            <div class="saldo-box" id="saldoContainer">
+              <div>
+                <strong>Saldo pendiente: S/ 0.00</strong>
+                <small id="saldoMensaje">Ingresa total y adelanto para calcular.</small>
+              </div>
+              <div class="status-badges">
+                <span class="badge reservado" id="badgeAlerta">Adelanto normal</span>
+              </div>
+            </div>
+
+            <div class="recomendacion" id="recomendacionBox">
+              Completa edad e invitados y te sugeriré qué paquete conviene más para este evento.
+            </div>
+
+            <div class="actions" style="margin-top:16px;">
+              <button type="button" class="btn primary" onclick="generarYGuardarPDF()">📄 Descargar PDF</button>
+              <button type="button" class="btn green" onclick="enviarWhatsApp()">📲 WhatsApp</button>
+              <button type="button" class="btn blue" onclick="agendarEnGoogle()">🗓️ Google Calendar</button>
+              <button type="button" class="btn dark" onclick="copiarResumen()">📋 Copiar resumen</button>
+              <button type="button" class="btn dark" onclick="guardarEventoManual()">💾 Guardar en agenda</button>
+              <button type="button" class="btn dark" onclick="abrirMapa()">📍 Ver mapa</button>
+              <button type="button" class="btn dark" onclick="limpiarFormulario()">🧹 Limpiar</button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <aside class="stack">
+        <section class="card">
+          <div class="card-title">
+            <div>
+              <h2>Agenda de eventos</h2>
+              <p class="sub">Tus reservas quedan guardadas localmente en este navegador</p>
+            </div>
+            <div class="mini-actions">
+              <button type="button" class="btn dark" onclick="cargarAgenda()">↻ Actualizar</button>
+            </div>
+          </div>
+          <div class="agenda-list" id="agendaList"></div>
+        </section>
+      </aside>
+    </main>
+
+    <div class="footer-note">
+      MR FIESTA Event Manager V2 · pensado para comparar con tu versión anterior y elegir la mejor base
+    </div>
   </div>
 
   <script>
-    const { jsPDF } = window.jspdf;
-    const STORAGE_KEY = 'mrfiesta_db_v2';
-    
-    // Variables para las imágenes optimizadas
-    let logoBase64 = "";
-    let firmaBase64 = "";
+    let jsPDF;
+    let logoBase64 = '';
+    let firmaBase64 = '';
 
-    const bdPaquetes = {
-      "Just Dance & Karaoke Party": "• 1 DJ en vivo\n• Parlante profesional\n• Proyector + ecran con trípode portátil\n• 2 micrófonos inalámbricos\n• Just Dance y Karaoke\n• 6 luces inteligentes con trípode\n\n*Nota: No incluye movilidad.*",
-      "Chicoteca en casa": "• 2 horas de animación\n• Animador(a) + DJ\n• Juegos y bailes guiados\n• Luces tipo discoteca y neón\n• Just Dance o Karaoke\n• Invitación virtual\n• Mini hora loca (incluye globos pencil, pulseras neón y accesorios LED)\n• Movilidad incluida (zonas seleccionadas)",
-      "Experiencia Neón": "• 3 horas de evento (1 hr glitter y tatuajes neón + 2 hrs animación con animador/a)\n• Juegos modernos + mini hora loca\n• Accesorios LED\n• DJ + sonido profesional\n• Luces inteligentes + luz UV\n• Proyector gigante (Just dance y Karaoke)\n• Máquina de humo o burbujas\n• Movilidad incluida",
-      "Ultra Chicoteca LED": "• 3 horas de experiencia (1 hr estación Glitter + 2 hrs show Chicoteca LED)\n• Pista LED 3x2 metros\n• 1 Animador(a) + 1 Staff + DJ + Maquilladora\n• Luces inteligentes + láser\n• Proyección láser del nombre\n• Proyector + ecran gigante para Just Dance y Karaoke\n• Juegos de competencia de acuerdo a la edad\n• Máquina de humo o burbujas\n• Mini hora loca LED (Globos pencil, pulseras neón, limbo, salta soga, burbujas)\n• Movilidad incluida",
-      "Ultra Chicoteca + Decoración": "• 4 horas de experiencia (1 hr estación Glitter + 2 hrs animación + 1 hr de DJ extra)\n• Decoración temática base Neón / Glow (Backing con cartel neón happy birthday, 3 mesas acrílicas o cilindros decorativos, accesorios para torta y bocaditos)\n• Pista LED 3x2 metros\n• Animador(a) + staff + DJ + maquilladora\n• Proyector + ecran para Just Dance y Karaoke\n• Mini hora loca LED (globos pencil, pulseras neón y accesorios LED, limbo y salta soga)\n• Movilidad incluida"
+    const STORAGE_KEY = 'mrfiesta_agenda_v2';
+
+    const descripcionesPaquetes = {
+      "Just Dance & Karaoke Party": "• DJ en vivo\n• Parlante profesional\n• Proyector + ecran portátil\n• 2 micrófonos inalámbricos\n• Just Dance y Karaoke\n• 6 luces inteligentes con trípode\n• Ideal para fiesta rápida y económica\n\n*Nota: No incluye movilidad.*",
+      "Chicoteca en casa": "• Hasta 3 horas de diversión\n• Animador(a) + DJ profesional\n• Juegos y bailes guiados\n• Luces tipo discoteca\n• Just Dance o Karaoke\n• Mini hora loca\n• 30 minutos de DJ antes y después\n• Movilidad incluida en zonas seleccionadas",
+      "Experiencia Neón": "• 3 horas de experiencia\n• Estación glitter y tatuajes neón\n• Juegos modernos + mini hora loca\n• Accesorios LED\n• DJ + sonido profesional\n• Luces inteligentes + luz UV\n• Proyector gigante para Just Dance y Karaoke\n• Máquina de humo o burbujas\n• Movilidad incluida",
+      "Ultra Chicoteca LED": "• 3 horas de experiencia\n• Pista LED 3x2 metros\n• Animador(a) + Staff + DJ + maquilladora\n• Luces inteligentes + láser\n• Proyección láser del nombre\n• Proyector + ecran gigante\n• Juegos de competencia según la edad\n• Máquina de humo o burbujas\n• Mini hora loca LED\n• Movilidad incluida",
+      "Ultra Chicoteca + Decoración": "• 4 horas de experiencia total\n• Decoración temática base neón / glow\n• Backing con cartel Happy Birthday\n• 3 mesas acrílicas o cilindros decorativos\n• Pista LED 3x2 metros\n• Animador(a) + staff + DJ + maquilladora\n• Proyector + ecran\n• Mini hora loca LED\n• Movilidad incluida",
+      "Personalizado": ""
     };
 
-    // Función para optimizar imágenes (evita fondos negros y reduce peso)
+    const preciosPaquetes = {
+      "Just Dance & Karaoke Party": 420,
+      "Chicoteca en casa": 750,
+      "Experiencia Neón": 950,
+      "Ultra Chicoteca LED": 1290,
+      "Ultra Chicoteca + Decoración": 1490
+    };
+
+    const duracionPaquetes = {
+      "Just Dance & Karaoke Party": 2,
+      "Chicoteca en casa": 3,
+      "Experiencia Neón": 3,
+      "Ultra Chicoteca LED": 3,
+      "Ultra Chicoteca + Decoración": 4,
+      "Personalizado": 3
+    };
+
+    window.onload = () => {
+      if (window.jspdf && window.jspdf.jsPDF) jsPDF = window.jspdf.jsPDF;
+      optimizarImagen('prueba de logo fiel.webp', 500, (b64) => { logoBase64 = b64; });
+      optimizarImagen('firma_andre.png', 320, (b64) => { firmaBase64 = b64; });
+      cargarAgenda();
+      calcularSaldo();
+      recomendarPaquete();
+    };
+
     function optimizarImagen(url, maxWidth, callback) {
       const img = new Image();
-      img.crossOrigin = "Anonymous"; 
-      img.onload = function() {
-        const canvas = document.createElement("canvas");
+      img.crossOrigin = 'Anonymous';
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
         let width = img.width;
         let height = img.height;
+
         if (width > maxWidth) {
           height = Math.round((height * maxWidth) / width);
           width = maxWidth;
         }
+
         canvas.width = width;
         canvas.height = height;
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
-        callback(canvas.toDataURL("image/png"));
+        callback(canvas.toDataURL('image/png'));
       };
-      img.onerror = function() { callback(""); };
+      img.onerror = function () { callback(''); };
       img.src = url;
     }
 
-    // Inicialización
-    window.onload = () => {
-      cargarAgenda();
-      // Cargar imágenes optimizadas
-      optimizarImagen("prueba de logo fiel.webp", 400, (b64) => { logoBase64 = b64; });
-      optimizarImagen("firma_andre.png", 300, (b64) => { firmaBase64 = b64; });
-    };
+    function actualizarPaquete() {
+      const paquete = document.getElementById('paqueteSelect').value;
+      const detalle = document.getElementById('detalleServicio');
+      const total = document.getElementById('total');
 
-    function switchTab(tabId, element) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      element.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
-      if(tabId === 'tab-agenda') cargarAgenda();
-    }
-
-    function autoFillPaquete() {
-      const key = document.getElementById("paqueteSelect").value;
-      const txt = document.getElementById("detalleServicio");
-      if(bdPaquetes[key]) { txt.value = bdPaquetes[key]; }
-      else { txt.value = ""; }
-    }
-
-    function calcSaldo() {
-      const total = parseFloat(document.getElementById("costoTotal").value) || 0;
-      const adelanto = parseFloat(document.getElementById("adelanto").value) || 0;
-      const saldo = total - adelanto;
-      document.getElementById("saldoContainer").innerHTML = `SALDO A COBRAR: S/ ${saldo.toFixed(2)}`;
-      return saldo.toFixed(2);
-    }
-
-    function genContratoId() {
-      const d = new Date();
-      return `MRF-${d.getFullYear().toString().slice(-2)}${String(d.getMonth()+1).padStart(2,'0')}-${Math.floor(Math.random()*900+100)}`;
-    }
-
-    function formatDate(dateStr) {
-      if(!dateStr) return "Por definir";
-      const options = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
-      const d = new Date(dateStr + 'T12:00:00');
-      return d.toLocaleDateString('es-PE', options).replace(/^\w/, c => c.toUpperCase());
-    }
-
-    // ================== GENERACIÓN DE PDF DUAL PAGE ==================
-    function generarContrato(action) {
-      const cliente = document.getElementById('cliente').value.trim();
-      const paqueteVal = document.getElementById("paqueteSelect").value || document.getElementById("detalleServicio").value.trim();
-      
-      if(!cliente) return alert("⚠️ Ingresa el nombre del cliente.");
-      if(!paqueteVal) return alert("⚠️ Selecciona un paquete o escribe el detalle.");
-
-      const cId = genContratoId();
-      const dni = document.getElementById('dni').value || "---";
-      const tel = document.getElementById('telefono').value || "---";
-      const fRaw = document.getElementById('fechaEvento').value;
-      const fFormato = formatDate(fRaw);
-      const hIni = document.getElementById('horaInicio').value || "---";
-      const hFin = document.getElementById('horaFin').value || "---";
-      const lug = document.getElementById('lugar').value || "---";
-      const dir = document.getElementById('direccion').value || "---";
-      
-      const paqueteNom = document.getElementById("paqueteSelect").value || "Personalizado";
-      const detalle = document.getElementById("detalleServicio").value || "Servicios acordados.";
-      const adic = document.getElementById("adicionales").value;
-      
-      const tot = (parseFloat(document.getElementById("costoTotal").value)||0).toFixed(2);
-      const ade = (parseFloat(document.getElementById("adelanto").value)||0).toFixed(2);
-      const sal = calcSaldo();
-
-      // CREACIÓN DEL PDF
-      const doc = new jsPDF();
-
-      // Función del Footer para ambas páginas
-      const addFooter = (docInst) => {
-          const totalPages = docInst.internal.getNumberOfPages();
-          for (let i = 1; i <= totalPages; i++) {
-              docInst.setPage(i);
-              docInst.setFillColor(13, 13, 18);
-              docInst.rect(0, 275, 210, 22, "F");
-              docInst.setFillColor(255, 0, 127);
-              docInst.rect(0, 275, 210, 1, "F");
-              
-              docInst.setTextColor(255, 255, 255);
-              docInst.setFont("helvetica", "normal");
-              docInst.setFontSize(8);
-              docInst.text("Web: mrfiesta-pe.github.io | Tel: 961 770 164 - 902 602 362 | Correo: mrfiesta.lima@gmail.com", 105, 282, {align: "center"});
-              docInst.text("Facebook: Mr. Fiesta Lima | Instagram: @mrfiesta_lima | TikTok: @mrfiesta", 105, 287, {align: "center"});
-              docInst.text(`Página ${i} de ${totalPages}`, 195, 292, {align: "right"});
-          }
-      };
-
-      // === PÁGINA 1: DATOS Y FIRMAS ===
-      doc.setFillColor(13, 13, 18);
-      doc.rect(0, 0, 210, 40, "F");
-
-      if (logoBase64) {
-          try { doc.addImage(logoBase64, 'PNG', 15, 5, 40, 30, 'logo', 'FAST'); } catch(e) {}
+      if (descripcionesPaquetes[paquete] !== undefined) {
+        detalle.value = descripcionesPaquetes[paquete];
       }
 
-      doc.setTextColor(255, 0, 127);
-      doc.setFont("helvetica", "bold");
+      if (preciosPaquetes[paquete]) {
+        total.value = preciosPaquetes[paquete];
+      }
+
+      calcularSaldo();
+      recomendarPaquete();
+    }
+
+    function calcularSaldo() {
+      const total = parseFloat(document.getElementById('total').value) || 0;
+      const adelanto = parseFloat(document.getElementById('adelanto').value) || 0;
+      const saldoManual = document.getElementById('saldoManual').value;
+      let saldo = saldoManual !== '' ? (parseFloat(saldoManual) || 0) : total - adelanto;
+      if (saldo < 0) saldo = 0;
+
+      const box = document.getElementById('saldoContainer');
+      const mensaje = document.getElementById('saldoMensaje');
+      const badge = document.getElementById('badgeAlerta');
+      const strong = box.querySelector('strong');
+      strong.textContent = `Saldo pendiente: S/ ${saldo.toFixed(2)}`;
+
+      if (adelanto === 0 && total > 0) {
+        box.style.borderColor = 'rgba(255,93,108,0.35)';
+        mensaje.textContent = 'Aún no hay adelanto registrado.';
+        badge.textContent = 'Sin adelanto';
+        badge.className = 'badge pendiente';
+      } else if (adelanto > 0 && adelanto < 100) {
+        box.style.borderColor = 'rgba(255,203,61,0.35)';
+        mensaje.textContent = 'Adelanto bajo. Revisa si te conviene pedir más para asegurar la fecha.';
+        badge.textContent = 'Adelanto bajo';
+        badge.className = 'badge reservado';
+      } else {
+        box.style.borderColor = 'rgba(0,234,255,0.35)';
+        mensaje.textContent = 'Todo bien. Ya puedes guardar, mandar WhatsApp o generar PDF.';
+        badge.textContent = 'Adelanto normal';
+        badge.className = 'badge pagado';
+      }
+
+      return saldo;
+    }
+
+    function recomendarPaquete() {
+      const edad = parseInt(document.getElementById('edad').value) || 0;
+      const invitados = parseInt(document.getElementById('invitados').value) || 0;
+      const tipo = document.getElementById('tipoEvento').value;
+      const box = document.getElementById('recomendacionBox');
+
+      if (!edad && !invitados) {
+        box.textContent = 'Completa edad e invitados y te sugeriré qué paquete conviene más para este evento.';
+        return;
+      }
+
+      let sugerencia = '';
+
+      if (tipo === 'Quinceañero' || edad >= 14) {
+        sugerencia = invitados > 35
+          ? 'Recomendación: Ultra Chicoteca LED o Ultra Chicoteca + Decoración. Para adolescentes y grupos grandes se ve más pro, más potente y vende mejor.'
+          : 'Recomendación: Experiencia Neón o Ultra Chicoteca LED. Para adolescentes queda más visual, más moderna y más alineada al estilo discoteca.';
+      } else if (edad >= 9 && edad <= 13) {
+        sugerencia = invitados > 25
+          ? 'Recomendación: Chicoteca en casa o Experiencia Neón. Ese rango de edad funciona muy bien con juegos, DJ, proyector y mini hora loca.'
+          : 'Recomendación: Chicoteca en casa. Es el punto más equilibrado entre precio, show y cantidad de invitados.';
+      } else if (edad > 0 && edad < 9) {
+        sugerencia = invitados > 20
+          ? 'Recomendación: Chicoteca en casa con ajustes de juegos por edad. Si quieres algo más impactante, sube a Experiencia Neón.'
+          : 'Recomendación: Just Dance & Karaoke Party o Chicoteca en casa, dependiendo del presupuesto y del espacio.';
+      }
+
+      if (!sugerencia) {
+        sugerencia = 'Puedes usar un paquete personalizado y adaptar la experiencia según espacio, edad y estilo del evento.';
+      }
+
+      box.textContent = sugerencia;
+    }
+
+    function generarNumeroContrato() {
+      const fecha = new Date();
+      const año = fecha.getFullYear().toString().slice(-2);
+      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+      const dia = String(fecha.getDate()).padStart(2, '0');
+      const aleatorio = String(Math.floor(Math.random() * 900) + 100);
+      return `MRF-${año}${mes}${dia}-${aleatorio}`;
+    }
+
+    function formatearFecha(fechaStr) {
+      if (!fechaStr) return 'No especificada';
+      const fecha = new Date(fechaStr + 'T00:00:00');
+      return fecha.toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function obtenerDatosFormulario() {
+      const paquete = document.getElementById('paqueteSelect').value || 'Personalizado';
+      const total = parseFloat(document.getElementById('total').value) || 0;
+      const adelanto = parseFloat(document.getElementById('adelanto').value) || 0;
+      const saldo = calcularSaldo();
+      const estadoPago = document.getElementById('estadoPago').value;
+      const fechaRaw = document.getElementById('fechaEvento').value;
+      const telefono = document.getElementById('telefonoCli').value.trim();
+
+      return {
+        id: Date.now(),
+        cliente: document.getElementById('cliente').value.trim(),
+        agasajado: document.getElementById('agasajado').value.trim(),
+        dni: document.getElementById('dni').value.trim(),
+        telefono,
+        tipoEvento: document.getElementById('tipoEvento').value,
+        edad: document.getElementById('edad').value.trim(),
+        invitados: document.getElementById('invitados').value.trim(),
+        fechaRaw,
+        fechaFormato: formatearFecha(fechaRaw),
+        hora: document.getElementById('horaEvento').value || 'No especificada',
+        lugar: document.getElementById('lugar').value.trim(),
+        direccion: document.getElementById('direccion').value.trim(),
+        paquete,
+        detalleServicio: document.getElementById('detalleServicio').value.trim(),
+        adicionales: document.getElementById('adicionales').value.trim(),
+        observaciones: document.getElementById('observaciones').value.trim(),
+        movilidad: document.getElementById('movilidad').value,
+        estadoPago,
+        total,
+        adelanto,
+        saldo,
+        creadoEn: new Date().toISOString()
+      };
+    }
+
+    function validarDatosBase(datos) {
+      if (!datos.cliente) {
+        alert('Falta el nombre del cliente.');
+        return false;
+      }
+      if (!datos.fechaRaw) {
+        alert('Falta la fecha del evento.');
+        return false;
+      }
+      if (!datos.paquete && !datos.detalleServicio) {
+        alert('Selecciona un paquete o escribe el detalle del servicio.');
+        return false;
+      }
+      return true;
+    }
+
+    function guardarEnAgenda(datos) {
+      let agenda = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+      const existe = agenda.some(e => e.id === datos.id);
+      if (!existe) {
+        agenda.push(datos);
+      }
+
+      agenda.sort((a, b) => new Date((a.fechaRaw || '2099-12-31') + 'T00:00:00') - new Date((b.fechaRaw || '2099-12-31') + 'T00:00:00'));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(agenda));
+      cargarAgenda();
+    }
+
+    function guardarEventoManual() {
+      const datos = obtenerDatosFormulario();
+      if (!validarDatosBase(datos)) return;
+      guardarEnAgenda(datos);
+      alert('Evento guardado en la agenda.');
+    }
+
+    function cargarAgenda() {
+      const lista = document.getElementById('agendaList');
+      lista.innerHTML = '';
+      const agenda = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      const hoy = new Date();
+      hoy.setHours(0,0,0,0);
+
+      if (!agenda.length) {
+        lista.innerHTML = '<div class="empty">No hay eventos guardados todavía.</div>';
+        calcularEstadisticas();
+        return;
+      }
+
+      agenda.forEach(evento => {
+        const fechaEvento = evento.fechaRaw ? new Date(evento.fechaRaw + 'T00:00:00') : null;
+        let diffDias = 999;
+        if (fechaEvento) diffDias = Math.ceil((fechaEvento - hoy) / (1000 * 60 * 60 * 24));
+        const urgent = diffDias >= 0 && diffDias <= 3 ? 'urgent' : '';
+
+        const estadoClass = evento.estadoPago === 'Pagado'
+          ? 'pagado'
+          : evento.estadoPago === 'Pendiente'
+            ? 'pendiente'
+            : 'reservado';
+
+        const div = document.createElement('div');
+        div.className = `agenda-item ${urgent}`;
+        div.innerHTML = `
+          <div class="agenda-top">
+            <div>
+              <strong>${escapeHtml(evento.cliente)} · ${escapeHtml(evento.paquete || 'Personalizado')}</strong>
+              <div class="agenda-meta">
+                📅 ${escapeHtml(evento.fechaFormato || 'Sin fecha')} · ⏰ ${escapeHtml(evento.hora || 'Sin hora')}<br>
+                📍 ${escapeHtml(evento.lugar || 'Sin distrito')} · ${escapeHtml(evento.direccion || 'Sin dirección')}<br>
+                🎉 ${escapeHtml(evento.tipoEvento || 'Evento')} ${evento.edad ? '· ' + escapeHtml(String(evento.edad)) + ' años' : ''} ${evento.invitados ? '· ' + escapeHtml(String(evento.invitados)) + ' invitados' : ''}
+              </div>
+            </div>
+            <span class="badge ${estadoClass}">${evento.estadoPago === 'Pagado' ? '🟢 Pagado' : evento.estadoPago === 'Pendiente' ? '🔴 Pendiente' : '🟡 Reservado'}</span>
+          </div>
+          <div class="agenda-footer">
+            <div class="agenda-meta">
+              Total: S/ ${Number(evento.total || 0).toFixed(2)} · Adelanto: S/ ${Number(evento.adelanto || 0).toFixed(2)} · Saldo: S/ ${Number(evento.saldo || 0).toFixed(2)}
+            </div>
+            <div class="mini-actions">
+              <button class="btn dark" type="button" onclick="cargarEventoEnFormulario(${evento.id})">Editar</button>
+              <button class="btn red" type="button" onclick="borrarEvento(${evento.id})">Eliminar</button>
+            </div>
+          </div>
+        `;
+        lista.appendChild(div);
+      });
+
+      calcularEstadisticas();
+    }
+
+    function calcularEstadisticas() {
+      const agenda = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      let totalEventos = agenda.length;
+      let totalFacturado = 0;
+      let totalAdelantos = 0;
+      let totalPendiente = 0;
+
+      agenda.forEach(e => {
+        totalFacturado += Number(e.total || 0);
+        totalAdelantos += Number(e.adelanto || 0);
+        totalPendiente += Number(e.saldo || 0);
+      });
+
+      document.getElementById('statEventos').textContent = totalEventos;
+      document.getElementById('statFacturado').textContent = `S/ ${totalFacturado.toFixed(2)}`;
+      document.getElementById('statAdelantos').textContent = `S/ ${totalAdelantos.toFixed(2)}`;
+      document.getElementById('statPendiente').textContent = `S/ ${totalPendiente.toFixed(2)}`;
+    }
+
+    function cargarEventoEnFormulario(id) {
+      const agenda = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      const e = agenda.find(item => item.id === id);
+      if (!e) return;
+
+      document.getElementById('cliente').value = e.cliente || '';
+      document.getElementById('agasajado').value = e.agasajado || '';
+      document.getElementById('dni').value = e.dni || '';
+      document.getElementById('telefonoCli').value = e.telefono || '';
+      document.getElementById('tipoEvento').value = e.tipoEvento || 'Cumpleaños';
+      document.getElementById('edad').value = e.edad || '';
+      document.getElementById('invitados').value = e.invitados || '';
+      document.getElementById('fechaEvento').value = e.fechaRaw || '';
+      document.getElementById('horaEvento').value = e.hora && e.hora !== 'No especificada' ? e.hora : '';
+      document.getElementById('lugar').value = e.lugar || '';
+      document.getElementById('direccion').value = e.direccion || '';
+      document.getElementById('paqueteSelect').value = e.paquete || 'Personalizado';
+      document.getElementById('estadoPago').value = e.estadoPago || 'Reservado';
+      document.getElementById('movilidad').value = e.movilidad || 'Incluida';
+      document.getElementById('detalleServicio').value = e.detalleServicio || '';
+      document.getElementById('adicionales').value = e.adicionales || '';
+      document.getElementById('observaciones').value = e.observaciones || '';
+      document.getElementById('total').value = e.total || '';
+      document.getElementById('adelanto').value = e.adelanto || '';
+      document.getElementById('saldoManual').value = '';
+
+      calcularSaldo();
+      recomendarPaquete();
+      alert('Evento cargado en el formulario. Si quieres actualizarlo, elimina el antiguo y vuelve a guardarlo editado.');
+    }
+
+    function borrarEvento(id) {
+      if (!confirm('¿Eliminar este evento de la agenda?')) return;
+      let agenda = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      agenda = agenda.filter(e => e.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(agenda));
+      cargarAgenda();
+    }
+
+    function copiarResumen() {
+      const d = obtenerDatosFormulario();
+      if (!validarDatosBase(d)) return;
+
+      const mensaje = `📋 RESERVA MR FIESTA\n\nCliente: ${d.cliente}\nAgasajado: ${d.agasajado || '-'}\nTipo de evento: ${d.tipoEvento}\nPaquete: ${d.paquete}\nFecha: ${d.fechaFormato}\nHora: ${d.hora}\nLugar: ${d.lugar}\nDirección: ${d.direccion}\n\nTotal: S/ ${d.total.toFixed(2)}\nAdelanto: S/ ${d.adelanto.toFixed(2)}\nSaldo: S/ ${d.saldo.toFixed(2)}\nEstado: ${d.estadoPago}\n\nAdicionales: ${d.adicionales || 'Ninguno'}`;
+
+      navigator.clipboard.writeText(mensaje)
+        .then(() => alert('Resumen copiado al portapapeles.'))
+        .catch(() => alert('No se pudo copiar automáticamente, pero el navegador lo bloqueó.'));
+    }
+
+    function abrirMapa() {
+      const direccion = document.getElementById('direccion').value.trim();
+      const lugar = document.getElementById('lugar').value.trim();
+      const query = `${direccion} ${lugar}`.trim();
+      if (!query) {
+        alert('Primero escribe la dirección o el distrito.');
+        return;
+      }
+      const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(query);
+      window.open(url, '_blank');
+    }
+
+    function agendarEnGoogle() {
+      const d = obtenerDatosFormulario();
+      if (!validarDatosBase(d)) return;
+      if (!d.hora || d.hora === 'No especificada') {
+        alert('Falta la hora del evento para abrir Google Calendar.');
+        return;
+      }
+
+      const fechaInicio = new Date(`${d.fechaRaw}T${d.hora}:00`);
+      const horas = duracionPaquetes[d.paquete] || 3;
+      const fechaFin = new Date(fechaInicio.getTime() + horas * 60 * 60 * 1000);
+
+      const formatGoogleDate = (date) => date.toISOString().replace(/-|:|\.\d{3}/g, '');
+
+      const text = encodeURIComponent(`MR FIESTA · ${d.paquete} · ${d.cliente}`);
+      const details = encodeURIComponent(
+        `Cliente: ${d.cliente}\nAgasajado: ${d.agasajado || '-'}\nTipo: ${d.tipoEvento}\nSaldo pendiente: S/ ${d.saldo.toFixed(2)}\nTeléfono: ${d.telefono || '-'}\nAdicionales: ${d.adicionales || 'Ninguno'}\nObservaciones: ${d.observaciones || 'Ninguna'}`
+      );
+      const location = encodeURIComponent(`${d.direccion}, ${d.lugar}`);
+
+      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${formatGoogleDate(fechaInicio)}/${formatGoogleDate(fechaFin)}&details=${details}&location=${location}`;
+      window.open(url, '_blank');
+      guardarEnAgenda(d);
+    }
+
+    function enviarWhatsApp() {
+      const d = obtenerDatosFormulario();
+      if (!validarDatosBase(d)) return;
+      if (!d.telefono) {
+        alert('Falta el número del cliente.');
+        return;
+      }
+
+      const mensaje = `¡Hola ${d.cliente}! 🎉\nTe escribe André de MR FIESTA.\n\nTu reserva ha sido registrada con estos datos:\n\n📦 Paquete: ${d.paquete}\n📅 Fecha: ${d.fechaFormato}\n⏰ Hora: ${d.hora}\n📍 Lugar: ${d.lugar}\n\n💰 Total: S/ ${d.total.toFixed(2)}\n💵 Adelanto: S/ ${d.adelanto.toFixed(2)}\n⚠️ Saldo pendiente: S/ ${d.saldo.toFixed(2)}\n\n✅ Yape / Plin: 961770164\nA nombre de José André Hidalgo Anticona\n\n🏦 BCP: 19378091874079\nCCI: 00219317809187407912\n\nGracias por confiar en MR FIESTA. ✨`;
+
+      const numero = d.telefono.replace(/\D/g, '');
+      const url = `https://wa.me/51${numero}?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, '_blank');
+      guardarEnAgenda(d);
+    }
+
+    function generarPDF(descargar = true) {
+      const d = obtenerDatosFormulario();
+      if (!validarDatosBase(d)) return null;
+      if (!jsPDF) {
+        alert('No cargó jsPDF todavía. Recarga la página.');
+        return null;
+      }
+
+      const numContrato = generarNumeroContrato();
+      const doc = new jsPDF();
+
+      const agregarMarcaAgua = (docInst) => {
+        if (!logoBase64) return;
+        try {
+          docInst.saveGraphicsState();
+          docInst.setGState(new docInst.GState({ opacity: 0.055 }));
+          docInst.addImage(logoBase64, 'PNG', 32, 82, 145, 105, 'watermark', 'FAST');
+          docInst.restoreGraphicsState();
+        } catch (e) {}
+      };
+
+      const addFooter = (docInst) => {
+        const totalPages = docInst.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+          docInst.setPage(i);
+          docInst.setFillColor(13, 13, 18);
+          docInst.rect(0, 275, 210, 22, 'F');
+          docInst.setFillColor(255, 47, 146);
+          docInst.rect(0, 275, 210, 1, 'F');
+
+          if (logoBase64) {
+            try { docInst.addImage(logoBase64, 'PNG', 10, 277, 18, 12, `footerLogo${i}`, 'FAST'); } catch (e) {}
+          }
+
+          docInst.setTextColor(255, 255, 255);
+          docInst.setFont('helvetica', 'normal');
+          docInst.setFontSize(8);
+          docInst.text('Web: mrfiesta-pe.github.io | Tel: 961 770 164 - 902 602 362 | Correo: mrfiesta.lima@gmail.com', 110, 282, { align: 'center' });
+          docInst.text('Facebook: Mr. Fiesta Lima | Instagram: @mrfiesta_lima | TikTok: @mrfiesta', 110, 287, { align: 'center' });
+          docInst.text(`Página ${i} de ${totalPages}`, 195, 292, { align: 'right' });
+        }
+      };
+
+      // PÁGINA 1
+      doc.setFillColor(13, 13, 18);
+      doc.rect(0, 0, 210, 40, 'F');
+
+      if (logoBase64) {
+        try { doc.addImage(logoBase64, 'PNG', 10, 2, 58, 35, 'logoHeader', 'FAST'); } catch (e) {}
+      }
+
+      agregarMarcaAgua(doc);
+
+      doc.setTextColor(255, 47, 146);
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(24);
-      doc.text("MR. FIESTA", 70, 20);
-      
-      doc.setTextColor(0, 243, 255);
+      doc.text('MR. FIESTA', 72, 19);
+
+      doc.setTextColor(0, 234, 255);
       doc.setFontSize(12);
-      doc.text("Contrato de Prestación de Servicios", 70, 28);
-      
+      doc.text('Contrato de Prestación de Servicios', 72, 27);
+
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(10);
-      doc.text(`N° ${cId}`, 160, 20);
+      doc.text(`N° ${numContrato}`, 160, 19);
 
       doc.setTextColor(30, 30, 30);
-      doc.setFont("helvetica", "normal");
+      doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
-      
-      const hoy = new Date().toLocaleDateString('es-ES');
+
+      const hoy = new Date().toLocaleDateString('es-PE');
       let y = 50;
-      doc.text(`Fecha de emisión: ${hoy}`, 15, y); y+=8;
+      doc.text(`Fecha de emisión: ${hoy}`, 15, y); y += 8;
 
-      doc.setFont("helvetica", "bold");
-      doc.text("1. DATOS DEL CLIENTE Y EVENTO", 15, y); y+=6;
-      doc.setFont("helvetica", "normal");
-      doc.text(`Cliente / Agasajado: ${cliente}`, 15, y); y+=5;
-      doc.text(`DNI/RUC: ${dni}`, 15, y); y+=5;
-      doc.text(`Teléfono: ${tel}`, 15, y); y+=5;
-      doc.text(`Fecha del evento: ${fFormato}`, 15, y); y+=5;
-      doc.text(`Horario: Inicio ${hIni} - Fin aprox. ${hFin}`, 15, y); y+=5;
-      doc.text(`Lugar: ${lug} - ${dir}`, 15, y); y+=8;
+      doc.setFont('helvetica', 'bold');
+      doc.text('1. DATOS DEL CLIENTE Y EVENTO', 15, y); y += 6;
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Cliente / Agasajado: ${d.cliente}${d.agasajado ? ' / ' + d.agasajado : ''}`, 15, y); y += 5;
+      doc.text(`DNI/RUC: ${d.dni || '---'}`, 15, y); y += 5;
+      doc.text(`Teléfono: ${d.telefono || '---'}`, 15, y); y += 5;
+      doc.text(`Fecha del evento: ${d.fechaFormato}`, 15, y); y += 5;
+      doc.text(`Horario: Inicio ${d.hora || '---'} - Fin aprox. ${document.getElementById('horaEvento').value || d.hora || '---'}`, 15, y); y += 5;
 
-      doc.setFont("helvetica", "bold");
-      doc.text(`2. DETALLES DEL PAQUETE: ${paqueteNom.toUpperCase()}`, 15, y); y+=6;
-      doc.setFont("helvetica", "normal");
-      
+      const lugarTexto = `${d.lugar || '---'} - ${d.direccion || '---'}`;
+      const lugarLineas = doc.splitTextToSize(`Lugar: ${lugarTexto}`, 180);
+      doc.text(lugarLineas, 15, y);
+      y += (lugarLineas.length * 5) + 4;
+
+      doc.setFont('helvetica', 'bold');
+      doc.text(`2. DETALLES DEL PAQUETE: ${(d.paquete || 'Personalizado').toUpperCase()}`, 15, y); y += 6;
+      doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
-      const detalleLineas = doc.splitTextToSize(`Incluye:\n${detalle}`, 180);
+
+      const detalleLineas = doc.splitTextToSize(`Incluye:
+${d.detalleServicio || 'Servicios acordados mutuamente.'}`, 180);
       doc.text(detalleLineas, 15, y);
       y += (detalleLineas.length * 4.5) + 3;
 
-      if (adic.trim() !== "") {
-          doc.setFont("helvetica", "bold");
-          doc.text("Servicios Adicionales:", 15, y); y+=5;
-          doc.setFont("helvetica", "normal");
-          const adicLineas = doc.splitTextToSize(adic, 180);
-          doc.text(adicLineas, 15, y);
-          y += (adicLineas.length * 4.5) + 3;
+      if (d.adicionales && d.adicionales.trim() !== '') {
+        doc.setFont('helvetica', 'bold');
+        doc.text('Servicios Adicionales:', 15, y); y += 5;
+        doc.setFont('helvetica', 'normal');
+        const adicLineas = doc.splitTextToSize(d.adicionales, 180);
+        doc.text(adicLineas, 15, y);
+        y += (adicLineas.length * 4.5) + 3;
       }
 
       doc.setFontSize(10);
-      y += 5; 
+      y += 5;
       doc.setFillColor(245, 245, 245);
-      doc.rect(15, y, 180, 20, "F");
-      doc.setDrawColor(0, 243, 255);
-      doc.rect(15, y, 180, 20, "S");
-      y+=6;
+      doc.rect(15, y, 180, 20, 'F');
+      doc.setDrawColor(0, 234, 255);
+      doc.rect(15, y, 180, 20, 'S');
+      y += 6;
 
-      doc.setFont("helvetica", "bold");
-      doc.text("3. CONDICIONES ECONÓMICAS", 20, y); y+=7;
-      doc.setFont("helvetica", "normal");
-      doc.text(`Costo Total: S/ ${tot}`, 20, y); 
-      doc.text(`Adelanto: S/ ${ade}`, 80, y); 
+      doc.setFont('helvetica', 'bold');
+      doc.text('3. CONDICIONES ECONÓMICAS', 20, y); y += 7;
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Costo Total: S/ ${Number(d.total || 0).toFixed(2)}`, 20, y);
+      doc.text(`Adelanto: S/ ${Number(d.adelanto || 0).toFixed(2)}`, 80, y);
       doc.setTextColor(255, 0, 0);
-      doc.setFont("helvetica", "bold");
-      doc.text(`Saldo a Pagar: S/ ${sal}`, 140, y); 
-      
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Saldo a Pagar: S/ ${Number(d.saldo || 0).toFixed(2)}`, 140, y);
+
       y += 20;
       doc.setTextColor(80, 80, 80);
-      doc.setFont("helvetica", "italic");
+      doc.setFont('helvetica', 'italic');
       doc.setFontSize(8);
-      doc.text("* Las cláusulas y términos de este contrato se encuentran detalladas en la Página 2 del presente documento.", 15, y);
+      doc.text('* Las cláusulas y términos de este contrato se encuentran detalladas en la Página 2 del presente documento.', 15, y);
 
-      // FIRMAS EN Y FIJO (Para que no se muevan)
-      y = 245; 
+      // FIRMAS
+      y = 245;
       if (firmaBase64) {
-          try { doc.addImage(firmaBase64, 'PNG', 125, 222, 50, 22, 'firma', 'FAST'); } catch(e) {}
+        try { doc.addImage(firmaBase64, 'PNG', 125, 222, 50, 22, 'firmaAndre', 'FAST'); } catch (e) {}
       }
-      doc.setDrawColor(0,0,0);
-      doc.line(25, y, 95, y); 
-      doc.line(115, y, 185, y); 
-      
+      doc.setDrawColor(0, 0, 0);
+      doc.line(25, y, 95, y);
+      doc.line(115, y, 185, y);
+
       y += 5;
-      doc.setFont("helvetica", "bold");
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(9);
       doc.setTextColor(30, 30, 30);
-      
-      doc.text(cliente, 60, y, {align: "center", maxWidth: 70}); 
-      doc.text("JOSÉ ANDRÉ HIDALGO A.", 150, y, {align: "center"}); 
-      
-      y += 4;
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8);
-      doc.text("EL CLIENTE", 60, y, {align: "center"}); 
-      doc.text("MR. FIESTA", 150, y, {align: "center"}); 
+      doc.text(d.cliente.toUpperCase(), 60, y, { align: 'center', maxWidth: 70 });
+      doc.text('JOSÉ ANDRÉ HIDALGO A.', 150, y, { align: 'center' });
 
-      // === PÁGINA 2: CLÁUSULAS ===
+      y += 4;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.text('EL CLIENTE', 60, y, { align: 'center' });
+      doc.text('MR. FIESTA', 150, y, { align: 'center' });
+
+      // PÁGINA 2
       doc.addPage();
-      
       doc.setFillColor(13, 13, 18);
-      doc.rect(0, 0, 210, 15, "F");
+      doc.rect(0, 0, 210, 15, 'F');
+      agregarMarcaAgua(doc);
       doc.setTextColor(255, 255, 255);
-      doc.setFont("helvetica", "bold");
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(10);
-      doc.text(`ANEXO DE TÉRMINOS Y CONDICIONES - Contrato N° ${cId}`, 105, 10, {align: "center"});
+      doc.text(`ANEXO DE TÉRMINOS Y CONDICIONES - Contrato N° ${numContrato}`, 105, 10, { align: 'center' });
 
       doc.setTextColor(30, 30, 30);
-      y = 30; 
-      doc.setFont("helvetica", "bold");
+      y = 30;
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(11);
-      doc.text("4. TÉRMINOS Y CONDICIONES DEL SERVICIO", 15, y); y+=8;
-      
-      doc.setFontSize(9.5); 
+      doc.text('4. TÉRMINOS Y CONDICIONES DEL SERVICIO', 15, y); y += 8;
 
+      doc.setFontSize(9.5);
       const clausulas = [
-          { t: "1. PAGOS Y CANCELACIONES", b: true },
-          { t: "1.1. Reserva y Saldo: La reserva se confirma con un pago adelantado. El cliente cancelará el saldo el mismo día del evento, OBLIGATORIAMENTE antes de instalar los equipos.", b: false },
-          { t: "1.2. Cancelaciones: En caso de anulación por el cliente, el dinero de la reserva NO SERÁ REEMBOLSADO bajo ninguna circunstancia.", b: false },
-          { t: "2. PUNTUALIDAD Y EVENTO", b: true },
-          { t: "2.1. Hora de Inicio: El tiempo comienza a la hora estipulada en este documento. Se brindará una tolerancia máxima de 10 minutos a favor del cliente para iniciar el show.", b: false },
-          { t: "3. MOVILIDAD Y LOGÍSTICA", b: true },
-          { t: "3.1. Traslado: La movilidad se rige según el paquete contratado. Si el paquete indica movilidad incluida, cubre zonas seleccionadas. Para paquetes que no la incluyen o distritos alejados, se coordinará un recargo adicional previamente.", b: false },
-          { t: "4. OBLIGACIONES DEL CLIENTE (ESPACIO Y ENERGÍA)", b: true },
-          { t: "4.1. Suministro Eléctrico y Daños: El cliente debe proveer energía estable. Nuestra empresa no se responsabiliza por cortes o variaciones de voltaje del local. Si nuestros equipos sufren daños por esto, el cliente asumirá el 100% de la reparación.", b: false },
-          { t: "5. RESPONSABILIDAD Y SEGURIDAD", b: true },
-          { t: "5.1. Protección y Daños: En caso de que algún equipo resulte dañado (golpes, derrames), robado o extraviado por acción de invitados, el cliente deberá asumir la totalidad de los costos de reparación.", b: false }
+        { t: '1. PAGOS Y CANCELACIONES', b: true },
+        { t: '1.1. Reserva y Saldo: La reserva se confirma con un pago adelantado. El cliente cancelará el saldo el mismo día del evento, OBLIGATORIAMENTE antes de instalar los equipos.', b: false },
+        { t: '1.2. Cancelaciones: En caso de anulación por el cliente, el dinero de la reserva NO SERÁ REEMBOLSADO bajo ninguna circunstancia.', b: false },
+        { t: '2. PUNTUALIDAD Y EVENTO', b: true },
+        { t: '2.1. Hora de Inicio: El tiempo comienza a la hora estipulada en este documento. Se brindará una tolerancia máxima de 10 minutos a favor del cliente para iniciar el show.', b: false },
+        { t: '3. MOVILIDAD Y LOGÍSTICA', b: true },
+        { t: '3.1. Traslado: La movilidad se rige según el paquete contratado. Si el paquete indica movilidad incluida, cubre zonas seleccionadas. Para paquetes que no la incluyen o distritos alejados, se coordinará un recargo adicional previamente.', b: false },
+        { t: '4. OBLIGACIONES DEL CLIENTE (ESPACIO Y ENERGÍA)', b: true },
+        { t: '4.1. Suministro Eléctrico y Daños: El cliente debe proveer energía estable. Nuestra empresa no se responsabiliza por cortes o variaciones de voltaje del local. Si nuestros equipos sufren daños por esto, el cliente asumirá el 100% de la reparación.', b: false },
+        { t: '5. RESPONSABILIDAD Y SEGURIDAD', b: true },
+        { t: '5.1. Protección y Daños: En caso de que algún equipo resulte dañado (golpes, derrames), robado o extraviado por acción de invitados, el cliente deberá asumir la totalidad de los costos de reparación.', b: false }
       ];
 
       clausulas.forEach(item => {
-          doc.setFont("helvetica", item.b ? "bold" : "normal");
-          const lines = doc.splitTextToSize(item.t, 180);
-          doc.text(lines, 15, y);
-          y += (lines.length * 5) + 2.5; 
+        doc.setFont('helvetica', item.b ? 'bold' : 'normal');
+        const lines = doc.splitTextToSize(item.t, 180);
+        doc.text(lines, 15, y);
+        y += (lines.length * 5) + 2.5;
       });
 
       addFooter(doc);
 
-      // Guardado en BD Local
-      const record = { id: Date.now(), cId, cliente, fRaw, fFormato, lug, sal, tel, hIni };
-      guardarEnAgenda(record);
+      if (descargar) {
+        const safe = (d.cliente || 'cliente').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        doc.save(`Contrato_${safe}_${numContrato}.pdf`);
+      }
 
-      if(action === 'pdf') {
-        let safeName = cliente.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        doc.save(`Contrato_${safeName}_${cId}.pdf`);
-      } else if(action === 'wa') {
-        if(!tel || tel==="---") return alert("Ingresa un celular para WhatsApp.");
-        let extra = adic ? `\n➕ *Adicionales:* ${adic}` : "";
-        let msj = `¡Hola ${cliente}! 🎉\nSomos *MR. FIESTA* 🪩\n\nTu reserva ha sido registrada.\n📋 *Detalles:*\n- Paquete: ${paqueteNom}\n- Fecha: ${fFormato} a las ${hIni}${extra}\n\n🔐 *Para confirmar tu reserva (S/100 o S/200):*\n✅ *Yape o Plin:* 961770164 (José Hidalgo)\n🏦 *BCP:* 19378091874079\n\n⚠️ *Saldo el día del evento:* S/ ${sal}\n\n🌐 mrfiesta-pe.github.io`;
-        window.open(`https://wa.me/51${tel}?text=${encodeURIComponent(msj)}`, '_blank');
+      return d;
+    }
+
+    function generarYGuardarPDF() {
+      const datos = generarPDF(true);
+      if (datos) {
+        guardarEnAgenda(datos);
+        alert('Contrato PDF generado y evento guardado.');
       }
     }
 
-    // ================== GOOGLE CALENDAR ==================
-    function agendarGoogle() {
-      const cliente = document.getElementById('cliente').value.trim();
-      const fRaw = document.getElementById('fechaEvento').value;
-      const hIni = document.getElementById('horaInicio').value;
-      const hFin = document.getElementById('horaFin').value;
-      
-      if(!cliente || !fRaw || !hIni) return alert("Falta Cliente, Fecha o Hora Inicio para Calendar.");
-
-      const dIni = new Date(`${fRaw}T${hIni}:00`);
-      let dFin = new Date(dIni.getTime() + (4*3600000)); 
-      if(hFin) {
-        const temp = new Date(`${fRaw}T${hFin}:00`);
-        if(temp > dIni) dFin = temp;
-      }
-
-      const format = d => d.toISOString().replace(/-|:|\.\d\d\d/g, "");
-      const title = encodeURIComponent(`MR FIESTA: ${cliente}`);
-      const loc = encodeURIComponent(`${document.getElementById('direccion').value}, ${document.getElementById('lugar').value}`);
-      const desc = encodeURIComponent(`Cliente: ${cliente}\nPaquete: ${document.getElementById('paqueteSelect').value}\nTel: ${document.getElementById('telefono').value}\nSaldo: S/ ${calcSaldo()}`);
-      
-      window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${format(dIni)}/${format(dFin)}&details=${desc}&location=${loc}`, '_blank');
-    }
-
-    // ================== GESTIÓN DE AGENDA ==================
-    function guardarEnAgenda(obj) {
-      let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-      db.push(obj);
-      db.sort((a,b) => new Date(a.fRaw) - new Date(b.fRaw));
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-    }
-
-    function cargarAgenda(filtro = "") {
-      const list = document.getElementById('agendaList');
-      list.innerHTML = '';
-      let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-      const hoy = new Date(); hoy.setHours(0,0,0,0);
-
-      if(filtro) {
-        const f = filtro.toLowerCase();
-        db = db.filter(e => e.cliente.toLowerCase().includes(f) || e.lug.toLowerCase().includes(f));
-      }
-
-      if(db.length === 0) {
-        list.innerHTML = '<div style="text-align:center; color:var(--muted); padding:20px;">No hay eventos registrados</div>'; return;
-      }
-
-      db.forEach(ev => {
-        const fEv = new Date(ev.fRaw + 'T00:00:00');
-        const diff = Math.ceil((fEv - hoy) / 86400000);
-        
-        let statusClass = diff < 0 ? 'past' : (diff <= 3 ? 'urgent' : '');
-        let tag = diff < 0 ? 'Concluido' : (diff === 0 ? '¡HOY!' : (diff <= 3 ? `Faltan ${diff} días` : 'Próximo'));
-        let tagClass = diff >= 0 && diff <= 3 ? 'tag-urgent' : '';
-
-        const div = document.createElement('div');
-        div.className = `event-card ${statusClass}`;
-        div.innerHTML = `
-          <div class="ev-info">
-            <h3>${escapeHtml(ev.cliente)} <span class="ev-tag ${tagClass}">${tag}</span></h3>
-            <div class="ev-details">
-              <span>📅 ${ev.fFormato} ${ev.hIni}</span>
-              <span>📍 ${escapeHtml(ev.lug)}</span>
-              <span style="color:var(--blue); font-weight:bold;">💰 S/ ${ev.sal}</span>
-            </div>
-          </div>
-          <div class="ev-actions">
-            <button class="btn-wa-small" onclick="abrirWA('${ev.tel}')" title="WhatsApp">💬</button>
-            <button class="btn-del" onclick="borrarEvento(${ev.id})" title="Eliminar">🗑️</button>
-          </div>
-        `;
-        list.appendChild(div);
-      });
-    }
-
-    function filtrarAgenda() {
-      cargarAgenda(document.getElementById('searchInput').value);
-    }
-
-    function borrarEvento(id) {
-      if(confirm("¿Seguro que deseas eliminar este evento?")) {
-        let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        db = db.filter(e => e.id !== id);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-        cargarAgenda();
-      }
-    }
-
-    function abrirWA(tel) {
-      if(!tel || tel==="---") return alert("No hay teléfono guardado.");
-      window.open(`https://wa.me/51${tel}`, '_blank');
-    }
-
-    function limpiarForm() {
-      document.getElementById("contratoForm").reset();
-      document.getElementById("saldoContainer").innerHTML = "SALDO A COBRAR: S/ 0.00";
+    function limpiarFormulario() {
+      document.getElementById('contratoForm').reset();
+      document.getElementById('detalleServicio').value = '';
+      document.getElementById('saldoManual').value = '';
+      calcularSaldo();
+      recomendarPaquete();
     }
 
     function exportarAgendaJSON() {
@@ -714,25 +1213,31 @@
       const blob = new Blob([JSON.stringify(agenda, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'mrfiesta_bd.json';
+      a.download = 'mrfiesta_agenda_v2.json';
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
       URL.revokeObjectURL(a.href);
     }
 
     function importarAgendaJSON() {
       const input = document.createElement('input');
-      input.type = 'file'; input.accept = 'application/json';
+      input.type = 'file';
+      input.accept = 'application/json';
       input.onchange = (e) => {
         const file = e.target.files[0];
-        if(!file) return;
+        if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
           try {
             const data = JSON.parse(ev.target.result);
-            if(!Array.isArray(data)) throw new Error('Format');
+            if (!Array.isArray(data)) throw new Error('Formato inválido');
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            cargarAgenda(); alert('✅ Base de datos restaurada.');
-          } catch(err) { alert('❌ Error al leer el archivo.'); }
+            cargarAgenda();
+            alert('Agenda importada correctamente.');
+          } catch (err) {
+            alert('No se pudo importar el archivo JSON.');
+          }
         };
         reader.readAsText(file);
       };
@@ -740,9 +1245,12 @@
     }
 
     function escapeHtml(text) {
-      return String(text || "").replace(/[&<>"']/g, function(m) {
-        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
-      });
+      return String(text ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
   </script>
 </body>
