@@ -587,7 +587,7 @@
 
     const descripcionesPaquetes = {
       "Just Dance & Karaoke Party": "• DJ en vivo\n• Parlante profesional\n• Proyector + ecran portátil\n• 2 micrófonos inalámbricos\n• Just Dance y Karaoke\n• 6 luces inteligentes con trípode\n• Ideal para fiesta rápida y económica\n\n*Nota: No incluye movilidad.*",
-      "Chicoteca en casa": "• Hasta 3 horas de diversión\n• Animador(a) + DJ profesional\n• Juegos y bailes guiados\n• Luces tipo discoteca\n• Just Dance o Karaoke\n• Mini hora loca\n• 30 minutos de DJ antes y después\n• Movilidad incluida en zonas seleccionadas",
+      "Chicoteca en casa": "• Hasta 2 horas de diversión\n• Animador(a) + DJ profesional\n• Juegos y bailes guiados\n• Luces tipo discoteca\n• Just Dance o Karaoke\n• Mini hora loca\n• Movilidad incluida en zonas seleccionadas",
       "Experiencia Neón": "• 3 horas de experiencia\n• Estación glitter y tatuajes neón\n• Juegos modernos + mini hora loca\n• Accesorios LED\n• DJ + sonido profesional\n• Luces inteligentes + luz UV\n• Proyector gigante para Just Dance y Karaoke\n• Máquina de humo o burbujas\n• Movilidad incluida",
       "Ultra Chicoteca LED": "• 3 horas de experiencia\n• Pista LED 3x2 metros\n• Animador(a) + Staff + DJ + maquilladora\n• Luces inteligentes + láser\n• Proyección láser del nombre\n• Proyector + ecran gigante\n• Juegos de competencia según la edad\n• Máquina de humo o burbujas\n• Mini hora loca LED\n• Movilidad incluida",
       "Ultra Chicoteca + Decoración": "• 4 horas de experiencia total\n• Decoración temática base neón / glow\n• Backing con cartel Happy Birthday\n• 3 mesas acrílicas o cilindros decorativos\n• Pista LED 3x2 metros\n• Animador(a) + staff + DJ + maquilladora\n• Proyector + ecran\n• Mini hora loca LED\n• Movilidad incluida",
@@ -992,6 +992,20 @@
       guardarEnAgenda(d);
     }
 
+    function calcularHoraFin(d) {
+      if (!d.hora || d.hora === 'No especificada' || !d.fechaRaw) return '';
+      const inicio = new Date(`${d.fechaRaw}T${d.hora}:00`);
+      const horas = duracionPaquetes[d.paquete] || 3;
+      const fin = new Date(inicio.getTime() + horas * 60 * 60 * 1000);
+      return fin.toTimeString().slice(0, 5);
+    }
+
+    function agregarLineaSiTieneValor(doc, etiqueta, valor, x, y) {
+      if (!valor || String(valor).trim() === '') return y;
+      doc.text(`${etiqueta}: ${valor}`, x, y);
+      return y + 5;
+    }
+
     function generarPDF(descargar = true) {
       const d = obtenerDatosFormulario();
       if (!validarDatosBase(d)) return null;
@@ -1035,7 +1049,6 @@
         }
       };
 
-      // PÁGINA 1
       doc.setFillColor(13, 13, 18);
       doc.rect(0, 0, 210, 40, 'F');
 
@@ -1063,36 +1076,65 @@
       doc.setFontSize(10);
 
       const hoy = new Date().toLocaleDateString('es-PE');
+      const horaFinTexto = calcularHoraFin(d);
+
       let y = 50;
-      doc.text(`Fecha de emisión: ${hoy}`, 15, y); y += 8;
+      doc.text(`Fecha de emisión: ${hoy}`, 15, y); 
+      y += 8;
 
       doc.setFont('helvetica', 'bold');
-      doc.text('1. DATOS DEL CLIENTE Y EVENTO', 15, y); y += 6;
+      doc.text('1. DATOS DEL CLIENTE Y EVENTO', 15, y); 
+      y += 6;
+
       doc.setFont('helvetica', 'normal');
-      doc.text(`Cliente / Agasajado: ${d.cliente}${d.agasajado ? ' / ' + d.agasajado : ''}`, 15, y); y += 5;
-      doc.text(`DNI/RUC: ${d.dni || '---'}`, 15, y); y += 5;
-      doc.text(`Teléfono: ${d.telefono || '---'}`, 15, y); y += 5;
-      doc.text(`Fecha del evento: ${d.fechaFormato}`, 15, y); y += 5;
-      doc.text(`Horario: Inicio ${d.hora || '---'} - Fin aprox. ${document.getElementById('horaEvento').value || d.hora || '---'}`, 15, y); y += 5;
 
-      const lugarTexto = `${d.lugar || '---'} - ${d.direccion || '---'}`;
-      const lugarLineas = doc.splitTextToSize(`Lugar: ${lugarTexto}`, 180);
-      doc.text(lugarLineas, 15, y);
-      y += (lugarLineas.length * 5) + 4;
+      const clienteAgasajado = d.agasajado
+        ? `${d.cliente} / ${d.agasajado}`
+        : d.cliente;
+
+      doc.text(`Cliente / Agasajado: ${clienteAgasajado}`, 15, y); 
+      y += 5;
+
+      y = agregarLineaSiTieneValor(doc, 'DNI/RUC', d.dni, 15, y);
+      y = agregarLineaSiTieneValor(doc, 'Teléfono', d.telefono, 15, y);
+
+      doc.text(`Fecha del evento: ${d.fechaFormato}`, 15, y); 
+      y += 5;
+
+      if (d.hora && d.hora !== 'No especificada') {
+        doc.text(`Horario: Inicio ${d.hora} - Fin aprox. ${horaFinTexto || '---'}`, 15, y);
+        y += 5;
+      }
+
+      const partesLugar = [];
+      if (d.lugar) partesLugar.push(d.lugar);
+      if (d.direccion) partesLugar.push(d.direccion);
+
+      if (partesLugar.length > 0) {
+        const lugarTexto = partesLugar.join(' - ');
+        const lugarLineas = doc.splitTextToSize(`Lugar: ${lugarTexto}`, 180);
+        doc.text(lugarLineas, 15, y);
+        y += (lugarLineas.length * 5) + 4;
+      } else {
+        y += 2;
+      }
 
       doc.setFont('helvetica', 'bold');
-      doc.text(`2. DETALLES DEL PAQUETE: ${(d.paquete || 'Personalizado').toUpperCase()}`, 15, y); y += 6;
+      doc.text(`2. DETALLES DEL PAQUETE: ${(d.paquete || 'Personalizado').toUpperCase()}`, 15, y); 
+      y += 6;
+
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(9);
 
-      const detalleLineas = doc.splitTextToSize(`Incluye:
-${d.detalleServicio || 'Servicios acordados mutuamente.'}`, 180);
+      const detalleLineas = doc.splitTextToSize(`Incluye:\n${d.detalleServicio || 'Servicios acordados mutuamente.'}`, 180);
       doc.text(detalleLineas, 15, y);
       y += (detalleLineas.length * 4.5) + 3;
 
       if (d.adicionales && d.adicionales.trim() !== '') {
         doc.setFont('helvetica', 'bold');
-        doc.text('Servicios Adicionales:', 15, y); y += 5;
+        doc.text('Servicios Adicionales:', 15, y); 
+        y += 5;
+
         doc.setFont('helvetica', 'normal');
         const adicLineas = doc.splitTextToSize(d.adicionales, 180);
         doc.text(adicLineas, 15, y);
@@ -1108,7 +1150,9 @@ ${d.detalleServicio || 'Servicios acordados mutuamente.'}`, 180);
       y += 6;
 
       doc.setFont('helvetica', 'bold');
-      doc.text('3. CONDICIONES ECONÓMICAS', 20, y); y += 7;
+      doc.text('3. CONDICIONES ECONÓMICAS', 20, y); 
+      y += 7;
+
       doc.setFont('helvetica', 'normal');
       doc.text(`Costo Total: S/ ${Number(d.total || 0).toFixed(2)}`, 20, y);
       doc.text(`Adelanto: S/ ${Number(d.adelanto || 0).toFixed(2)}`, 80, y);
@@ -1122,11 +1166,11 @@ ${d.detalleServicio || 'Servicios acordados mutuamente.'}`, 180);
       doc.setFontSize(8);
       doc.text('* Las cláusulas y términos de este contrato se encuentran detalladas en la Página 2 del presente documento.', 15, y);
 
-      // FIRMAS
       y = 245;
       if (firmaBase64) {
         try { doc.addImage(firmaBase64, 'PNG', 125, 222, 50, 22, 'firmaAndre', 'FAST'); } catch (e) {}
       }
+
       doc.setDrawColor(0, 0, 0);
       doc.line(25, y, 95, y);
       doc.line(115, y, 185, y);
@@ -1144,11 +1188,11 @@ ${d.detalleServicio || 'Servicios acordados mutuamente.'}`, 180);
       doc.text('EL CLIENTE', 60, y, { align: 'center' });
       doc.text('MR. FIESTA', 150, y, { align: 'center' });
 
-      // PÁGINA 2
       doc.addPage();
       doc.setFillColor(13, 13, 18);
       doc.rect(0, 0, 210, 15, 'F');
       agregarMarcaAgua(doc);
+
       doc.setTextColor(255, 255, 255);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(10);
@@ -1158,7 +1202,8 @@ ${d.detalleServicio || 'Servicios acordados mutuamente.'}`, 180);
       y = 30;
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(11);
-      doc.text('4. TÉRMINOS Y CONDICIONES DEL SERVICIO', 15, y); y += 8;
+      doc.text('4. TÉRMINOS Y CONDICIONES DEL SERVICIO', 15, y); 
+      y += 8;
 
       doc.setFontSize(9.5);
       const clausulas = [
