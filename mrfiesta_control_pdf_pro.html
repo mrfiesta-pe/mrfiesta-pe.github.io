@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MR FIESTA | Event Manager V3</title>
+  <title>MR FIESTA CONTROL | Sistema inteligente de gestión de eventos</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -362,8 +362,8 @@
       <div class="brand">
         <div class="brand-badge">MF</div>
         <div>
-          <h1>MR FIESTA<br />EVENT MANAGER V3.0</h1>
-          <p>Agenda sincronizada con Supabase + hooks para Calendar y Drive</p>
+          <h1>MR FIESTA<br />CONTROL</h1>
+          <p>Sistema inteligente de gestión de eventos</p>
         </div>
       </div>
       <div class="top-actions">
@@ -687,7 +687,7 @@ with check (true);</code>
     </main>
 
     <div class="footer-note">
-      MR FIESTA Event Manager V3.0 · base limpia para GitHub Pages + Supabase
+      MR FIESTA CONTROL · Sistema inteligente de gestión de eventos
     </div>
   </div>
 
@@ -696,7 +696,9 @@ with check (true);</code>
     const APP_STATE = {
       supabase: null,
       agenda: [],
-      jsPDF: null
+      jsPDF: null,
+      logoBase64: '',
+      firmaBase64: ''
     };
 
     const descripcionesPaquetes = {
@@ -727,6 +729,8 @@ with check (true);</code>
 
     window.onload = async () => {
       APP_STATE.jsPDF = window.jspdf?.jsPDF || null;
+      optimizarImagen('prueba de logo fiel.webp', 500, (b64) => { APP_STATE.logoBase64 = b64; });
+      optimizarImagen('firma_andre.png', 320, (b64) => { APP_STATE.firmaBase64 = b64; });
       cargarConfiguracionGuardada();
       calcularSaldo();
       recomendarPaquete();
@@ -734,6 +738,30 @@ with check (true);</code>
       await inicializarSupabaseDesdeConfig();
       await cargarAgenda();
     };
+
+    function optimizarImagen(url, maxWidth, callback) {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+        callback(canvas.toDataURL('image/png'));
+      };
+      img.onerror = function () { callback(''); };
+      img.src = url;
+    }
 
     function getConfig() {
       try {
@@ -1301,6 +1329,17 @@ with check (true);</code>
       return `MRF-${año}${mes}${dia}-${aleatorio}`;
     }
 
+    function calcularHoraFinPDF(d) {
+      if (!d.hora_inicio || !d.fecha_evento) return '';
+      return d.hora_fin || sumarHoras(d.hora_inicio, duracionPaquetes[d.paquete] || 3);
+    }
+
+    function agregarLineaSiTieneValorPDF(doc, etiqueta, valor, x, y) {
+      if (!valor || String(valor).trim() === '') return y;
+      doc.text(`${etiqueta}: ${valor}`, x, y);
+      return y + 5;
+    }
+
     function generarPDFDoc() {
       const d = obtenerDatosFormulario();
       if (!validarDatosBase(d)) return null;
@@ -1311,69 +1350,146 @@ with check (true);</code>
 
       const numContrato = generarNumeroContrato();
       const doc = new APP_STATE.jsPDF();
-      const clienteAgasajado = d.agasajado ? `${d.cliente} / ${d.agasajado}` : d.cliente;
-      const hoy = new Date().toLocaleDateString('es-PE');
+      const logoBase64 = APP_STATE.logoBase64;
+      const firmaBase64 = APP_STATE.firmaBase64;
+
+      const agregarMarcaAgua = (docInst) => {
+        if (!logoBase64) return;
+        try {
+          docInst.saveGraphicsState();
+          docInst.setGState(new docInst.GState({ opacity: 0.055 }));
+          docInst.addImage(logoBase64, 'PNG', 32, 82, 145, 105, 'watermark', 'FAST');
+          docInst.restoreGraphicsState();
+        } catch (e) {}
+      };
+
+      const addFooter = (docInst) => {
+        const totalPages = docInst.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+          docInst.setPage(i);
+          docInst.setFillColor(13, 13, 18);
+          docInst.rect(0, 275, 210, 22, 'F');
+          docInst.setFillColor(255, 47, 146);
+          docInst.rect(0, 275, 210, 1, 'F');
+
+          if (logoBase64) {
+            try { docInst.addImage(logoBase64, 'PNG', 10, 277, 18, 12, `footerLogo${i}`, 'FAST'); } catch (e) {}
+          }
+
+          docInst.setTextColor(255, 255, 255);
+          docInst.setFont('helvetica', 'normal');
+          docInst.setFontSize(8);
+          docInst.text('Web: mrfiesta-pe.github.io | Tel: 961 770 164 - 902 602 362 | Correo: mrfiesta.lima@gmail.com', 110, 282, { align: 'center' });
+          docInst.text('Facebook: Mr. Fiesta Lima | Instagram: @mrfiesta_lima | TikTok: @mrfiesta', 110, 287, { align: 'center' });
+          docInst.text(`Página ${i} de ${totalPages}`, 195, 292, { align: 'right' });
+        }
+      };
 
       doc.setFillColor(13, 13, 18);
-      doc.rect(0, 0, 210, 26, 'F');
+      doc.rect(0, 0, 210, 40, 'F');
+
+      if (logoBase64) {
+        try { doc.addImage(logoBase64, 'PNG', 10, 2, 58, 35, 'logoHeader', 'FAST'); } catch (e) {}
+      }
+
+      agregarMarcaAgua(doc);
+
       doc.setTextColor(255, 47, 146);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(22);
-      doc.text('MR. FIESTA', 15, 16);
+      doc.setFontSize(24);
+      doc.text('MR. FIESTA', 72, 19);
+
       doc.setTextColor(0, 234, 255);
-      doc.setFontSize(11);
-      doc.text('Contrato de Prestación de Servicios · V3', 15, 22);
+      doc.setFontSize(12);
+      doc.text('Contrato de Prestación de Servicios', 72, 27);
+
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(10);
-      doc.text(`N° ${numContrato}`, 190, 16, { align: 'right' });
+      doc.text(`N° ${numContrato}`, 160, 19);
 
-      let y = 38;
       doc.setTextColor(30, 30, 30);
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(10);
+
+      const hoy = new Date().toLocaleDateString('es-PE');
+      const horaFinTexto = calcularHoraFinPDF(d);
+
+      let y = 50;
       doc.text(`Fecha de emisión: ${hoy}`, 15, y);
       y += 8;
 
       doc.setFont('helvetica', 'bold');
       doc.text('1. DATOS DEL CLIENTE Y EVENTO', 15, y);
       y += 6;
+
       doc.setFont('helvetica', 'normal');
+
+      const clienteAgasajado = d.agasajado ? `${d.cliente} / ${d.agasajado}` : d.cliente;
       doc.text(`Cliente / Agasajado: ${clienteAgasajado}`, 15, y);
       y += 5;
-      if (d.dni) { doc.text(`DNI/RUC: ${d.dni}`, 15, y); y += 5; }
-      if (d.telefono) { doc.text(`Teléfono: ${d.telefono}`, 15, y); y += 5; }
-      doc.text(`Fecha del evento: ${formatearFecha(d.fecha_evento)}`, 15, y); y += 5;
-      doc.text(`Horario: Inicio ${d.hora_inicio || '---'} - Fin aprox. ${d.hora_fin || '---'}`, 15, y); y += 5;
-      const lugarTexto = `Lugar: ${[d.lugar, d.direccion].filter(Boolean).join(' - ') || 'Por confirmar'}`;
-      const lugarLineas = doc.splitTextToSize(lugarTexto, 180);
-      doc.text(lugarLineas, 15, y); y += (lugarLineas.length * 5) + 4;
 
-      doc.setFont('helvetica', 'bold');
-      doc.text(`2. DETALLES DEL PAQUETE: ${(d.paquete || 'Personalizado').toUpperCase()}`, 15, y); y += 6;
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9.5);
-      const detalleLineas = doc.splitTextToSize(`Incluye:\n${d.detalle_servicio || 'Servicios acordados mutuamente.'}`, 180);
-      doc.text(detalleLineas, 15, y); y += (detalleLineas.length * 4.5) + 5;
+      y = agregarLineaSiTieneValorPDF(doc, 'DNI/RUC', d.dni, 15, y);
+      y = agregarLineaSiTieneValorPDF(doc, 'Teléfono', d.telefono, 15, y);
 
-      if (d.adicionales) {
-        doc.setFont('helvetica', 'bold');
-        doc.text('Servicios adicionales:', 15, y); y += 5;
-        doc.setFont('helvetica', 'normal');
-        const adicLineas = doc.splitTextToSize(d.adicionales, 180);
-        doc.text(adicLineas, 15, y); y += (adicLineas.length * 4.5) + 5;
+      doc.text(`Fecha del evento: ${formatearFecha(d.fecha_evento)}`, 15, y);
+      y += 5;
+
+      if (d.hora_inicio) {
+        doc.text(`Horario: Inicio ${d.hora_inicio} - Fin aprox. ${horaFinTexto || '---'}`, 15, y);
+        y += 5;
       }
 
+      const partesLugar = [];
+      if (d.lugar) partesLugar.push(d.lugar);
+      if (d.direccion) partesLugar.push(d.direccion);
+
+      if (partesLugar.length > 0) {
+        const lugarTexto = partesLugar.join(' - ');
+        const lugarLineas = doc.splitTextToSize(`Lugar: ${lugarTexto}`, 180);
+        doc.text(lugarLineas, 15, y);
+        y += (lugarLineas.length * 5) + 4;
+      } else {
+        y += 2;
+      }
+
+      doc.setFont('helvetica', 'bold');
+      doc.text(`2. DETALLES DEL PAQUETE: ${(d.paquete || 'Personalizado').toUpperCase()}`, 15, y);
+      y += 6;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+
+      const detalleLineas = doc.splitTextToSize(`Incluye:
+${d.detalle_servicio || 'Servicios acordados mutuamente.'}`, 180);
+      doc.text(detalleLineas, 15, y);
+      y += (detalleLineas.length * 4.5) + 3;
+
+      if (d.adicionales && d.adicionales.trim() !== '') {
+        doc.setFont('helvetica', 'bold');
+        doc.text('Servicios Adicionales:', 15, y);
+        y += 5;
+
+        doc.setFont('helvetica', 'normal');
+        const adicLineas = doc.splitTextToSize(d.adicionales, 180);
+        doc.text(adicLineas, 15, y);
+        y += (adicLineas.length * 4.5) + 3;
+      }
+
+      doc.setFontSize(10);
+      y += 5;
       doc.setFillColor(245, 245, 245);
       doc.rect(15, y, 180, 20, 'F');
       doc.setDrawColor(0, 234, 255);
       doc.rect(15, y, 180, 20, 'S');
       y += 6;
+
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
-      doc.text('3. CONDICIONES ECONÓMICAS', 20, y); y += 7;
+      doc.text('3. CONDICIONES ECONÓMICAS', 20, y);
+      y += 7;
+
       doc.setFont('helvetica', 'normal');
       doc.text(`Costo Total: ${formatearMoneda(d.total)}`, 20, y);
-      doc.text(`Adelanto: ${formatearMoneda(d.adelanto)}`, 84, y);
+      doc.text(`Adelanto: ${formatearMoneda(d.adelanto)}`, 80, y);
       doc.setTextColor(255, 0, 0);
       doc.setFont('helvetica', 'bold');
       doc.text(`Saldo a Pagar: ${formatearMoneda(d.saldo)}`, 140, y);
@@ -1382,23 +1498,70 @@ with check (true);</code>
       doc.setTextColor(80, 80, 80);
       doc.setFont('helvetica', 'italic');
       doc.setFontSize(8);
-      doc.text('* Este documento fue generado desde MR FIESTA Event Manager V3.0.', 15, y);
+      doc.text('* Las cláusulas y términos de este contrato se encuentran detalladas en la Página 2 del presente documento.', 15, y);
 
-      y = 246;
+      y = 245;
+      if (firmaBase64) {
+        try { doc.addImage(firmaBase64, 'PNG', 125, 222, 50, 22, 'firmaAndre', 'FAST'); } catch (e) {}
+      }
+
       doc.setDrawColor(0, 0, 0);
       doc.line(25, y, 95, y);
       doc.line(115, y, 185, y);
+
       y += 5;
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(9);
       doc.setTextColor(30, 30, 30);
       doc.text((d.cliente || 'CLIENTE').toUpperCase(), 60, y, { align: 'center', maxWidth: 70 });
       doc.text('JOSÉ ANDRÉ HIDALGO A.', 150, y, { align: 'center' });
+
       y += 4;
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.text('EL CLIENTE', 60, y, { align: 'center' });
       doc.text('MR. FIESTA', 150, y, { align: 'center' });
+
+      doc.addPage();
+      doc.setFillColor(13, 13, 18);
+      doc.rect(0, 0, 210, 15, 'F');
+      agregarMarcaAgua(doc);
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.text(`ANEXO DE TÉRMINOS Y CONDICIONES - Contrato N° ${numContrato}`, 105, 10, { align: 'center' });
+
+      doc.setTextColor(30, 30, 30);
+      y = 30;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text('4. TÉRMINOS Y CONDICIONES DEL SERVICIO', 15, y);
+      y += 8;
+
+      doc.setFontSize(9.5);
+      const clausulas = [
+        { t: '1. PAGOS Y CANCELACIONES', b: true },
+        { t: '1.1. Reserva y Saldo: La reserva se confirma con un pago adelantado. El cliente cancelará el saldo el mismo día del evento, OBLIGATORIAMENTE antes de instalar los equipos.', b: false },
+        { t: '1.2. Cancelaciones: En caso de anulación por el cliente, el dinero de la reserva NO SERÁ REEMBOLSADO bajo ninguna circunstancia.', b: false },
+        { t: '2. PUNTUALIDAD Y EVENTO', b: true },
+        { t: '2.1. Hora de Inicio: El tiempo comienza a la hora estipulada en este documento. Se brindará una tolerancia máxima de 10 minutos a favor del cliente para iniciar el show.', b: false },
+        { t: '3. MOVILIDAD Y LOGÍSTICA', b: true },
+        { t: '3.1. Traslado: La movilidad se rige según el paquete contratado. Si el paquete indica movilidad incluida, cubre zonas seleccionadas. Para paquetes que no la incluyen o distritos alejados, se coordinará un recargo adicional previamente.', b: false },
+        { t: '4. OBLIGACIONES DEL CLIENTE (ESPACIO Y ENERGÍA)', b: true },
+        { t: '4.1. Suministro Eléctrico y Daños: El cliente debe proveer energía estable. Nuestra empresa no se responsabiliza por cortes o variaciones de voltaje del local. Si nuestros equipos sufren daños por esto, el cliente asumirá el 100% de la reparación.', b: false },
+        { t: '5. RESPONSABILIDAD Y SEGURIDAD', b: true },
+        { t: '5.1. Protección y Daños: En caso de que algún equipo resulte dañado (golpes, derrames), robado o extraviado por acción de invitados, el cliente deberá asumir la totalidad de los costos de reparación.', b: false }
+      ];
+
+      clausulas.forEach(item => {
+        doc.setFont('helvetica', item.b ? 'bold' : 'normal');
+        const lines = doc.splitTextToSize(item.t, 180);
+        doc.text(lines, 15, y);
+        y += (lines.length * 5) + 2.5;
+      });
+
+      addFooter(doc);
 
       return { doc, data: d, fileName: `Contrato_${(d.cliente || 'cliente').replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${numContrato}.pdf` };
     }
@@ -1407,6 +1570,41 @@ with check (true);</code>
       const built = generarPDFDoc();
       if (!built) return;
       built.doc.save(built.fileName);
+    }
+
+    function sanitizeFilePart(text) {
+      return String(text || '')
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .replace(/&/g, ' y ')
+        .replace(/[^a-zA-Z0-9\s_-]/g, '')
+        .trim()
+        .replace(/\s+/g, '_');
+    }
+
+    function buildDriveFileName(data) {
+      const fecha = data.fecha_evento || new Date().toISOString().slice(0, 10);
+      const partesCliente = sanitizeFilePart(data.cliente).split('_').filter(Boolean);
+      const primerNombre = partesCliente[0] || 'Cliente';
+      const primerApellido = partesCliente[1] || 'SinApellido';
+      const paquete = sanitizeFilePart(data.paquete || 'Personalizado') || 'Personalizado';
+      return `${fecha}_${primerNombre}_${primerApellido}_${paquete}_MRF.pdf`;
+    }
+
+    function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const result = reader.result;
+          if (!result) {
+            reject(new Error('No se pudo leer el PDF generado.'));
+            return;
+          }
+          resolve(String(result).split(',')[1]);
+        };
+        reader.onerror = () => reject(new Error('No se pudo convertir el PDF a base64.'));
+        reader.readAsDataURL(blob);
+      });
     }
 
     async function subirPDFaDrive() {
@@ -1421,29 +1619,59 @@ with check (true);</code>
 
       try {
         const blob = built.doc.output('blob');
-        const formData = new FormData();
-        formData.append('file', blob, built.fileName);
-        formData.append('cliente', built.data.cliente || '');
-        formData.append('fecha_evento', built.data.fecha_evento || '');
-        formData.append('evento_id', built.data.id || '');
+        const base64 = await blobToBase64(blob);
+        const payload = {
+          base64,
+          fechaEvento: built.data.fecha_evento,
+          cliente: built.data.cliente,
+          paquete: built.data.paquete,
+          fileName: buildDriveFileName(built.data),
+          eventoId: built.data.id || ''
+        };
 
         const response = await fetch(config.driveWebhook, {
           method: 'POST',
-          body: formData
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
 
-        if (!response.ok) throw new Error('El webhook respondió con error.');
-        const result = await response.json().catch(() => ({}));
+        const rawText = await response.text();
+        let result = {};
+        try {
+          result = rawText ? JSON.parse(rawText) : {};
+        } catch (e) {
+          throw new Error(`El webhook respondió algo inválido: ${rawText}`);
+        }
 
-        if (built.data.id && result.fileUrl && APP_STATE.supabase) {
-          await APP_STATE.supabase.from('eventos').update({ drive_pdf_url: result.fileUrl }).eq('id', built.data.id);
+        if (!response.ok || result.ok === false) {
+          throw new Error(result.error || 'El webhook respondió con error.');
+        }
+
+        const driveUrl = result.url || result.fileUrl || '';
+        if (built.data.id && driveUrl && APP_STATE.supabase) {
+          await APP_STATE.supabase
+            .from('eventos')
+            .update({ drive_pdf_url: driveUrl, updated_at: new Date().toISOString() })
+            .eq('id', built.data.id);
           await cargarAgenda();
         }
 
-        alert('PDF enviado al webhook de Drive.');
+        const nombreMostrado = result.fileName || payload.fileName;
+        const carpeta = result.folderYear && result.folderMonth
+          ? `
+Carpeta: ${result.folderYear} / ${result.folderMonth}`
+          : '';
+        const enlace = driveUrl ? `
+URL: ${driveUrl}` : '';
+
+        alert(`PDF guardado en Drive correctamente.
+
+Archivo: ${nombreMostrado}${carpeta}${enlace}`);
       } catch (error) {
         console.error(error);
-        alert('No pude subir el PDF a Drive. Revisa tu webhook o backend.');
+        alert(`No pude subir el PDF a Drive.
+
+${error.message || error}`);
       }
     }
 
