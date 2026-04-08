@@ -81,6 +81,15 @@
       box-shadow: 0 0 22px rgba(255,47,146,0.35);
     }
 
+    .logo-img {
+      height: 64px;
+      width: auto;
+      max-width: 220px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 18px rgba(255,47,146,0.30));
+      display: block;
+    }
+
     .brand h1 {
       font-size: 1.45rem;
       line-height: 1.05;
@@ -360,7 +369,7 @@
   <div class="app">
     <header class="topbar">
       <div class="brand">
-        <div class="brand-badge">MF</div>
+        <img src="prueba de logo fiel.webp" class="logo-img" alt="MR Fiesta Logo" />
         <div>
           <h1>MR FIESTA<br />CONTROL</h1>
           <p>Sistema inteligente de gestión de eventos</p>
@@ -493,6 +502,34 @@ with check (true);</code>
 
           <form id="contratoForm">
             <input type="hidden" id="eventoId" />
+
+            <div class="paste-box">
+              <div class="card-title" style="margin-bottom:0;">
+                <div>
+                  <h2 style="font-size:0.96rem;">Pegado rápido desde WhatsApp</h2>
+                  <p class="sub">Pega la respuesta del cliente y el sistema autocompleta lo que encuentre.</p>
+                </div>
+                <div class="mini-actions">
+                  <button type="button" class="btn dark" onclick="copiarPlantillaDatos()">📋 Copiar plantilla</button>
+                  <button type="button" class="btn blue" onclick="autocompletarDesdeTexto()">⚡ Autocompletar</button>
+                </div>
+              </div>
+              <div class="field">
+                <label for="textoCliente">Texto del cliente</label>
+                <textarea id="textoCliente" class="small-textarea" placeholder="CLIENTE:
+FECHA_EVENTO:
+HORA_INICIO:
+DIRECCION:
+
+AGASAJADO:
+EDAD:
+
+HORA_INVITACION:
+TEMATICA:
+CANCION:"></textarea>
+              </div>
+              <div class="mini-note">Plantilla sugerida: CLIENTE, FECHA_EVENTO, HORA_INICIO, DIRECCION, AGASAJADO, EDAD, HORA_INVITACION, TEMATICA y CANCION. Lo que no corresponda al contrato se guarda en observaciones.</div>
+            </div>
 
             <div class="grid-2">
               <div class="field">
@@ -637,14 +674,9 @@ with check (true);</code>
             </div>
 
             <div class="actions" style="margin-top:16px;">
-              <button type="button" class="btn primary" onclick="guardarEvento()">☁ Guardar en la nube</button>
-              <button type="button" class="btn yellow" onclick="duplicarEventoActual()">🧬 Duplicar</button>
+              <button type="button" id="generateContractBtn" class="btn primary" onclick="generarContratoCompleto()">📄 Generar contrato</button>
               <button type="button" class="btn green" onclick="enviarWhatsApp()">📲 WhatsApp</button>
-              <button type="button" class="btn blue" onclick="crearEventoCalendar()">🗓️ Calendar</button>
-              <button type="button" class="btn dark" onclick="generarYDescargarPDF()">📄 Descargar PDF</button>
-              <button type="button" class="btn dark" onclick="subirPDFaDrive()">☁ Subir PDF a Drive</button>
-              <button type="button" class="btn dark" onclick="copiarResumen()">📋 Copiar resumen</button>
-              <button type="button" class="btn dark" onclick="abrirMapa()">📍 Ver mapa</button>
+              <button type="button" class="btn yellow" onclick="duplicarEventoActual()">🧬 Duplicar</button>
               <button type="button" class="btn dark" onclick="limpiarFormulario()">🧹 Limpiar</button>
             </div>
           </form>
@@ -698,7 +730,8 @@ with check (true);</code>
       agenda: [],
       jsPDF: null,
       logoBase64: '',
-      firmaBase64: ''
+      firmaBase64: '',
+      isGeneratingContract: false
     };
 
     const descripcionesPaquetes = {
@@ -736,8 +769,122 @@ with check (true);</code>
       recomendarPaquete();
       actualizarEstadosIntegracion();
       await inicializarSupabaseDesdeConfig();
+      ocultarSetupSiYaEstaListo();
       await cargarAgenda();
     };
+
+
+    function setGenerateButtonState(isLoading, text = '📄 Generar contrato') {
+      const btn = document.getElementById('generateContractBtn');
+      if (!btn) return;
+      btn.disabled = isLoading;
+      btn.textContent = text;
+      btn.style.opacity = isLoading ? '0.78' : '1';
+      btn.style.cursor = isLoading ? 'wait' : 'pointer';
+    }
+
+    function copiarPlantillaDatos() {
+      const plantilla = `CLIENTE:
+FECHA_EVENTO:
+HORA_INICIO:
+DIRECCION:
+
+AGASAJADO:
+EDAD:
+
+HORA_INVITACION:
+TEMATICA:
+CANCION:`;
+      navigator.clipboard.writeText(plantilla)
+        .then(() => alert('Plantilla copiada.'))
+        .catch(() => alert('No pude copiar la plantilla automáticamente.'));
+    }
+
+    function normalizarClaveTexto(key) {
+      return String(key || '')
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .toUpperCase()
+        .replace(/[^A-Z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    }
+
+    function convertirFechaTextoAISO(valor) {
+      const raw = String(valor || '').trim();
+      if (!raw) return '';
+      if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+      const m = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+      if (!m) return '';
+      let [, d, mo, y] = m;
+      if (y.length === 2) y = '20' + y;
+      return `${y.padStart(4,'0')}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;
+    }
+
+    function convertirHoraTexto24(valor) {
+      let raw = String(valor || '').trim().toLowerCase();
+      if (!raw) return '';
+      raw = raw.replace(/\./g, '').replace(/\s+/g, ' ');
+      const m = raw.match(/^(\d{1,2})(?::(\d{1,2}))?\s*(am|pm)?$/i);
+      if (!m) return '';
+      let horas = parseInt(m[1], 10);
+      const minutos = parseInt(m[2] || '0', 10);
+      const sufijo = (m[3] || '').toLowerCase();
+      if (sufijo === 'pm' && horas < 12) horas += 12;
+      if (sufijo === 'am' && horas === 12) horas = 0;
+      if (horas > 23 || minutos > 59) return '';
+      return `${String(horas).padStart(2,'0')}:${String(minutos).padStart(2,'0')}`;
+    }
+
+    function autocompletarDesdeTexto() {
+      const texto = document.getElementById('textoCliente').value.trim();
+      if (!texto) {
+        alert('Pega primero el texto del cliente.');
+        return;
+      }
+
+      const mapa = {};
+      texto.split(/\r?\n/).forEach(linea => {
+        if (!linea.includes(':')) return;
+        const idx = linea.indexOf(':');
+        const clave = normalizarClaveTexto(linea.slice(0, idx));
+        const valor = linea.slice(idx + 1).trim();
+        if (clave) mapa[clave] = valor;
+      });
+
+      if (mapa.CLIENTE) document.getElementById('cliente').value = mapa.CLIENTE;
+      if (mapa.AGASAJADO) document.getElementById('agasajado').value = mapa.AGASAJADO;
+      if (mapa.EDAD) document.getElementById('edad').value = parseInt(mapa.EDAD, 10) || '';
+
+      const fechaISO = convertirFechaTextoAISO(mapa.FECHA_EVENTO || mapa.FECHA || '');
+      if (fechaISO) document.getElementById('fechaEvento').value = fechaISO;
+
+      const horaInicio = convertirHoraTexto24(mapa.HORA_INICIO || mapa.HORA || '');
+      if (horaInicio) document.getElementById('horaEvento').value = horaInicio;
+
+      if (mapa.DIRECCION) document.getElementById('direccion').value = mapa.DIRECCION;
+
+      const observaciones = [];
+      if (mapa.HORA_INVITACION) observaciones.push(`Hora de invitación: ${mapa.HORA_INVITACION}`);
+      if (mapa.TEMATICA) observaciones.push(`Temática: ${mapa.TEMATICA}`);
+      if (mapa.CANCION) observaciones.push(`Canción: ${mapa.CANCION}`);
+
+      if (observaciones.length) {
+        const obs = document.getElementById('observaciones');
+        const actual = obs.value.trim();
+        const nuevo = observaciones.join('\n');
+        obs.value = actual ? `${actual}
+${nuevo}` : nuevo;
+      }
+
+      if (horaInicio && !document.getElementById('horaFin').value) {
+        const paquete = document.getElementById('paqueteSelect').value || 'Personalizado';
+        document.getElementById('horaFin').value = sumarHoras(horaInicio, duracionPaquetes[paquete] || 3);
+      }
+
+      calcularSaldo();
+      recomendarPaquete();
+      alert('Datos capturados y colocados en el formulario. Revisa antes de generar el contrato.');
+    }
 
     function optimizarImagen(url, maxWidth, callback) {
       const img = new Image();
@@ -819,6 +966,18 @@ with check (true);</code>
       document.getElementById('setupCard').classList.toggle('hide');
     }
 
+    function ocultarSetupSiYaEstaListo() {
+      const config = getConfig();
+      const setupCard = document.getElementById('setupCard');
+      if (!setupCard) return;
+
+      if (config.supabaseUrl && config.supabaseAnonKey && APP_STATE.supabase) {
+        setupCard.classList.add('hide');
+      } else {
+        setupCard.classList.remove('hide');
+      }
+    }
+
     async function guardarConfiguracion() {
       const config = {
         supabaseUrl: document.getElementById('supabaseUrl').value.trim(),
@@ -830,6 +989,7 @@ with check (true);</code>
       actualizarEstadosIntegracion();
       const ok = await inicializarSupabaseDesdeConfig();
       if (ok) {
+        ocultarSetupSiYaEstaListo();
         await cargarAgenda();
         alert('Configuración guardada y conexión preparada.');
       } else {
@@ -843,6 +1003,7 @@ with check (true);</code>
       cargarConfiguracionGuardada();
       actualizarEstadosIntegracion();
       actualizarBadge('statusSupabase', 'Supabase: sin conectar', 'badge off');
+      ocultarSetupSiYaEstaListo();
       alert('Configuración eliminada del navegador.');
     }
 
@@ -1013,19 +1174,32 @@ with check (true);</code>
         alert('Falta la fecha del evento.');
         return false;
       }
+      if (!datos.hora_inicio) {
+        alert('Falta la hora de inicio.');
+        return false;
+      }
       if (!datos.paquete && !datos.detalle_servicio) {
         alert('Selecciona un paquete o escribe el detalle del servicio.');
+        return false;
+      }
+      if ((Number(datos.total) || 0) <= 0) {
+        alert('Ingresa el costo total del servicio.');
+        return false;
+      }
+      if ((Number(datos.adelanto) || 0) > (Number(datos.total) || 0)) {
+        alert('El adelanto no puede ser mayor al total.');
         return false;
       }
       return true;
     }
 
-    async function guardarEvento() {
+
+    async function guardarEventoSilencioso() {
       const datos = obtenerDatosFormulario();
-      if (!validarDatosBase(datos)) return;
+      if (!validarDatosBase(datos)) return null;
       if (!APP_STATE.supabase) {
         alert('Primero configura Supabase.');
-        return;
+        return null;
       }
 
       try {
@@ -1052,12 +1226,96 @@ with check (true);</code>
         document.getElementById('syncBadge').className = 'badge pagado';
 
         await cargarAgenda();
-        alert(datos.id ? 'Evento actualizado en la nube.' : 'Evento guardado en Supabase.');
+        return response.data;
       } catch (error) {
         console.error(error);
         document.getElementById('syncBadge').textContent = 'Error de sincronización';
         document.getElementById('syncBadge').className = 'badge pendiente';
         alert(`No se pudo guardar el evento. ${error.message || ''}`);
+        return null;
+      }
+    }
+
+    async function generarContratoCompleto() {
+      if (APP_STATE.isGeneratingContract) return;
+
+      const datosActuales = obtenerDatosFormulario();
+      if (datosActuales.id) {
+        const confirmarEdicion = confirm('Estás actualizando un evento ya existente. ¿Deseas continuar y regenerar el contrato?');
+        if (!confirmarEdicion) return;
+      }
+
+      APP_STATE.isGeneratingContract = true;
+      setGenerateButtonState(true, '⏳ Generando...');
+
+      try {
+        const saved = await guardarEventoSilencioso();
+        if (!saved) return;
+
+        const built = generarPDFDoc();
+        if (!built) return;
+
+        const config = getConfig();
+        const blob = built.doc.output('blob');
+        built.doc.save(built.fileName);
+
+        if (!config.driveWebhook) {
+          alert('Evento guardado, contrato generado y descargado localmente. No hay webhook de Drive configurado.');
+          return;
+        }
+
+        const base64 = await blobToBase64(blob);
+        const payload = {
+          base64,
+          fechaEvento: saved.fecha_evento,
+          cliente: saved.cliente,
+          paquete: saved.paquete,
+          fileName: buildDriveFileName(saved),
+          eventoId: saved.id || ''
+        };
+
+        const response = await fetch(config.driveWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const rawText = await response.text();
+        let result = {};
+        try {
+          result = rawText ? JSON.parse(rawText) : {};
+        } catch (e) {
+          throw new Error(`El webhook respondió algo inválido: ${rawText}`);
+        }
+
+        if (!response.ok || result.ok === false) {
+          throw new Error(result.error || 'El webhook respondió con error.');
+        }
+
+        const driveUrl = result.url || result.fileUrl || '';
+        if (saved.id && APP_STATE.supabase) {
+          const payloadUpdate = { updated_at: new Date().toISOString() };
+          if (driveUrl) payloadUpdate.drive_pdf_url = driveUrl;
+          await APP_STATE.supabase.from('eventos').update(payloadUpdate).eq('id', saved.id);
+          await cargarAgenda();
+        }
+
+        alert('Contrato generado, descargado localmente y enviado a Drive correctamente.');
+      } catch (error) {
+        console.error(error);
+        alert(`El evento se guardó o actualizó, pero hubo un problema en el proceso final.
+
+${error.message || error}`);
+      } finally {
+        APP_STATE.isGeneratingContract = false;
+        setGenerateButtonState(false, '📄 Generar contrato');
+      }
+    }
+
+    async function guardarEvento() {
+      const saved = await guardarEventoSilencioso();
+      if (saved) {
+        alert(saved.id ? 'Evento sincronizado correctamente.' : 'Evento guardado en Supabase.');
       }
     }
 
@@ -1214,7 +1472,17 @@ with check (true);</code>
         alert('Primero configura Supabase.');
         return;
       }
-      if (!confirm('¿Eliminar este evento de Supabase?')) return;
+      const evento = getEventoById(id);
+      const mensaje = evento
+        ? `Vas a eliminar este evento:
+
+Cliente: ${evento.cliente || '-'}
+Fecha: ${formatearFecha(evento.fecha_evento)}
+Paquete: ${evento.paquete || 'Personalizado'}
+
+Esta acción no se puede deshacer. ¿Continuar?`
+        : '¿Eliminar este evento de Supabase?';
+      if (!confirm(mensaje)) return;
 
       const { error } = await APP_STATE.supabase.from('eventos').delete().eq('id', id);
       if (error) {
@@ -1563,7 +1831,7 @@ ${d.detalle_servicio || 'Servicios acordados mutuamente.'}`, 180);
 
       addFooter(doc);
 
-      return { doc, data: d, fileName: `Contrato_${(d.cliente || 'cliente').replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${numContrato}.pdf` };
+      return { doc, data: d, fileName: buildLocalContractFileName(d, numContrato), numContrato };
     }
 
     function generarYDescargarPDF() {
@@ -1589,6 +1857,13 @@ ${d.detalle_servicio || 'Servicios acordados mutuamente.'}`, 180);
       const primerApellido = partesCliente[1] || 'SinApellido';
       const paquete = sanitizeFilePart(data.paquete || 'Personalizado') || 'Personalizado';
       return `${fecha}_${primerNombre}_${primerApellido}_${paquete}_MRF.pdf`;
+    }
+
+    function buildLocalContractFileName(data, numContrato) {
+      const fecha = data.fecha_evento || new Date().toISOString().slice(0, 10);
+      const cliente = sanitizeFilePart(data.cliente || 'Cliente') || 'Cliente';
+      const paquete = sanitizeFilePart(data.paquete || 'Personalizado') || 'Personalizado';
+      return `${fecha}_${cliente}_${paquete}_${numContrato}_MRF.pdf`;
     }
 
     function blobToBase64(blob) {
