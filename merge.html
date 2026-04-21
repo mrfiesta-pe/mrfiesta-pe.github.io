@@ -1,0 +1,2423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MR FIESTA CONTROL | Sistema inteligente de gestión de eventos</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg: #080910;
+      --bg-soft: #10131d;
+      --card: rgba(15, 17, 27, 0.92);
+      --line: rgba(255,255,255,0.08);
+      --line-strong: rgba(0,234,255,0.28);
+      --text: #eef2ff;
+      --muted: #aeb6d3;
+      --blue: #00eaff;
+      --pink: #ff2f92;
+      --green: #27d17f;
+      --yellow: #ffcb3d;
+      --red: #ff5d6c;
+      --shadow: 0 10px 35px rgba(0,0,0,0.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255,47,146,0.18), transparent 30%),
+        radial-gradient(circle at 85% 15%, rgba(0,234,255,0.15), transparent 30%),
+        linear-gradient(180deg, #07080d 0%, #090b13 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .app {
+      max-width: 1520px;
+      margin: 0 auto;
+      display: grid;
+      gap: 20px;
+    }
+
+    .topbar, .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 18px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topbar-watermark {
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 140px;
+      opacity: 0.06;
+      pointer-events: none;
+      filter: drop-shadow(0 0 18px rgba(255,47,146,0.18));
+    }
+
+    .topbar > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--pink), var(--blue));
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 0 22px rgba(255,47,146,0.35);
+    }
+
+    .logo-img {
+      height: 82px;
+      width: auto;
+      max-width: 280px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 18px rgba(255,47,146,0.30));
+      display: block;
+    }
+
+    .brand h1 {
+      font-size: 1.45rem;
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .brand p, .sub, .meta, .empty, .footer-note, .setup-box p {
+      color: var(--muted);
+    }
+
+    .top-actions, .actions, .mini-actions, .chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.3fr 0.95fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .stack { display: grid; gap: 20px; }
+    .card { padding: 22px; }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .card-title h2 {
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .grid-2, .grid-3, .grid-4 {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+
+    .field { display: grid; gap: 7px; }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--blue);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: rgba(5, 7, 15, 0.7);
+      color: white;
+      border: 1px solid rgba(0,234,255,0.18);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: inherit;
+      transition: 0.2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(255,47,146,0.13);
+    }
+
+    textarea { min-height: 110px; resize: vertical; }
+    .small-textarea { min-height: 84px; }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+      color: white;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn.primary { background: linear-gradient(135deg, var(--pink), #ff7b31); box-shadow: 0 0 18px rgba(255,47,146,0.35); }
+    .btn.blue { background: linear-gradient(135deg, #2e7cff, #00c7ff); box-shadow: 0 0 18px rgba(0,199,255,0.25); }
+    .btn.green { background: linear-gradient(135deg, #16c95d, #25d366); box-shadow: 0 0 18px rgba(37,211,102,0.24); }
+    .btn.dark { background: rgba(255,255,255,0.03); border: 1px solid var(--line); color: var(--text); }
+    .btn.red { background: linear-gradient(135deg, #ff4e63, #df2841); }
+    .btn.yellow { background: linear-gradient(135deg, #f6b70d, #ffcf54); color: #191919; }
+
+    .actions .btn { flex: 1 1 180px; }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 14px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .stat span { display: block; color: var(--muted); font-size: 0.82rem; margin-bottom: 8px; }
+    .stat strong { font-size: 1.35rem; font-weight: 800; }
+
+    .status-badges, .connection-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .badge.reservado { background: rgba(255,203,61,0.13); color: #ffd45b; border-color: rgba(255,203,61,0.25); }
+    .badge.pagado { background: rgba(39,209,127,0.12); color: #6df0aa; border-color: rgba(39,209,127,0.24); }
+    .badge.pendiente { background: rgba(255,93,108,0.12); color: #ff7d89; border-color: rgba(255,93,108,0.22); }
+    .badge.info { background: rgba(0,234,255,0.1); color: #8df7ff; border-color: rgba(0,234,255,0.24); }
+    .badge.off { background: rgba(255,255,255,0.05); color: #d8def8; border-color: rgba(255,255,255,0.1); }
+
+    .setup-box, .saldo-box, .recomendacion, .helper-box {
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .setup-box {
+      border: 1px solid rgba(0,234,255,0.15);
+      background: rgba(0,234,255,0.04);
+    }
+
+    .helper-box {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.025);
+    }
+
+    .helper-box code, .setup-box code {
+      white-space: pre-wrap;
+      display: block;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      color: #cde8ff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.83rem;
+    }
+
+    .saldo-box {
+      margin-top: 14px;
+      background: rgba(0,234,255,0.08);
+      border: 1px dashed rgba(0,234,255,0.35);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .saldo-box strong { font-size: 1.15rem; }
+    .saldo-box small { color: var(--muted); display: block; margin-top: 4px; }
+
+    .recomendacion {
+      margin-top: 14px;
+      border: 1px solid rgba(255,47,146,0.18);
+      background: rgba(255,47,146,0.06);
+      color: #ffd6e8;
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .agenda-list {
+      display: grid;
+      gap: 12px;
+      max-height: 900px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .agenda-item {
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--blue);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(255,255,255,0.02);
+      display: grid;
+      gap: 10px;
+    }
+
+    .agenda-item.urgent { border-left-color: var(--pink); }
+    .agenda-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .agenda-top strong {
+      font-size: 1rem;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .agenda-meta {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .agenda-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 22px;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .toolbar .grid-2 { gap: 10px; }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.84rem;
+      padding-bottom: 6px;
+    }
+
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 9999;
+    }
+
+    .modal-card {
+      width: min(460px, 100%);
+      max-height: 82vh;
+      overflow: auto;
+      background: linear-gradient(180deg, rgba(15, 17, 27, 0.98), rgba(9, 11, 19, 0.98));
+      border: 1px solid rgba(0,234,255,0.14);
+      border-radius: 22px;
+      box-shadow: 0 20px 55px rgba(0,0,0,0.45);
+      padding: 20px;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .modal-head h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .equipo-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .equipo-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+    }
+
+    .equipo-option input {
+      width: 18px;
+      height: 18px;
+      accent-color: #00eaff;
+      flex: 0 0 auto;
+    }
+
+    .equipo-option strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .equipo-option span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .hide { display: none !important; }
+
+    @media (max-width: 1180px) {
+      .layout { grid-template-columns: 1fr; }
+      .stat-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 14px; }
+      .grid-2, .grid-3, .grid-4, .stat-grid { grid-template-columns: 1fr; }
+      .topbar, .card { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <img src="prueba de logo fiel.webp" class="logo-img" alt="MR Fiesta Logo" />
+        <div>
+          <h1>MR FIESTA<br />CONTROL</h1>
+          <p>Sistema inteligente de gestión de eventos</p>
+        </div>
+      </div>
+      <img src="prueba de logo fiel.webp" class="topbar-watermark" alt="Marca de agua MR Fiesta" />
+      <div class="top-actions" id="topActions">
+        <button class="btn dark" type="button" onclick="toggleSetup()">⚙ Configuración</button>
+        <button class="btn dark" type="button" onclick="probarConexionSupabase()">🔌 Probar conexión</button>
+        <button class="btn dark" type="button" onclick="cargarAgenda()">↻ Recargar agenda</button>
+      </div>
+    </header>
+
+    <section class="card" id="setupCard">
+      <div class="card-title">
+        <div>
+          <h2>Configuración base</h2>
+          <p class="sub">Aquí va tu conexión real. Lo único local que se guarda son estas credenciales públicas y URLs de integración.</p>
+        </div>
+        <div class="connection-badges">
+          <span class="badge info" id="statusSupabase">Supabase: sin conectar</span>
+          <span class="badge off" id="statusCalendar">Calendar: manual</span>
+          <span class="badge off" id="statusDrive">Drive: descarga local</span>
+        </div>
+      </div>
+
+      <div class="setup-box">
+        <div class="grid-2">
+          <div class="field">
+            <label for="supabaseUrl">Supabase URL</label>
+            <input type="text" id="supabaseUrl" placeholder="https://xxxxx.supabase.co" />
+          </div>
+          <div class="field">
+            <label for="supabaseAnonKey">Supabase Anon Key</label>
+            <input type="text" id="supabaseAnonKey" placeholder="eyJhbGciOi..." />
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:14px;">
+          <div class="field">
+            <label for="calendarWebhook">Google Calendar Webhook (opcional)</label>
+            <input type="text" id="calendarWebhook" placeholder="URL de Apps Script / backend para crear eventos" />
+          </div>
+          <div class="field">
+            <label for="driveWebhook">Google Drive Webhook (opcional)</label>
+            <input type="text" id="driveWebhook" placeholder="URL de Apps Script / backend para subir PDFs" />
+          </div>
+        </div>
+        <div class="actions" style="margin-top:14px;">
+          <button class="btn blue" type="button" onclick="guardarConfiguracion()">💾 Guardar configuración</button>
+          <button class="btn dark" type="button" onclick="copiarSQLSetup()">📋 Copiar SQL de Supabase</button>
+          <button class="btn dark" type="button" onclick="limpiarConfiguracion()">🧹 Limpiar configuración</button>
+        </div>
+        <p style="margin-top:12px;">Primero crea la tabla <strong>eventos</strong> en Supabase con el SQL sugerido. Después pegas tu URL y tu anon key, guardas, y listo.</p>
+      </div>
+
+      <div class="helper-box" style="margin-top:14px;">
+        <strong>SQL sugerido para Supabase</strong>
+        <code id="sqlSetup">create table if not exists public.eventos (
+  id uuid primary key default gen_random_uuid(),
+  cliente text not null,
+  agasajado text,
+  dni text,
+  telefono text,
+  tipo_evento text default 'Cumpleaños',
+  edad integer,
+  invitados integer,
+  fecha_evento date not null,
+  hora_inicio text,
+  hora_fin text,
+  lugar text,
+  direccion text,
+  paquete text,
+  detalle_servicio text,
+  cronograma text,
+  adicionales text,
+  observaciones text,
+  movilidad text default 'Incluida',
+  estado_pago text default 'Reservado',
+  total numeric default 0,
+  adelanto numeric default 0,
+  saldo numeric default 0,
+  calendar_event_id text,
+  drive_pdf_url text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  juegos_elegidos text
+);
+
+create extension if not exists pgcrypto;
+
+alter table public.eventos enable row level security;
+
+create policy "allow all for anon" on public.eventos
+for all
+using (true)
+with check (true);</code>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-title">
+        <div>
+          <h2>Panel general</h2>
+          <p class="sub">Resumen automático de tus eventos sincronizados</p>
+        </div>
+        <div class="status-badges">
+          <span class="badge reservado">🟡 Reservado</span>
+          <span class="badge pagado">🟢 Pagado</span>
+          <span class="badge pendiente">🔴 Pendiente</span>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><span>Eventos registrados</span><strong id="statEventos">0</strong></div>
+        <div class="stat"><span>Total facturado</span><strong id="statFacturado">S/ 0</strong></div>
+        <div class="stat"><span>Total adelantado</span><strong id="statAdelantos">S/ 0</strong></div>
+        <div class="stat"><span>Saldo pendiente</span><strong id="statPendiente">S/ 0</strong></div>
+      </div>
+    </section>
+
+    <main class="layout">
+      <div class="stack">
+        <section class="card">
+          <div class="card-title">
+            <div>
+              <h2>Contrato / evento</h2>
+              <p class="sub">Versión 3.0 preparada para trabajar directo contra la nube</p>
+            </div>
+            <div class="chips">
+              <span class="badge info" id="modeBadge">Modo: nuevo</span>
+              <span class="badge off" id="syncBadge">Sincronización pendiente</span>
+            </div>
+          </div>
+
+          <form id="contratoForm">
+            <input type="hidden" id="eventoId" />
+
+            <div class="paste-box">
+              <div class="card-title" style="margin-bottom:0;">
+                <div>
+                  <h2 style="font-size:0.96rem;">Pegado rápido desde WhatsApp</h2>
+                  <p class="sub">Pega la respuesta del cliente y el sistema autocompleta lo que encuentre.</p>
+                </div>
+                <div class="mini-actions">
+                  <button type="button" class="btn dark" onclick="copiarPlantillaDatos()">📋 Copiar plantilla</button>
+                  <button type="button" class="btn blue" onclick="autocompletarDesdeTexto()">⚡ Autocompletar</button>
+                </div>
+              </div>
+              <div class="field">
+                <label for="textoCliente">Texto del cliente</label>
+                <textarea id="textoCliente" class="small-textarea" placeholder="CLIENTE:
+FECHA_EVENTO:
+HORA_INICIO:
+DIRECCION:
+
+AGASAJADO:
+EDAD:
+
+HORA_INVITACION:
+TEMATICA:
+CANCION:"></textarea>
+              </div>
+              <div class="mini-note">Plantilla sugerida: CLIENTE, FECHA_EVENTO, HORA_INICIO, DIRECCION, AGASAJADO, EDAD, HORA_INVITACION, TEMATICA y CANCION. Lo que no corresponda al contrato se guarda en observaciones.</div>
+            </div>
+
+            <div class="grid-2">
+              <div class="field">
+                <label for="cliente">Nombre del cliente</label>
+                <input type="text" id="cliente" placeholder="Ej: María Pérez" />
+              </div>
+              <div class="field">
+                <label for="agasajado">Nombre del agasajado</label>
+                <input type="text" id="agasajado" placeholder="Ej: Valeria" />
+              </div>
+            </div>
+
+            <div class="grid-3" style="margin-top:14px;">
+              <div class="field">
+                <label for="dni">DNI / RUC</label>
+                <input type="text" id="dni" placeholder="12345678" />
+              </div>
+              <div class="field">
+                <label for="telefonoCli">Teléfono</label>
+                <input type="text" id="telefonoCli" placeholder="987654321" />
+              </div>
+              <div class="field">
+                <label for="tipoEvento">Tipo de evento</label>
+                <select id="tipoEvento">
+                  <option value="Cumpleaños">Cumpleaños</option>
+                  <option value="Quinceañero">Quinceañero</option>
+                  <option value="Promoción">Promoción</option>
+                  <option value="Baby Shower">Baby Shower</option>
+                  <option value="Evento personalizado">Evento personalizado</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-4" style="margin-top:14px;">
+              <div class="field">
+                <label for="edad">Edad</label>
+                <input type="number" id="edad" placeholder="10" oninput="recomendarPaquete()" />
+              </div>
+              <div class="field">
+                <label for="invitados">Invitados aprox.</label>
+                <input type="number" id="invitados" placeholder="20" oninput="recomendarPaquete()" />
+              </div>
+              <div class="field">
+                <label for="fechaEvento">Fecha del evento</label>
+                <input type="date" id="fechaEvento" />
+              </div>
+              <div class="field">
+                <label for="horaEvento">Hora de inicio</label>
+                <input type="time" id="horaEvento" />
+              </div>
+            </div>
+
+            <div class="grid-3" style="margin-top:14px;">
+              <div class="field">
+                <label for="horaFin">Hora fin</label>
+                <input type="time" id="horaFin" />
+              </div>
+              <div class="field">
+                <label for="lugar">Distrito / zona</label>
+                <input type="text" id="lugar" placeholder="Ej: Surco" />
+              </div>
+              <div class="field">
+                <label for="direccion">Dirección exacta</label>
+                <input type="text" id="direccion" placeholder="Av. Siempre Viva 123" />
+              </div>
+            </div>
+
+            <div class="grid-3" style="margin-top:14px;">
+              <div class="field">
+                <label for="paqueteSelect">Paquete</label>
+                <select id="paqueteSelect" onchange="actualizarPaquete()">
+                  <option value="">-- Selecciona un paquete --</option>
+                  <option value="Just Dance & Karaoke Party">Just Dance & Karaoke Party</option>
+                  <option value="Chicoteca en casa">Chicoteca en casa</option>
+                  <option value="Experiencia Neón">Experiencia Neón</option>
+                  <option value="Ultra Chicoteca LED">Ultra Chicoteca LED</option>
+                  <option value="Ultra Chicoteca + Decoración">Ultra Chicoteca + Decoración</option>
+                  <option value="Personalizado">✏️ Personalizado</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="estadoPago">Estado de pago</label>
+                <select id="estadoPago">
+                  <option value="Reservado">Reservado</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="Pagado">Pagado</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="movilidad">Movilidad</label>
+                <select id="movilidad">
+                  <option value="Incluida">Incluida</option>
+                  <option value="No incluida">No incluida</option>
+                  <option value="Por coordinar">Por coordinar</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field" style="margin-top:14px;">
+              <label for="detalleServicio">Detalle del servicio</label>
+              <textarea id="detalleServicio" placeholder="Aquí aparece el detalle del paquete o lo puedes editar manualmente"></textarea>
+            </div>
+
+            <div class="field" style="margin-top:14px;">
+              <label for="juegosElegidos">Juegos elegidos</label>
+              <textarea id="juegosElegidos" class="small-textarea" placeholder="Ej: Just Dance, Preguntados, Canta y Gana"></textarea>
+            </div>
+
+            <div class="field" style="margin-top:14px;">
+              <label for="cronograma">Cronograma del evento</label>
+              <textarea id="cronograma" class="small-textarea" placeholder="Ej: INICIO 6:00 PM, GLITTER 6:30 PM, SHOW 7:00 PM, DJ DE CIERRE 9:00 PM"></textarea>
+            </div>
+
+            <div class="grid-2" style="margin-top:14px;">
+              <div class="field">
+                <label for="adicionales">Adicionales / requerimientos</label>
+                <textarea id="adicionales" class="small-textarea" placeholder="Ej: glitter, tatuajes neón, 2 personajes, etc."></textarea>
+              </div>
+              <div class="field">
+                <label for="observaciones">Observaciones internas</label>
+                <textarea id="observaciones" class="small-textarea" placeholder="Notas solo para ti: piso 4, terraza, escalera angosta, etc."></textarea>
+              </div>
+            </div>
+
+            <div class="grid-3" style="margin-top:14px;">
+              <div class="field">
+                <label for="total">Costo total (S/)</label>
+                <input type="number" id="total" placeholder="750" oninput="calcularSaldo()" />
+              </div>
+              <div class="field">
+                <label for="adelanto">Adelanto (S/)</label>
+                <input type="number" id="adelanto" placeholder="200" oninput="calcularSaldo()" />
+              </div>
+              <div class="field">
+                <label for="saldoManual">Saldo manual opcional</label>
+                <input type="number" id="saldoManual" placeholder="Déjalo vacío para cálculo automático" oninput="calcularSaldo()" />
+              </div>
+            </div>
+
+            <div class="saldo-box" id="saldoContainer">
+              <div>
+                <strong>Saldo pendiente: S/ 0.00</strong>
+                <small id="saldoMensaje">Ingresa total y adelanto para calcular.</small>
+              </div>
+              <div class="status-badges">
+                <span class="badge reservado" id="badgeAlerta">Adelanto normal</span>
+              </div>
+            </div>
+
+            <div class="recomendacion" id="recomendacionBox">
+              Completa edad e invitados y te sugeriré qué paquete conviene más para este evento.
+            </div>
+
+            <div class="actions" style="margin-top:16px;">
+              <button type="button" id="generateContractBtn" class="btn primary" onclick="generarContratoCompleto()">📄 Generar contrato</button>
+              <button type="button" class="btn green" onclick="enviarWhatsApp()">📲 WhatsApp</button>
+              <button type="button" class="btn yellow" onclick="duplicarEventoActual()">🧬 Duplicar</button>
+              <button type="button" class="btn dark" onclick="limpiarFormulario()">🧹 Limpiar</button>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <aside class="stack">
+        <section class="card">
+          <div class="card-title">
+            <div>
+              <h2>Agenda sincronizada</h2>
+              <p class="sub">Lo que veas aquí viene desde Supabase</p>
+            </div>
+            <div class="mini-actions">
+              <button type="button" class="btn dark" onclick="cargarAgenda()">↻ Actualizar</button>
+              <button type="button" class="btn dark" onclick="toggleHistorial()" id="btnHistorial">📂 Ver historial</button>
+            </div>
+          </div>
+
+          <div class="toolbar">
+            <div class="grid-2">
+              <div class="field">
+                <label for="buscadorAgenda">Buscar</label>
+                <input type="text" id="buscadorAgenda" placeholder="Cliente, paquete, distrito" oninput="renderAgenda()" />
+              </div>
+              <div class="field">
+                <label for="filtroEstado">Filtrar por estado</label>
+                <select id="filtroEstado" onchange="renderAgenda()">
+                  <option value="">Todos</option>
+                  <option value="Reservado">Reservado</option>
+                  <option value="Pendiente">Pendiente</option>
+                  <option value="Pagado">Pagado</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="agenda-list" id="agendaList"></div>
+        </section>
+      </aside>
+    </main>
+
+    <div class="footer-note">
+      MR FIESTA CONTROL · Sistema inteligente de gestión de eventos
+    </div>
+  </div>
+
+
+  <div id="modalEquipo" class="modal-overlay hide">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <h3>Seleccionar equipo</h3>
+          <p class="sub">Elige a uno o varios colaboradores antes de abrir WhatsApp.</p>
+        </div>
+        <button type="button" class="btn dark" onclick="cerrarModalEquipo()">✕</button>
+      </div>
+
+      <div class="mini-actions" style="margin-bottom: 14px;">
+        <button type="button" class="btn dark" onclick="seleccionarTodosEquipo(true)">Seleccionar todos</button>
+        <button type="button" class="btn dark" onclick="seleccionarTodosEquipo(false)">Limpiar</button>
+      </div>
+
+      <div id="listaEquipo" class="equipo-list"></div>
+
+      <div class="actions" style="margin-top:16px;">
+        <button type="button" class="btn blue" onclick="confirmarEnvioEquipo()">📲 Enviar a seleccionados</button>
+        <button type="button" class="btn dark" onclick="cerrarModalEquipo()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CONFIG_KEY = 'mrfiesta_v3_config';
+    const APP_STATE = {
+      supabase: null,
+      agenda: [],
+      jsPDF: null,
+      logoBase64: '',
+      firmaBase64: '',
+      isGeneratingContract: false
+    };
+
+    let eventoSeleccionadoEquipo = null;
+let mostrarHistorial = false;
+
+    const COLAB_KEY = 'mrfiesta_colaboradores';
+
+    const colaboradoresIniciales = [
+      { nombre: "Maria Jose", rol: "Animadora", telefono: "940758037" },
+      { nombre: "Ysabel", rol: "Animadora", telefono: "921067147" },
+      { nombre: "Kiara", rol: "Animadora", telefono: "946733892" },
+      { nombre: "Carlos", rol: "Animador", telefono: "977726706" },
+      { nombre: "Edinson", rol: "Animador", telefono: "940248303" },
+      { nombre: "Kenneth", rol: "Animador", telefono: "937497874" },
+      { nombre: "Jackie", rol: "Animadora", telefono: "989432888" },
+      { nombre: "Clarita", rol: "Animadora", telefono: "993408344" },
+      { nombre: "Nico", rol: "DJ", telefono: "913735450" },
+      { nombre: "Diego", rol: "DJ", telefono: "937157830" },
+      { nombre: "Lhuana", rol: "SUPER STAFF", telefono: "930168388" },
+      { nombre: "Lobo", rol: "STAFF", telefono: "931497582" },
+      { nombre: "Mariela", rol: "SUPER STAFF", telefono: "987716942" },
+      { nombre: "Sara", rol: "Bailarina", telefono: "907535736" }
+    ];
+
+    const descripcionesPaquetes = {
+      'Just Dance & Karaoke Party': `• DJ en vivo
+• Parlante profesional
+• Proyector + ecran portátil
+• 2 micrófonos inalámbricos
+• Just Dance y Karaoke
+• 6 luces inteligentes con trípode
+• Ideal para fiesta rápida y económica
+
+*Nota: No incluye movilidad.*`,
+      'Chicoteca en casa': `• 2 horas de animación continua
+• Animador(a) + DJ con equipo de sonido profesional
+• Juegos interactivos y bailes guiados según la edad
+• Luces tipo discoteca o efecto neón
+• Just Dance o Karaoke en pantalla gigante (ecran + proyector)
+• Invitación virtual personalizada
+• Mini hora loca con:
+   - Globos tipo pencil
+   - Pulseras neón
+   - Accesorios LED (limbo y salta soga)
+• Movilidad incluida (zonas seleccionadas)`,
+      'Experiencia Neón': `• 3 horas de experiencia total:
+   - 1 hora de estación Glitter previa al show
+   - 2 horas de animación continua
+• Animador(a) + DJ con equipo de sonido profesional
+• Juegos interactivos y bailes guiados según la edad
+• Luces tipo discoteca + iluminación UV (efecto neón)
+• Just Dance o Karaoke en pantalla gigante (ecran + proyector)
+• Invitación virtual personalizada
+• Mini hora loca con:
+   - Globos tipo pencil
+   - Pulseras neón
+   - Accesorios LED (limbo y salta soga)
+• Estación Glitter (maquillaje y tatuajes neón)
+• DJ activo durante la estación Glitter (previo al show)
+• Máquina de burbujas o humo (según el espacio)
+• Movilidad incluida (zonas seleccionadas)`,
+      'Ultra Chicoteca LED': `• 3 horas de experiencia total:
+   - 1 hora de estación Glitter (previo al show)
+   - 2 horas de show Chicoteca LED
+• Pista LED de 3x2 metros
+• Animador(a) + DJ + staff de apoyo + maquilladora
+• Estación Glitter (maquillaje y tatuajes neón)
+• DJ activo durante la estación Glitter
+• Juegos de competencia y dinámicas según la edad
+• Just Dance o Karaoke en pantalla gigante (ecran + proyector)
+• Luces inteligentes + efectos láser
+• Proyección láser personalizada con el nombre
+• Iluminación tipo discoteca + ambiente LED
+• Mini hora loca LED con:
+   - Globos tipo pencil
+   - Pulseras neón
+   - Limbo LED
+   - Salta soga LED
+   - Efecto de burbujas
+• Máquina de humo o burbujas (según el espacio)
+• Movilidad incluida`,
+      'Ultra Chicoteca + Decoración': `• 4 horas de experiencia total:
+   - 1 hora de estación Glitter (previo al show)
+   - 2 horas de show Chicoteca LED
+   - 1 hora de DJ adicional (30 min antes + 30 min después)
+• Pista LED de 3x2 metros
+• Animador(a) + DJ + staff de apoyo + maquilladora
+• Estación Glitter (maquillaje y tatuajes neón)
+• DJ activo durante la estación Glitter
+• Juegos de competencia y dinámicas según la edad
+• Just Dance o Karaoke en pantalla gigante (ecran + proyector)
+• Luces inteligentes + efectos láser
+• Proyección láser personalizada con el nombre
+• Iluminación tipo discoteca + ambiente LED
+• Mini hora loca LED con:
+   - Globos tipo pencil
+   - Pulseras neón
+   - Limbo LED
+   - Salta soga LED
+   - Efecto de burbujas
+• Máquina de humo o burbujas (según el espacio)
+• Decoración temática base (Neón / Glow):
+   - Backing decorativo con letrero estilo neón
+   - 3 mesas acrílicas o cilindros decorativos
+   - Accesorios para torta y bocaditos
+• Movilidad incluida`,
+      'Personalizado': ''
+    };
+
+    const preciosPaquetes = {
+      'Just Dance & Karaoke Party': 420,
+      'Chicoteca en casa': 750,
+      'Experiencia Neón': 950,
+      'Ultra Chicoteca LED': 1290,
+      'Ultra Chicoteca + Decoración': 1490
+    };
+
+    const duracionPaquetes = {
+      'Just Dance & Karaoke Party': 2,
+      'Chicoteca en casa': 2,
+      'Experiencia Neón': 3,
+      'Ultra Chicoteca LED': 3,
+      'Ultra Chicoteca + Decoración': 4,
+      'Personalizado': 3
+    };
+
+    window.onload = async () => {
+      APP_STATE.jsPDF = window.jspdf?.jsPDF || null;
+      optimizarImagen('prueba de logo fiel.webp', 500, (b64) => { APP_STATE.logoBase64 = b64; });
+      optimizarImagen('firma_andre.png', 320, (b64) => { APP_STATE.firmaBase64 = b64; });
+      cargarConfiguracionGuardada();
+      inicializarColaboradores();
+      calcularSaldo();
+      recomendarPaquete();
+      actualizarEstadosIntegracion();
+      await inicializarSupabaseDesdeConfig();
+      ocultarSetupSiYaEstaListo();
+      ocultarTopActionsSiYaEstaListo();
+      await cargarAgenda();
+    };
+
+
+    function setGenerateButtonState(isLoading, text = '📄 Generar contrato') {
+      const btn = document.getElementById('generateContractBtn');
+      if (!btn) return;
+      btn.disabled = isLoading;
+      btn.textContent = text;
+      btn.style.opacity = isLoading ? '0.78' : '1';
+      btn.style.cursor = isLoading ? 'wait' : 'pointer';
+    }
+
+    function copiarPlantillaDatos() {
+      const plantilla = `CLIENTE:
+FECHA_EVENTO:
+HORA_INICIO:
+DIRECCION:
+
+AGASAJADO:
+EDAD:
+
+HORA_INVITACION:
+TEMATICA:
+CANCION:`;
+      navigator.clipboard.writeText(plantilla)
+        .then(() => alert('Plantilla copiada.'))
+        .catch(() => alert('No pude copiar la plantilla automáticamente.'));
+    }
+
+    function normalizarClaveTexto(key) {
+      return String(key || '')
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .toUpperCase()
+        .replace(/[^A-Z0-9]+/g, '_')
+        .replace(/^_+|_+$/g, '');
+    }
+
+    function convertirFechaTextoAISO(valor) {
+      const raw = String(valor || '').trim();
+      if (!raw) return '';
+      if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+      const m = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+      if (!m) return '';
+      let [, d, mo, y] = m;
+      if (y.length === 2) y = '20' + y;
+      return `${y.padStart(4,'0')}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;
+    }
+
+    function convertirHoraTexto24(valor) {
+      let raw = String(valor || '').trim().toLowerCase();
+      if (!raw) return '';
+      raw = raw.replace(/\./g, '').replace(/\s+/g, ' ');
+      const m = raw.match(/^(\d{1,2})(?::(\d{1,2}))?\s*(am|pm)?$/i);
+      if (!m) return '';
+      let horas = parseInt(m[1], 10);
+      const minutos = parseInt(m[2] || '0', 10);
+      const sufijo = (m[3] || '').toLowerCase();
+      if (sufijo === 'pm' && horas < 12) horas += 12;
+      if (sufijo === 'am' && horas === 12) horas = 0;
+      if (horas > 23 || minutos > 59) return '';
+      return `${String(horas).padStart(2,'0')}:${String(minutos).padStart(2,'0')}`;
+    }
+
+    function autocompletarDesdeTexto() {
+      const texto = document.getElementById('textoCliente').value.trim();
+      if (!texto) {
+        alert('Pega primero el texto del cliente.');
+        return;
+      }
+
+      const mapa = {};
+      texto.split(/\r?\n/).forEach(linea => {
+        if (!linea.includes(':')) return;
+        const idx = linea.indexOf(':');
+        const clave = normalizarClaveTexto(linea.slice(0, idx));
+        const valor = linea.slice(idx + 1).trim();
+        if (clave) mapa[clave] = valor;
+      });
+
+      if (mapa.CLIENTE) document.getElementById('cliente').value = mapa.CLIENTE;
+      if (mapa.AGASAJADO) document.getElementById('agasajado').value = mapa.AGASAJADO;
+      if (mapa.EDAD) document.getElementById('edad').value = parseInt(mapa.EDAD, 10) || '';
+
+      const fechaISO = convertirFechaTextoAISO(mapa.FECHA_EVENTO || mapa.FECHA || '');
+      if (fechaISO) document.getElementById('fechaEvento').value = fechaISO;
+
+      const horaInicio = convertirHoraTexto24(mapa.HORA_INICIO || mapa.HORA || '');
+      if (horaInicio) document.getElementById('horaEvento').value = horaInicio;
+
+      if (mapa.DIRECCION) document.getElementById('direccion').value = mapa.DIRECCION;
+
+      const observaciones = [];
+      if (mapa.HORA_INVITACION) observaciones.push(`Hora de invitación: ${mapa.HORA_INVITACION}`);
+      if (mapa.TEMATICA) observaciones.push(`Temática: ${mapa.TEMATICA}`);
+      if (mapa.CANCION) observaciones.push(`Canción: ${mapa.CANCION}`);
+
+      if (observaciones.length) {
+        const obs = document.getElementById('observaciones');
+        const actual = obs.value.trim();
+        const nuevo = observaciones.join('\n');
+        obs.value = actual ? `${actual}
+${nuevo}` : nuevo;
+      }
+
+      if (horaInicio && !document.getElementById('horaFin').value) {
+        const paquete = document.getElementById('paqueteSelect').value || 'Personalizado';
+        document.getElementById('horaFin').value = sumarHoras(horaInicio, duracionPaquetes[paquete] || 3);
+      }
+
+      calcularSaldo();
+      recomendarPaquete();
+      alert('Datos capturados y colocados en el formulario. Revisa antes de generar el contrato.');
+    }
+
+    function optimizarImagen(url, maxWidth, callback) {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = function () {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+        callback(canvas.toDataURL('image/png'));
+      };
+      img.onerror = function () { callback(''); };
+      img.src = url;
+    }
+
+    function getConfig() {
+      try {
+        return JSON.parse(localStorage.getItem(CONFIG_KEY)) || {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function setConfig(config) {
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+    }
+
+
+    function inicializarColaboradores() {
+      const existentes = localStorage.getItem(COLAB_KEY);
+      if (!existentes) {
+        localStorage.setItem(COLAB_KEY, JSON.stringify(colaboradoresIniciales));
+      }
+    }
+
+    function obtenerColaboradores() {
+      try {
+        return JSON.parse(localStorage.getItem(COLAB_KEY)) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function cargarConfiguracionGuardada() {
+      const config = getConfig();
+      document.getElementById('supabaseUrl').value = config.supabaseUrl || '';
+      document.getElementById('supabaseAnonKey').value = config.supabaseAnonKey || '';
+      document.getElementById('calendarWebhook').value = config.calendarWebhook || '';
+      document.getElementById('driveWebhook').value = config.driveWebhook || '';
+    }
+
+    async function inicializarSupabaseDesdeConfig() {
+      const config = getConfig();
+      if (!config.supabaseUrl || !config.supabaseAnonKey) {
+        actualizarBadge('statusSupabase', 'Supabase: falta configurar', 'badge pendiente');
+        APP_STATE.supabase = null;
+        return false;
+      }
+
+      try {
+        APP_STATE.supabase = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+        actualizarBadge('statusSupabase', 'Supabase: listo', 'badge pagado');
+        return true;
+      } catch (error) {
+        console.error(error);
+        APP_STATE.supabase = null;
+        actualizarBadge('statusSupabase', 'Supabase: error', 'badge pendiente');
+        return false;
+      }
+    }
+
+    function actualizarBadge(id, text, className) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = className;
+    }
+
+    function actualizarEstadosIntegracion() {
+      const config = getConfig();
+      actualizarBadge('statusCalendar', config.calendarWebhook ? 'Calendar: webhook listo' : 'Calendar: manual', config.calendarWebhook ? 'badge pagado' : 'badge off');
+      actualizarBadge('statusDrive', config.driveWebhook ? 'Drive: webhook listo' : 'Drive: descarga local', config.driveWebhook ? 'badge pagado' : 'badge off');
+    }
+
+    function toggleSetup() {
+      document.getElementById('setupCard').classList.toggle('hide');
+    }
+
+    function ocultarSetupSiYaEstaListo() {
+      const config = getConfig();
+      const setupCard = document.getElementById('setupCard');
+      if (!setupCard) return;
+
+      if (config.supabaseUrl && config.supabaseAnonKey && APP_STATE.supabase) {
+        setupCard.classList.add('hide');
+      } else {
+        setupCard.classList.remove('hide');
+      }
+    }
+
+    function ocultarTopActionsSiYaEstaListo() {
+      const config = getConfig();
+      const topActions = document.getElementById('topActions');
+      if (!topActions) return;
+
+      if (config.supabaseUrl && config.supabaseAnonKey && APP_STATE.supabase) {
+        topActions.classList.add('hide');
+      } else {
+        topActions.classList.remove('hide');
+      }
+    }
+
+    async function guardarConfiguracion() {
+      const config = {
+        supabaseUrl: document.getElementById('supabaseUrl').value.trim(),
+        supabaseAnonKey: document.getElementById('supabaseAnonKey').value.trim(),
+        calendarWebhook: document.getElementById('calendarWebhook').value.trim(),
+        driveWebhook: document.getElementById('driveWebhook').value.trim()
+      };
+      setConfig(config);
+      actualizarEstadosIntegracion();
+      const ok = await inicializarSupabaseDesdeConfig();
+      if (ok) {
+        ocultarSetupSiYaEstaListo();
+        ocultarTopActionsSiYaEstaListo();
+        await cargarAgenda();
+        alert('Configuración guardada y conexión preparada.');
+      } else {
+        alert('Configuración guardada, pero revisa la conexión de Supabase.');
+      }
+    }
+
+    function limpiarConfiguracion() {
+      localStorage.removeItem(CONFIG_KEY);
+      APP_STATE.supabase = null;
+      cargarConfiguracionGuardada();
+      actualizarEstadosIntegracion();
+      actualizarBadge('statusSupabase', 'Supabase: sin conectar', 'badge off');
+      ocultarSetupSiYaEstaListo();
+      ocultarTopActionsSiYaEstaListo();
+      alert('Configuración eliminada del navegador.');
+    }
+
+    async function probarConexionSupabase() {
+      const ok = await inicializarSupabaseDesdeConfig();
+      if (!ok || !APP_STATE.supabase) {
+        alert('Falta configurar Supabase o la conexión no pudo iniciarse.');
+        return;
+      }
+
+      const { error } = await APP_STATE.supabase.from('eventos').select('id').limit(1);
+      if (error) {
+        console.error(error);
+        actualizarBadge('statusSupabase', 'Supabase: error en tabla', 'badge pendiente');
+        alert('No pude leer la tabla eventos. Revisa el SQL y la política RLS.');
+        return;
+      }
+
+      actualizarBadge('statusSupabase', 'Supabase: conectado', 'badge pagado');
+      alert('Conexión correcta con Supabase.');
+    }
+
+    function copiarSQLSetup() {
+      const sql = document.getElementById('sqlSetup').textContent;
+      navigator.clipboard.writeText(sql)
+        .then(() => alert('SQL copiado.'))
+        .catch(() => alert('No pude copiar el SQL automáticamente.'));
+    }
+
+    function actualizarPaquete() {
+      const paquete = document.getElementById('paqueteSelect').value;
+      const detalle = document.getElementById('detalleServicio');
+      const total = document.getElementById('total');
+      const horaFin = document.getElementById('horaFin');
+      const horaEvento = document.getElementById('horaEvento').value;
+
+      if (descripcionesPaquetes[paquete] !== undefined) detalle.value = descripcionesPaquetes[paquete];
+      if (preciosPaquetes[paquete]) total.value = preciosPaquetes[paquete];
+      if (horaEvento && !horaFin.value) horaFin.value = sumarHoras(horaEvento, duracionPaquetes[paquete] || 3);
+
+      calcularSaldo();
+      recomendarPaquete();
+    }
+
+    function sumarHoras(hora, horasASumar) {
+      const [h, m] = (hora || '00:00').split(':').map(Number);
+      const totalMin = (h * 60) + m + (horasASumar * 60);
+      const finalMin = totalMin % (24 * 60);
+      const hh = String(Math.floor(finalMin / 60)).padStart(2, '0');
+      const mm = String(finalMin % 60).padStart(2, '0');
+      return `${hh}:${mm}`;
+    }
+
+    function calcularSaldo() {
+      const total = parseFloat(document.getElementById('total').value) || 0;
+      const adelanto = parseFloat(document.getElementById('adelanto').value) || 0;
+      const saldoManual = document.getElementById('saldoManual').value;
+      let saldo = saldoManual !== '' ? (parseFloat(saldoManual) || 0) : total - adelanto;
+      if (saldo < 0) saldo = 0;
+
+      const box = document.getElementById('saldoContainer');
+      const mensaje = document.getElementById('saldoMensaje');
+      const badge = document.getElementById('badgeAlerta');
+      const strong = box.querySelector('strong');
+      strong.textContent = `Saldo pendiente: S/ ${saldo.toFixed(2)}`;
+
+      if (adelanto === 0 && total > 0) {
+        box.style.borderColor = 'rgba(255,93,108,0.35)';
+        mensaje.textContent = 'Aún no hay adelanto registrado.';
+        badge.textContent = 'Sin adelanto';
+        badge.className = 'badge pendiente';
+      } else if (adelanto > 0 && adelanto < 100) {
+        box.style.borderColor = 'rgba(255,203,61,0.35)';
+        mensaje.textContent = 'Adelanto bajo. Revisa si te conviene pedir más para asegurar la fecha.';
+        badge.textContent = 'Adelanto bajo';
+        badge.className = 'badge reservado';
+      } else {
+        box.style.borderColor = 'rgba(0,234,255,0.35)';
+        mensaje.textContent = 'Todo bien. Ya puedes guardar, mandar WhatsApp o generar PDF.';
+        badge.textContent = 'Adelanto normal';
+        badge.className = 'badge pagado';
+      }
+      return saldo;
+    }
+
+    function recomendarPaquete() {
+      const edad = parseInt(document.getElementById('edad').value) || 0;
+      const invitados = parseInt(document.getElementById('invitados').value) || 0;
+      const tipo = document.getElementById('tipoEvento').value;
+      const box = document.getElementById('recomendacionBox');
+
+      if (!edad && !invitados) {
+        box.textContent = 'Completa edad e invitados y te sugeriré qué paquete conviene más para este evento.';
+        return;
+      }
+
+      let sugerencia = '';
+      if (tipo === 'Quinceañero' || edad >= 14) {
+        sugerencia = invitados > 35
+          ? 'Recomendación: Ultra Chicoteca LED o Ultra Chicoteca + Decoración. Para adolescentes y grupos grandes se ve más pro y más potente.'
+          : 'Recomendación: Experiencia Neón o Ultra Chicoteca LED. Para adolescentes queda más visual y moderna.';
+      } else if (edad >= 9 && edad <= 13) {
+        sugerencia = invitados > 25
+          ? 'Recomendación: Chicoteca en casa o Experiencia Neón. Ese rango de edad funciona muy bien con juegos, DJ, proyector y mini hora loca.'
+          : 'Recomendación: Chicoteca en casa. Es el punto más equilibrado entre precio, show y cantidad de invitados.';
+      } else if (edad > 0 && edad < 9) {
+        sugerencia = invitados > 20
+          ? 'Recomendación: Chicoteca en casa con ajustes de juegos por edad. Si quieres más impacto, sube a Experiencia Neón.'
+          : 'Recomendación: Just Dance & Karaoke Party o Chicoteca en casa, según presupuesto y espacio.';
+      }
+
+      box.textContent = sugerencia || 'Puedes usar un paquete personalizado y adaptar la experiencia según espacio, edad y estilo del evento.';
+    }
+
+    function formatearFecha(fechaStr) {
+      if (!fechaStr) return 'No especificada';
+      const fecha = new Date(`${fechaStr}T00:00:00`);
+      return fecha.toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function formatearMoneda(value) {
+      return `S/ ${Number(value || 0).toFixed(2)}`;
+    }
+
+    function obtenerDatosFormulario() {
+      const paquete = document.getElementById('paqueteSelect').value || 'Personalizado';
+      const total = parseFloat(document.getElementById('total').value) || 0;
+      const adelanto = parseFloat(document.getElementById('adelanto').value) || 0;
+      const saldo = calcularSaldo();
+      const fechaRaw = document.getElementById('fechaEvento').value;
+      const horaInicio = document.getElementById('horaEvento').value || '';
+      const horaFin = document.getElementById('horaFin').value || (horaInicio ? sumarHoras(horaInicio, duracionPaquetes[paquete] || 3) : '');
+
+      return {
+        id: document.getElementById('eventoId').value || null,
+        cliente: document.getElementById('cliente').value.trim(),
+        agasajado: document.getElementById('agasajado').value.trim(),
+        dni: document.getElementById('dni').value.trim(),
+        telefono: document.getElementById('telefonoCli').value.trim(),
+        tipo_evento: document.getElementById('tipoEvento').value,
+        edad: parseInt(document.getElementById('edad').value) || null,
+        invitados: parseInt(document.getElementById('invitados').value) || null,
+        fecha_evento: fechaRaw,
+        hora_inicio: horaInicio,
+        hora_fin: horaFin,
+        lugar: document.getElementById('lugar').value.trim(),
+        direccion: document.getElementById('direccion').value.trim(),
+        paquete,
+        detalle_servicio: document.getElementById('detalleServicio').value.trim(),
+        juegos_elegidos: document.getElementById('juegosElegidos').value.trim(),
+        cronograma: document.getElementById('cronograma').value.trim(),
+        adicionales: document.getElementById('adicionales').value.trim(),
+        observaciones: document.getElementById('observaciones').value.trim(),
+        movilidad: document.getElementById('movilidad').value,
+        estado_pago: document.getElementById('estadoPago').value,
+        total,
+        adelanto,
+        saldo,
+        calendar_event_id: null,
+        drive_pdf_url: null
+      };
+    }
+
+    function validarDatosBase(datos) {
+      if (!datos.cliente) {
+        alert('Falta el nombre del cliente.');
+        return false;
+      }
+      if (!datos.fecha_evento) {
+        alert('Falta la fecha del evento.');
+        return false;
+      }
+      if (!datos.hora_inicio) {
+        alert('Falta la hora de inicio.');
+        return false;
+      }
+      if (!datos.paquete && !datos.detalle_servicio) {
+        alert('Selecciona un paquete o escribe el detalle del servicio.');
+        return false;
+      }
+      if ((Number(datos.total) || 0) <= 0) {
+        alert('Ingresa el costo total del servicio.');
+        return false;
+      }
+      if ((Number(datos.adelanto) || 0) > (Number(datos.total) || 0)) {
+        alert('El adelanto no puede ser mayor al total.');
+        return false;
+      }
+      return true;
+    }
+
+
+    async function guardarEventoSilencioso() {
+      const datos = obtenerDatosFormulario();
+      if (!validarDatosBase(datos)) return null;
+      if (!APP_STATE.supabase) {
+        alert('Primero configura Supabase.');
+        return null;
+      }
+
+      try {
+        document.getElementById('syncBadge').textContent = 'Guardando...';
+        document.getElementById('syncBadge').className = 'badge reservado';
+
+        let response;
+        if (datos.id) {
+          const payload = { ...datos };
+          delete payload.id;
+          payload.updated_at = new Date().toISOString();
+          response = await APP_STATE.supabase.from('eventos').update(payload).eq('id', datos.id).select().single();
+        } else {
+          const payload = { ...datos };
+          delete payload.id;
+          response = await APP_STATE.supabase.from('eventos').insert(payload).select().single();
+        }
+
+        if (response.error) throw response.error;
+
+        document.getElementById('eventoId').value = response.data.id;
+        document.getElementById('modeBadge').textContent = 'Modo: edición';
+        document.getElementById('syncBadge').textContent = 'Sincronizado';
+        document.getElementById('syncBadge').className = 'badge pagado';
+
+        await cargarAgenda();
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        document.getElementById('syncBadge').textContent = 'Error de sincronización';
+        document.getElementById('syncBadge').className = 'badge pendiente';
+        alert(`No se pudo guardar el evento. ${error.message || ''}`);
+        return null;
+      }
+    }
+
+    async function generarContratoCompleto() {
+      if (APP_STATE.isGeneratingContract) return;
+
+      const datosActuales = obtenerDatosFormulario();
+      if (datosActuales.id) {
+        const confirmarEdicion = confirm('Estás actualizando un evento ya existente. ¿Deseas continuar y regenerar el contrato?');
+        if (!confirmarEdicion) return;
+      }
+
+      APP_STATE.isGeneratingContract = true;
+      setGenerateButtonState(true, '⏳ Generando...');
+
+      try {
+        const saved = await guardarEventoSilencioso();
+        if (!saved) return;
+
+        const built = generarPDFDoc();
+        if (!built) return;
+
+        const config = getConfig();
+        const blob = built.doc.output('blob');
+        built.doc.save(built.fileName);
+
+        if (!config.driveWebhook) {
+          alert('Evento guardado, contrato generado y descargado localmente. No hay webhook de Drive configurado.');
+          return;
+        }
+
+        const base64 = await blobToBase64(blob);
+        const payload = {
+          base64,
+          fechaEvento: saved.fecha_evento,
+          cliente: saved.cliente,
+          paquete: saved.paquete,
+          fileName: buildDriveFileName(saved),
+          eventoId: saved.id || ''
+        };
+
+        const response = await fetch(config.driveWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const rawText = await response.text();
+        let result = {};
+        try {
+          result = rawText ? JSON.parse(rawText) : {};
+        } catch (e) {
+          throw new Error(`El webhook respondió algo inválido: ${rawText}`);
+        }
+
+        if (!response.ok || result.ok === false) {
+          throw new Error(result.error || 'El webhook respondió con error.');
+        }
+
+        const driveUrl = result.url || result.fileUrl || '';
+        if (saved.id && APP_STATE.supabase) {
+          const payloadUpdate = { updated_at: new Date().toISOString() };
+          if (driveUrl) payloadUpdate.drive_pdf_url = driveUrl;
+          await APP_STATE.supabase.from('eventos').update(payloadUpdate).eq('id', saved.id);
+          await cargarAgenda();
+        }
+
+        alert('Contrato generado, descargado localmente y enviado a Drive correctamente.');
+      } catch (error) {
+        console.error(error);
+        alert(`El evento se guardó o actualizó, pero hubo un problema en el proceso final.
+
+${error.message || error}`);
+      } finally {
+        APP_STATE.isGeneratingContract = false;
+        setGenerateButtonState(false, '📄 Generar contrato');
+      }
+    }
+
+    async function guardarEvento() {
+      const saved = await guardarEventoSilencioso();
+      if (saved) {
+        alert(saved.id ? 'Evento sincronizado correctamente.' : 'Evento guardado en Supabase.');
+      }
+    }
+
+    function toggleHistorial() {
+      mostrarHistorial = !mostrarHistorial;
+      const btn = document.getElementById('btnHistorial');
+      if (btn) btn.textContent = mostrarHistorial ? '📅 Ver próximos' : '📂 Ver historial';
+      renderAgenda();
+    }
+
+    async function cargarAgenda() {
+      if (!APP_STATE.supabase) {
+        APP_STATE.agenda = [];
+        renderAgenda();
+        calcularEstadisticas();
+        return;
+      }
+
+      const { data, error } = await APP_STATE.supabase
+        .from('eventos')
+        .select('*')
+        .order('fecha_evento', { ascending: true })
+        .order('hora_inicio', { ascending: true });
+
+      if (error) {
+        console.error(error);
+        alert('No se pudo leer la agenda desde Supabase.');
+        return;
+      }
+
+      APP_STATE.agenda = data || [];
+      renderAgenda();
+      calcularEstadisticas();
+    }
+
+    function renderAgenda() {
+      const lista = document.getElementById('agendaList');
+      const query = document.getElementById('buscadorAgenda').value.trim().toLowerCase();
+      const estado = document.getElementById('filtroEstado').value;
+      lista.innerHTML = '';
+
+      const hoy = new Date();
+      hoy.setHours(0,0,0,0);
+
+      const agendaFiltrada = APP_STATE.agenda.filter(evento => {
+        const texto = [evento.cliente, evento.paquete, evento.lugar, evento.direccion, evento.tipo_evento].join(' ').toLowerCase();
+        const okQuery = !query || texto.includes(query);
+        const okEstado = !estado || evento.estado_pago === estado;
+        const fechaEvento = evento.fecha_evento ? new Date(`${evento.fecha_evento}T00:00:00`) : null;
+        const okVigente = !fechaEvento || fechaEvento >= hoy;
+        return okQuery && okEstado && okVigente;
+      });
+
+      if (!agendaFiltrada.length) {
+        lista.innerHTML = '<div class="empty">No hay eventos próximos para mostrar.</div>';
+        return;
+      }
+
+      agendaFiltrada.forEach(evento => {
+        const fechaEvento = evento.fecha_evento ? new Date(`${evento.fecha_evento}T00:00:00`) : null;
+        let diffDias = 999;
+        if (fechaEvento) diffDias = Math.ceil((fechaEvento - hoy) / (1000 * 60 * 60 * 24));
+        const urgent = diffDias >= 0 && diffDias <= 3 ? 'urgent' : '';
+
+        const estadoClass = evento.estado_pago === 'Pagado'
+          ? 'pagado'
+          : evento.estado_pago === 'Pendiente'
+            ? 'pendiente'
+            : 'reservado';
+
+        const div = document.createElement('div');
+        div.className = `agenda-item ${urgent}`;
+        div.innerHTML = `
+          <div class="agenda-top">
+            <div>
+              <strong>${escapeHtml(evento.cliente)} · ${escapeHtml(evento.paquete || 'Personalizado')}</strong>
+              <div class="agenda-meta">
+                📅 ${escapeHtml(formatearFecha(evento.fecha_evento))} · ⏰ ${escapeHtml(evento.hora_inicio || 'Sin hora')} ${evento.hora_fin ? ' - ' + escapeHtml(evento.hora_fin) : ''}<br>
+                📍 ${escapeHtml(evento.lugar || 'Sin distrito')} · ${escapeHtml(evento.direccion || 'Sin dirección')}<br>
+                🎉 ${escapeHtml(evento.tipo_evento || 'Evento')} ${evento.edad ? '· ' + escapeHtml(String(evento.edad)) + ' años' : ''} ${evento.invitados ? '· ' + escapeHtml(String(evento.invitados)) + ' invitados' : ''}
+              </div>
+            </div>
+            <span class="badge ${estadoClass}">${evento.estado_pago === 'Pagado' ? '🟢 Pagado' : evento.estado_pago === 'Pendiente' ? '🔴 Pendiente' : '🟡 Reservado'}</span>
+          </div>
+          <div class="agenda-footer">
+            <div class="agenda-meta">
+              Total: ${formatearMoneda(evento.total)} · Adelanto: ${formatearMoneda(evento.adelanto)} · Saldo: ${formatearMoneda(evento.saldo)}
+            </div>
+            <div class="mini-actions">
+              <button class="btn dark" type="button" onclick="cargarEventoEnFormulario('${evento.id}')">Editar</button>
+              <button class="btn blue" type="button" onclick="enviarEquipoDesdeAgenda('${evento.id}')">Equipo</button>
+              <button class="btn red" type="button" onclick="borrarEvento('${evento.id}')">Eliminar</button>
+            </div>
+          </div>
+        `;
+        lista.appendChild(div);
+      });
+    }
+
+    function calcularEstadisticas() {
+      let totalEventos = APP_STATE.agenda.length;
+      let totalFacturado = 0;
+      let totalAdelantos = 0;
+      let totalPendiente = 0;
+
+      APP_STATE.agenda.forEach(e => {
+        totalFacturado += Number(e.total || 0);
+        totalAdelantos += Number(e.adelanto || 0);
+        totalPendiente += Number(e.saldo || 0);
+      });
+
+      document.getElementById('statEventos').textContent = totalEventos;
+      document.getElementById('statFacturado').textContent = formatearMoneda(totalFacturado);
+      document.getElementById('statAdelantos').textContent = formatearMoneda(totalAdelantos);
+      document.getElementById('statPendiente').textContent = formatearMoneda(totalPendiente);
+    }
+
+    function cargarEventoEnFormulario(id) {
+      const e = APP_STATE.agenda.find(item => item.id === id);
+      if (!e) return;
+
+      document.getElementById('eventoId').value = e.id || '';
+      document.getElementById('cliente').value = e.cliente || '';
+      document.getElementById('agasajado').value = e.agasajado || '';
+      document.getElementById('dni').value = e.dni || '';
+      document.getElementById('telefonoCli').value = e.telefono || '';
+      document.getElementById('tipoEvento').value = e.tipo_evento || 'Cumpleaños';
+      document.getElementById('edad').value = e.edad || '';
+      document.getElementById('invitados').value = e.invitados || '';
+      document.getElementById('fechaEvento').value = e.fecha_evento || '';
+      document.getElementById('horaEvento').value = e.hora_inicio || '';
+      document.getElementById('horaFin').value = e.hora_fin || '';
+      document.getElementById('lugar').value = e.lugar || '';
+      document.getElementById('direccion').value = e.direccion || '';
+      document.getElementById('paqueteSelect').value = e.paquete || 'Personalizado';
+      document.getElementById('estadoPago').value = e.estado_pago || 'Reservado';
+      document.getElementById('movilidad').value = e.movilidad || 'Incluida';
+      document.getElementById('detalleServicio').value = e.detalle_servicio || '';
+      document.getElementById('juegosElegidos').value = e.juegos_elegidos || '';
+      document.getElementById('cronograma').value = e.cronograma || '';
+      document.getElementById('adicionales').value = e.adicionales || '';
+      document.getElementById('observaciones').value = e.observaciones || '';
+      document.getElementById('total').value = e.total || '';
+      document.getElementById('adelanto').value = e.adelanto || '';
+      document.getElementById('saldoManual').value = '';
+
+      document.getElementById('modeBadge').textContent = 'Modo: edición';
+      document.getElementById('syncBadge').textContent = 'Cargado desde nube';
+      document.getElementById('syncBadge').className = 'badge info';
+      calcularSaldo();
+      recomendarPaquete();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function duplicarEventoActual() {
+      document.getElementById('eventoId').value = '';
+      document.getElementById('modeBadge').textContent = 'Modo: nuevo';
+      document.getElementById('syncBadge').textContent = 'Listo para duplicar';
+      document.getElementById('syncBadge').className = 'badge reservado';
+      alert('Se quitó el ID actual. El siguiente guardado creará un evento nuevo.');
+    }
+
+
+    function enviarEquipoDesdeAgenda(id) {
+      const evento = getEventoById(id);
+      if (!evento) {
+        alert('No se encontró el evento.');
+        return;
+      }
+
+      const colaboradores = obtenerColaboradores();
+      if (!colaboradores.length) {
+        alert('No tienes colaboradores guardados.');
+        return;
+      }
+
+      eventoSeleccionadoEquipo = evento;
+      const contenedor = document.getElementById('listaEquipo');
+      contenedor.innerHTML = '';
+
+      colaboradores.forEach((colab, index) => {
+        const idCheck = `equipo_${index}_${String(colab.telefono || '').replace(/\D/g, '')}`;
+        const div = document.createElement('label');
+        div.className = 'equipo-option';
+        div.setAttribute('for', idCheck);
+        div.innerHTML = `
+          <input type="checkbox" id="${idCheck}" value="${escapeHtml(colab.telefono || '')}">
+          <div>
+            <strong>${escapeHtml(colab.nombre || 'Colaborador')}</strong>
+            <span>${escapeHtml(colab.rol || 'Sin rol')} · ${escapeHtml(colab.telefono || '')}</span>
+          </div>
+        `;
+        contenedor.appendChild(div);
+      });
+
+      document.getElementById('modalEquipo').classList.remove('hide');
+    }
+
+    function cerrarModalEquipo() {
+      document.getElementById('modalEquipo').classList.add('hide');
+      eventoSeleccionadoEquipo = null;
+    }
+
+    function seleccionarTodosEquipo(checked) {
+      document.querySelectorAll('#listaEquipo input[type="checkbox"]').forEach(input => {
+        input.checked = checked;
+      });
+    }
+
+    function confirmarEnvioEquipo() {
+      if (!eventoSeleccionadoEquipo) {
+        alert('No hay un evento seleccionado.');
+        return;
+      }
+
+      const checks = Array.from(document.querySelectorAll('#listaEquipo input[type="checkbox"]:checked'));
+      if (!checks.length) {
+        alert('Selecciona al menos un colaborador.');
+        return;
+      }
+
+      const evento = eventoSeleccionadoEquipo;
+      const mensaje = `🎧 EVENTO MR FIESTA
+
+Cliente: ${evento.cliente}
+Agasajado: ${evento.agasajado || '-'}
+Fecha: ${formatearFecha(evento.fecha_evento)}
+Hora: ${evento.hora_inicio || '-'}${evento.hora_fin ? ' - ' + evento.hora_fin : ''}
+Distrito: ${evento.lugar || '-'}
+Dirección: ${evento.direccion || '-'}
+Tipo de evento: ${evento.tipo_evento || '-'}
+Juegos elegidos: ${evento.juegos_elegidos || 'No especificados'}
+Observaciones: ${evento.observaciones || 'Ninguna'}
+`;
+
+      checks.forEach(chk => {
+        let numero = String(chk.value || '').replace(/\D/g, '');
+        if (!numero) return;
+        if (numero.length === 9) numero = '51' + numero;
+        const url = `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`;
+        window.open(url, '_blank');
+      });
+
+      cerrarModalEquipo();
+    }
+
+    async function borrarEvento(id) {
+      if (!APP_STATE.supabase) {
+        alert('Primero configura Supabase.');
+        return;
+      }
+      const evento = getEventoById(id);
+      const mensaje = evento
+        ? `Vas a eliminar este evento:
+
+Cliente: ${evento.cliente || '-'}
+Fecha: ${formatearFecha(evento.fecha_evento)}
+Paquete: ${evento.paquete || 'Personalizado'}
+
+Esta acción no se puede deshacer. ¿Continuar?`
+        : '¿Eliminar este evento de Supabase?';
+      if (!confirm(mensaje)) return;
+
+      const { error } = await APP_STATE.supabase.from('eventos').delete().eq('id', id);
+      if (error) {
+        console.error(error);
+        alert('No se pudo eliminar el evento.');
+        return;
+      }
+
+      if (document.getElementById('eventoId').value === id) limpiarFormulario();
+      await cargarAgenda();
+    }
+
+    function copiarResumen() {
+      const d = obtenerDatosFormulario();
+      if (!validarDatosBase(d)) return;
+
+      const mensaje = `📋 RESERVA MR FIESTA\n\nCliente: ${d.cliente}\nAgasajado: ${d.agasajado || '-'}\nTipo de evento: ${d.tipo_evento}\nPaquete: ${d.paquete}\nFecha: ${formatearFecha(d.fecha_evento)}\nHora: ${d.hora_inicio || '-'}\nHora fin: ${d.hora_fin || '-'}\nLugar: ${d.lugar}\nDirección: ${d.direccion}\n\nTotal: ${formatearMoneda(d.total)}\nAdelanto: ${formatearMoneda(d.adelanto)}\nSaldo: ${formatearMoneda(d.saldo)}\nEstado: ${d.estado_pago}\n\nAdicionales: ${d.adicionales || 'Ninguno'}`;
+
+      navigator.clipboard.writeText(mensaje)
+        .then(() => alert('Resumen copiado al portapapeles.'))
+        .catch(() => alert('No se pudo copiar automáticamente.'));
+    }
+
+    function abrirMapa() {
+      const direccion = document.getElementById('direccion').value.trim();
+      const lugar = document.getElementById('lugar').value.trim();
+      const query = `${direccion} ${lugar}`.trim();
+      if (!query) {
+        alert('Primero escribe la dirección o el distrito.');
+        return;
+      }
+      const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(query);
+      window.open(url, '_blank');
+    }
+
+    function getEventoById(id) {
+      return APP_STATE.agenda.find(item => item.id === id) || null;
+    }
+
+    async function crearEventoCalendar(id = null) {
+      const d = id ? getEventoById(id) : obtenerDatosFormulario();
+      if (!d || !validarDatosBase(d)) return;
+      if (!d.hora_inicio) {
+        alert('Falta la hora de inicio del evento.');
+        return;
+      }
+
+      const config = getConfig();
+      if (config.calendarWebhook) {
+        try {
+          const response = await fetch(config.calendarWebhook, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: `MR FIESTA · ${d.paquete} · ${d.cliente}`,
+              date: d.fecha_evento,
+              startTime: d.hora_inicio,
+              endTime: d.hora_fin || sumarHoras(d.hora_inicio, duracionPaquetes[d.paquete] || 3),
+              location: `${d.direccion || ''} ${d.lugar || ''}`.trim(),
+              description: `Cliente: ${d.cliente}\nAgasajado: ${d.agasajado || '-'}\nTipo: ${d.tipo_evento}\nSaldo: ${formatearMoneda(d.saldo)}\nTeléfono: ${d.telefono || '-'}\nAdicionales: ${d.adicionales || 'Ninguno'}\nObservaciones: ${d.observaciones || 'Ninguna'}`,
+              sourceId: d.id || null
+            })
+          });
+
+          if (!response.ok) throw new Error('El webhook respondió con error.');
+          const result = await response.json().catch(() => ({}));
+
+          if (d.id && result.eventId && APP_STATE.supabase) {
+            await APP_STATE.supabase.from('eventos').update({ calendar_event_id: result.eventId }).eq('id', d.id);
+            await cargarAgenda();
+          }
+
+          alert('Evento enviado al webhook de Calendar.');
+          return;
+        } catch (error) {
+          console.error(error);
+          alert('No pude enviar al webhook de Calendar. Abriré la versión manual.');
+        }
+      }
+
+      const fechaInicio = new Date(`${d.fecha_evento}T${d.hora_inicio}:00`);
+      const fechaFin = new Date(`${d.fecha_evento}T${(d.hora_fin || sumarHoras(d.hora_inicio, duracionPaquetes[d.paquete] || 3))}:00`);
+      const formatGoogleDate = (date) => date.toISOString().replace(/-|:|\.\d{3}/g, '');
+      const text = encodeURIComponent(`MR FIESTA · ${d.paquete} · ${d.cliente}`);
+      const details = encodeURIComponent(`Cliente: ${d.cliente}\nAgasajado: ${d.agasajado || '-'}\nTipo: ${d.tipo_evento}\nSaldo pendiente: ${formatearMoneda(d.saldo)}\nTeléfono: ${d.telefono || '-'}\nAdicionales: ${d.adicionales || 'Ninguno'}\nObservaciones: ${d.observaciones || 'Ninguna'}`);
+      const location = encodeURIComponent(`${d.direccion}, ${d.lugar}`);
+      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${formatGoogleDate(fechaInicio)}/${formatGoogleDate(fechaFin)}&details=${details}&location=${location}`;
+      window.open(url, '_blank');
+    }
+
+    function enviarWhatsApp() {
+      const d = obtenerDatosFormulario();
+      if (!validarDatosBase(d)) return;
+      if (!d.telefono) {
+        alert('Falta el número del cliente.');
+        return;
+      }
+
+      const mensaje = `¡Hola ${d.cliente}! 🎉\nTe escribe André de MR FIESTA.\n\nTu reserva ha sido registrada con estos datos:\n\n📦 Paquete: ${d.paquete}\n📅 Fecha: ${formatearFecha(d.fecha_evento)}\n⏰ Hora: ${d.hora_inicio || '-'}\n📍 Lugar: ${d.lugar}\n\n💰 Total: ${formatearMoneda(d.total)}\n💵 Adelanto: ${formatearMoneda(d.adelanto)}\n⚠️ Saldo pendiente: ${formatearMoneda(d.saldo)}\n\n✅ Yape / Plin: 961770164\nA nombre de José André Hidalgo Anticona\n\n🏦 BCP: 19378091874079\nCCI: 00219317809187407912\n\nGracias por confiar en MR FIESTA. ✨`;
+
+      const numero = d.telefono.replace(/\D/g, '');
+      const url = `https://wa.me/51${numero}?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, '_blank');
+    }
+
+    function generarNumeroContrato() {
+      const fecha = new Date();
+      const año = fecha.getFullYear().toString().slice(-2);
+      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+      const dia = String(fecha.getDate()).padStart(2, '0');
+      const aleatorio = String(Math.floor(Math.random() * 900) + 100);
+      return `MRF-${año}${mes}${dia}-${aleatorio}`;
+    }
+
+    function calcularHoraFinPDF(d) {
+      if (!d.hora_inicio || !d.fecha_evento) return '';
+      return d.hora_fin || sumarHoras(d.hora_inicio, duracionPaquetes[d.paquete] || 3);
+    }
+
+    function agregarLineaSiTieneValorPDF(doc, etiqueta, valor, x, y) {
+      if (!valor || String(valor).trim() === '') return y;
+      doc.text(`${etiqueta}: ${valor}`, x, y);
+      return y + 5;
+    }
+
+    function parsearCronograma(cronogramaTexto) {
+      if (!cronogramaTexto || !cronogramaTexto.trim()) return [];
+
+      return cronogramaTexto
+        .split(',')
+        .map(item => item.trim())
+        .filter(Boolean)
+        .map(item => {
+          const match = item.match(/^(.*?)(\d{1,2}:\d{2}\s?(?:AM|PM)?)$/i);
+
+          if (match) {
+            return {
+              titulo: match[1].trim().replace(/[:\-]\s*$/, ''),
+              hora: match[2].trim().toUpperCase()
+            };
+          }
+
+          return {
+            titulo: item,
+            hora: ''
+          };
+        });
+    }
+
+    function dibujarTimelinePDF(doc, pasos, startX, startY, maxWidth = 160) {
+      if (!pasos || !pasos.length) return startY;
+
+      const lineX = startX + 6;
+      const textX = startX + 18;
+      const circleRadius = 3;
+      const stepGap = 22;
+      let yCursor = startY;
+      let lastCircleY = startY;
+
+      pasos.forEach((paso, index) => {
+        const y = yCursor;
+        lastCircleY = y;
+
+        doc.setDrawColor(0, 234, 255);
+        doc.setFillColor(0, 234, 255);
+        doc.circle(lineX, y, circleRadius, 'F');
+        doc.setFillColor(180, 0, 255);
+        doc.circle(lineX, y, 2, 'F');
+
+        const texto = paso.hora ? `${paso.titulo} ${paso.hora}` : paso.titulo;
+        doc.setTextColor(40, 40, 40);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(12);
+        const lineas = doc.splitTextToSize(texto, maxWidth);
+        doc.text(lineas, textX, y + 2);
+
+        const blockHeight = Math.max(stepGap, lineas.length * 5 + 6);
+        yCursor += blockHeight;
+      });
+
+      doc.setDrawColor(0, 234, 255);
+      doc.setLineWidth(0.8);
+      doc.line(lineX, startY, lineX, lastCircleY);
+
+      return yCursor + 2;
+    }
+
+    function generarPDFDoc() {
+      const d = obtenerDatosFormulario();
+      if (!validarDatosBase(d)) return null;
+      if (!APP_STATE.jsPDF) {
+        alert('No cargó jsPDF todavía.');
+        return null;
+      }
+
+      const numContrato = generarNumeroContrato();
+      const doc = new APP_STATE.jsPDF();
+      const logoBase64 = APP_STATE.logoBase64;
+      const firmaBase64 = APP_STATE.firmaBase64;
+
+      const agregarMarcaAgua = (docInst) => {
+        if (!logoBase64) return;
+        try {
+          docInst.saveGraphicsState();
+          docInst.setGState(new docInst.GState({ opacity: 0.055 }));
+          docInst.addImage(logoBase64, 'PNG', 32, 82, 145, 105, 'watermark', 'FAST');
+          docInst.restoreGraphicsState();
+        } catch (e) {}
+      };
+
+      const addFooter = (docInst) => {
+        const totalPages = docInst.internal.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+          docInst.setPage(i);
+          docInst.setFillColor(13, 13, 18);
+          docInst.rect(0, 275, 210, 22, 'F');
+          docInst.setFillColor(255, 47, 146);
+          docInst.rect(0, 275, 210, 1, 'F');
+
+          if (logoBase64) {
+            try { docInst.addImage(logoBase64, 'PNG', 10, 277, 18, 12, `footerLogo${i}`, 'FAST'); } catch (e) {}
+          }
+
+          docInst.setTextColor(255, 255, 255);
+          docInst.setFont('helvetica', 'normal');
+          docInst.setFontSize(8);
+          docInst.text('Web: mrfiesta-pe.github.io | Tel: 961 770 164 - 902 602 362 | Correo: mrfiesta.lima@gmail.com', 110, 282, { align: 'center' });
+          docInst.text('Facebook: Mr. Fiesta Lima | Instagram: @mrfiesta_lima | TikTok: @mrfiesta', 110, 287, { align: 'center' });
+          docInst.text(`Página ${i} de ${totalPages}`, 195, 292, { align: 'right' });
+        }
+      };
+
+      doc.setFillColor(13, 13, 18);
+      doc.rect(0, 0, 210, 40, 'F');
+
+      if (logoBase64) {
+        try { doc.addImage(logoBase64, 'PNG', 10, 2, 58, 35, 'logoHeader', 'FAST'); } catch (e) {}
+      }
+
+      agregarMarcaAgua(doc);
+
+      doc.setTextColor(255, 47, 146);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(24);
+      doc.text('MR. FIESTA', 72, 19);
+
+      doc.setTextColor(0, 234, 255);
+      doc.setFontSize(12);
+      doc.text('Contrato de Prestación de Servicios', 72, 27);
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.text(`N° ${numContrato}`, 160, 19);
+
+      doc.setTextColor(30, 30, 30);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+
+      const hoy = new Date().toLocaleDateString('es-PE');
+      const horaFinTexto = calcularHoraFinPDF(d);
+
+      let y = 50;
+      doc.text(`Fecha de emisión: ${hoy}`, 15, y);
+      y += 8;
+
+      doc.setFont('helvetica', 'bold');
+      doc.text('1. DATOS DEL CLIENTE Y EVENTO', 15, y);
+      y += 6;
+
+      doc.setFont('helvetica', 'normal');
+
+      const clienteAgasajado = d.agasajado ? `${d.cliente} / ${d.agasajado}` : d.cliente;
+      doc.text(`Cliente / Agasajado: ${clienteAgasajado}`, 15, y);
+      y += 5;
+
+      y = agregarLineaSiTieneValorPDF(doc, 'DNI/RUC', d.dni, 15, y);
+      y = agregarLineaSiTieneValorPDF(doc, 'Teléfono', d.telefono, 15, y);
+
+      doc.text(`Fecha del evento: ${formatearFecha(d.fecha_evento)}`, 15, y);
+      y += 5;
+
+      if (d.hora_inicio) {
+        doc.text(`Horario: Inicio ${d.hora_inicio} - Fin aprox. ${horaFinTexto || '---'}`, 15, y);
+        y += 5;
+      }
+
+      const partesLugar = [];
+      if (d.lugar) partesLugar.push(d.lugar);
+      if (d.direccion) partesLugar.push(d.direccion);
+
+      if (partesLugar.length > 0) {
+        const lugarTexto = partesLugar.join(' - ');
+        const lugarLineas = doc.splitTextToSize(`Lugar: ${lugarTexto}`, 180);
+        doc.text(lugarLineas, 15, y);
+        y += (lugarLineas.length * 5) + 4;
+      } else {
+        y += 2;
+      }
+
+      doc.setFont('helvetica', 'bold');
+      doc.text(`2. DETALLES DEL PAQUETE: ${(d.paquete || 'Personalizado').toUpperCase()}`, 15, y);
+      y += 6;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+
+      const detalleLineas = doc.splitTextToSize(`Incluye:
+${d.detalle_servicio || 'Servicios acordados mutuamente.'}`, 180);
+      doc.text(detalleLineas, 15, y);
+      y += (detalleLineas.length * 4.5) + 3;
+
+      if (d.juegos_elegidos && d.juegos_elegidos.trim() !== '') {
+        doc.setFont('helvetica', 'bold');
+        doc.text('Juegos elegidos:', 15, y);
+        y += 5;
+
+        doc.setFont('helvetica', 'normal');
+        const juegosLineas = doc.splitTextToSize(d.juegos_elegidos, 180);
+        doc.text(juegosLineas, 15, y);
+        y += (juegosLineas.length * 4.5) + 3;
+      }
+
+      if (d.cronograma && d.cronograma.trim() !== '') {
+        const pasosCronograma = parsearCronograma(d.cronograma);
+        if (pasosCronograma.length) {
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          doc.setTextColor(255, 47, 146);
+          doc.text('3. CRONOGRAMA DEL EVENTO', 15, y);
+          y += 8;
+          y = dibujarTimelinePDF(doc, pasosCronograma, 15, y, 150);
+          y += 2;
+          doc.setTextColor(30, 30, 30);
+          doc.setFontSize(9);
+        }
+      }
+
+      if (d.adicionales && d.adicionales.trim() !== '') {
+        doc.setFont('helvetica', 'bold');
+        doc.text('Servicios Adicionales:', 15, y);
+        y += 5;
+
+        doc.setFont('helvetica', 'normal');
+        const adicLineas = doc.splitTextToSize(d.adicionales, 180);
+        doc.text(adicLineas, 15, y);
+        y += (adicLineas.length * 4.5) + 3;
+      }
+
+      doc.setFontSize(10);
+      y += 5;
+      doc.setFillColor(245, 245, 245);
+      doc.rect(15, y, 180, 20, 'F');
+      doc.setDrawColor(0, 234, 255);
+      doc.rect(15, y, 180, 20, 'S');
+      y += 6;
+
+      doc.setFont('helvetica', 'bold');
+      doc.text('4. CONDICIONES ECONÓMICAS', 20, y);
+      y += 7;
+
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Costo Total: ${formatearMoneda(d.total)}`, 20, y);
+      doc.text(`Adelanto: ${formatearMoneda(d.adelanto)}`, 80, y);
+      doc.setTextColor(255, 0, 0);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Saldo a Pagar: ${formatearMoneda(d.saldo)}`, 140, y);
+
+      y += 20;
+
+      y = 245;
+      if (firmaBase64) {
+        try { doc.addImage(firmaBase64, 'PNG', 125, 222, 50, 22, 'firmaAndre', 'FAST'); } catch (e) {}
+      }
+
+      doc.setDrawColor(0, 0, 0);
+      doc.line(25, y, 95, y);
+      doc.line(115, y, 185, y);
+
+      y += 5;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9);
+      doc.setTextColor(30, 30, 30);
+      doc.text((d.cliente || 'CLIENTE').toUpperCase(), 60, y, { align: 'center', maxWidth: 70 });
+      doc.text('JOSÉ ANDRÉ HIDALGO A.', 150, y, { align: 'center' });
+
+      y += 4;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.text('EL CLIENTE', 60, y, { align: 'center' });
+      doc.text('MR. FIESTA', 150, y, { align: 'center' });
+
+      doc.setTextColor(80, 80, 80);
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(7.5);
+      doc.text('* Las cláusulas y términos de este contrato se encuentran detalladas en la Página 2 del presente documento.', 105, 271, { align: 'center', maxWidth: 180 });
+
+      doc.addPage();
+      doc.setFillColor(13, 13, 18);
+      doc.rect(0, 0, 210, 15, 'F');
+      agregarMarcaAgua(doc);
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.text(`ANEXO DE TÉRMINOS Y CONDICIONES - Contrato N° ${numContrato}`, 105, 10, { align: 'center' });
+
+      doc.setTextColor(30, 30, 30);
+      y = 30;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text('4. TÉRMINOS Y CONDICIONES DEL SERVICIO', 15, y);
+      y += 8;
+
+      doc.setFontSize(9.5);
+      const clausulas = [
+        { t: '1. PAGOS Y CANCELACIONES', b: true },
+        { t: '1.1. Reserva y Saldo: La reserva se confirma con un pago adelantado. El cliente cancelará el saldo el mismo día del evento, OBLIGATORIAMENTE antes de instalar los equipos.', b: false },
+        { t: '1.2. Cancelaciones: En caso de anulación por el cliente, el dinero de la reserva NO SERÁ REEMBOLSADO bajo ninguna circunstancia.', b: false },
+        { t: '2. PUNTUALIDAD Y EVENTO', b: true },
+        { t: '2.1. Hora de Inicio: El tiempo comienza a la hora estipulada en este documento. Se brindará una tolerancia máxima de 10 minutos a favor del cliente para iniciar el show.', b: false },
+        { t: '3. MOVILIDAD Y LOGÍSTICA', b: true },
+        { t: '3.1. Traslado: La movilidad se rige según el paquete contratado. Si el paquete indica movilidad incluida, cubre zonas seleccionadas. Para paquetes que no la incluyen o distritos alejados, se coordinará un recargo adicional previamente.', b: false },
+        { t: '4. OBLIGACIONES DEL CLIENTE (ESPACIO Y ENERGÍA)', b: true },
+        { t: '4.1. Suministro Eléctrico y Daños: El cliente debe proveer energía estable. Nuestra empresa no se responsabiliza por cortes o variaciones de voltaje del local. Si nuestros equipos sufren daños por esto, el cliente asumirá el 100% de la reparación.', b: false },
+        { t: '5. RESPONSABILIDAD Y SEGURIDAD', b: true },
+        { t: '5.1. Protección y Daños: En caso de que algún equipo resulte dañado (golpes, derrames), robado o extraviado por acción de invitados, el cliente deberá asumir la totalidad de los costos de reparación.', b: false }
+      ];
+
+      clausulas.forEach(item => {
+        doc.setFont('helvetica', item.b ? 'bold' : 'normal');
+        const lines = doc.splitTextToSize(item.t, 180);
+        doc.text(lines, 15, y);
+        y += (lines.length * 5) + 2.5;
+      });
+
+      addFooter(doc);
+
+      return { doc, data: d, fileName: buildLocalContractFileName(d, numContrato), numContrato };
+    }
+
+    function generarYDescargarPDF() {
+      const built = generarPDFDoc();
+      if (!built) return;
+      built.doc.save(built.fileName);
+    }
+
+    function sanitizeFilePart(text) {
+      return String(text || '')
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')
+        .replace(/&/g, ' y ')
+        .replace(/[^a-zA-Z0-9\s_-]/g, '')
+        .trim()
+        .replace(/\s+/g, '_');
+    }
+
+    function buildDriveFileName(data) {
+      const fecha = data.fecha_evento || new Date().toISOString().slice(0, 10);
+      const partesCliente = sanitizeFilePart(data.cliente).split('_').filter(Boolean);
+      const primerNombre = partesCliente[0] || 'Cliente';
+      const primerApellido = partesCliente[1] || 'SinApellido';
+      const paquete = sanitizeFilePart(data.paquete || 'Personalizado') || 'Personalizado';
+      return `${fecha}_${primerNombre}_${primerApellido}_${paquete}_MRF.pdf`;
+    }
+
+    function buildLocalContractFileName(data, numContrato) {
+      const fecha = data.fecha_evento || new Date().toISOString().slice(0, 10);
+      const cliente = sanitizeFilePart(data.cliente || 'Cliente') || 'Cliente';
+      const paquete = sanitizeFilePart(data.paquete || 'Personalizado') || 'Personalizado';
+      return `${fecha}_${cliente}_${paquete}_${numContrato}_MRF.pdf`;
+    }
+
+    function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const result = reader.result;
+          if (!result) {
+            reject(new Error('No se pudo leer el PDF generado.'));
+            return;
+          }
+          resolve(String(result).split(',')[1]);
+        };
+        reader.onerror = () => reject(new Error('No se pudo convertir el PDF a base64.'));
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    async function subirPDFaDrive() {
+      const built = generarPDFDoc();
+      if (!built) return;
+      const config = getConfig();
+      if (!config.driveWebhook) {
+        built.doc.save(built.fileName);
+        alert('No hay webhook de Drive. Te descargué el PDF localmente.');
+        return;
+      }
+
+      try {
+        const blob = built.doc.output('blob');
+        const base64 = await blobToBase64(blob);
+        const payload = {
+          base64,
+          fechaEvento: built.data.fecha_evento,
+          cliente: built.data.cliente,
+          paquete: built.data.paquete,
+          fileName: buildDriveFileName(built.data),
+          eventoId: built.data.id || ''
+        };
+
+        const response = await fetch(config.driveWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const rawText = await response.text();
+        let result = {};
+        try {
+          result = rawText ? JSON.parse(rawText) : {};
+        } catch (e) {
+          throw new Error(`El webhook respondió algo inválido: ${rawText}`);
+        }
+
+        if (!response.ok || result.ok === false) {
+          throw new Error(result.error || 'El webhook respondió con error.');
+        }
+
+        const driveUrl = result.url || result.fileUrl || '';
+        if (built.data.id && driveUrl && APP_STATE.supabase) {
+          await APP_STATE.supabase
+            .from('eventos')
+            .update({ drive_pdf_url: driveUrl, updated_at: new Date().toISOString() })
+            .eq('id', built.data.id);
+          await cargarAgenda();
+        }
+
+        const nombreMostrado = result.fileName || payload.fileName;
+        const carpeta = result.folderYear && result.folderMonth
+          ? `
+Carpeta: ${result.folderYear} / ${result.folderMonth}`
+          : '';
+        const enlace = driveUrl ? `
+URL: ${driveUrl}` : '';
+
+        alert(`PDF guardado en Drive correctamente.
+
+Archivo: ${nombreMostrado}${carpeta}${enlace}`);
+      } catch (error) {
+        console.error(error);
+        alert(`No pude subir el PDF a Drive.
+
+${error.message || error}`);
+      }
+    }
+
+    function limpiarFormulario() {
+      document.getElementById('contratoForm').reset();
+      document.getElementById('eventoId').value = '';
+      document.getElementById('detalleServicio').value = '';
+      document.getElementById('juegosElegidos').value = '';
+      document.getElementById('cronograma').value = '';
+      document.getElementById('saldoManual').value = '';
+      document.getElementById('modeBadge').textContent = 'Modo: nuevo';
+      document.getElementById('syncBadge').textContent = 'Sincronización pendiente';
+      document.getElementById('syncBadge').className = 'badge off';
+      calcularSaldo();
+      recomendarPaquete();
+    }
+
+    function escapeHtml(text) {
+      return String(text ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
