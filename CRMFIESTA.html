@@ -1965,6 +1965,7 @@ Esta acción no se puede deshacer. ¿Continuar?`
       return y + 5;
     }
 
+
     function parsearCronograma(cronogramaTexto) {
       if (!cronogramaTexto || !cronogramaTexto.trim()) return [];
 
@@ -1974,59 +1975,128 @@ Esta acción no se puede deshacer. ¿Continuar?`
         .filter(Boolean)
         .map(item => {
           const match = item.match(/^(.*?)(\d{1,2}:\d{2}\s?(?:AM|PM)?)$/i);
-
           if (match) {
             return {
               titulo: match[1].trim().replace(/[:\-]\s*$/, ''),
               hora: match[2].trim().toUpperCase()
             };
           }
-
-          return {
-            titulo: item,
-            hora: ''
-          };
+          return { titulo: item, hora: '' };
         });
     }
 
-    function dibujarTimelinePDF(doc, pasos, startX, startY, maxWidth = 160) {
-      if (!pasos || !pasos.length) return startY;
+    function renderBloqueServicioCronograma(doc, data, startY) {
+      const boxX = 15;
+      const boxW = 180;
+      const splitX = 108;
+      const rightX = splitX + 4;
+      const leftInnerX = boxX + 4;
+      const leftW = splitX - boxX - 8;
+      const rightW = boxX + boxW - rightX - 4;
+      const titleY = startY + 6;
+      const contentTop = startY + 10.5;
 
-      const lineX = startX + 6;
-      const textX = startX + 18;
-      const circleRadius = 3;
-      const stepGap = 22;
-      let yCursor = startY;
-      let lastCircleY = startY;
+      const detalleBase = (data.detalle_servicio || 'Servicios acordados mutuamente.')
+        .split('\n')
+        .map(line => line.trim())
+        .filter(Boolean)
+        .map(line => line.startsWith('•') ? line : `• ${line}`)
+        .join('\n');
 
-      pasos.forEach((paso, index) => {
-        const y = yCursor;
-        lastCircleY = y;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.1);
+      const detalleLineas = doc.splitTextToSize(detalleBase, leftW);
+      const pasos = parsearCronograma(data.cronograma || '');
 
-        doc.setDrawColor(0, 234, 255);
-        doc.setFillColor(0, 234, 255);
-        doc.circle(lineX, y, circleRadius, 'F');
-        doc.setFillColor(180, 0, 255);
-        doc.circle(lineX, y, 2, 'F');
+      let timelineHeight = 0;
+      const timelineEntries = [];
+      if (pasos.length) {
+        pasos.forEach((paso) => {
+          const texto = paso.hora ? `${paso.titulo} ${paso.hora}` : paso.titulo;
+          const lineas = doc.splitTextToSize(texto, rightW - 13);
+          const blockHeight = Math.max(10, lineas.length * 4.2 + 1.5);
+          timelineEntries.push({ lineas, blockHeight });
+          timelineHeight += blockHeight;
+        });
+        timelineHeight += 1;
+      } else {
+        timelineHeight = 12;
+      }
 
-        const texto = paso.hora ? `${paso.titulo} ${paso.hora}` : paso.titulo;
-        doc.setTextColor(40, 40, 40);
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(12);
-        const lineas = doc.splitTextToSize(texto, maxWidth);
-        doc.text(lineas, textX, y + 2);
+      const detalleHeight = detalleLineas.length * 4.15;
+      const contentHeight = Math.max(detalleHeight, timelineHeight);
+      const boxH = Math.max(46, contentHeight + 13);
 
-        const blockHeight = Math.max(stepGap, lineas.length * 5 + 6);
-        yCursor += blockHeight;
-      });
+      doc.setFillColor(252, 252, 252);
+      doc.setDrawColor(232, 232, 232);
+      doc.roundedRect(boxX, startY, boxW, boxH, 4, 4, 'FD');
 
-      doc.setDrawColor(0, 234, 255);
-      doc.setLineWidth(0.8);
-      doc.line(lineX, startY, lineX, lastCircleY);
+      doc.setDrawColor(226, 226, 226);
+      doc.line(splitX, startY + 5, splitX, startY + boxH - 5);
 
-      return yCursor + 2;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.4);
+      doc.setTextColor(255, 47, 146);
+      doc.text('DETALLE DEL SERVICIO', leftInnerX, titleY);
+      doc.setTextColor(0, 175, 220);
+      doc.text('CRONOGRAMA', rightX + 1, titleY);
+
+      doc.setTextColor(48, 48, 48);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.1);
+      doc.text(detalleLineas, leftInnerX, contentTop);
+
+      if (timelineEntries.length) {
+        const lineX = rightX + 4;
+        const textX = rightX + 11;
+        let cursorY = contentTop - 1.2;
+        const firstDotY = cursorY;
+        let lastDotY = cursorY;
+
+        timelineEntries.forEach((entry) => {
+          const dotY = cursorY;
+          lastDotY = dotY;
+
+          doc.setFillColor(0, 234, 255);
+          doc.circle(lineX, dotY, 2.2, 'F');
+          doc.setFillColor(180, 0, 255);
+          doc.circle(lineX, dotY, 1.35, 'F');
+
+          doc.setTextColor(48, 48, 48);
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(8.2);
+          doc.text(entry.lineas, textX, dotY + 1.2);
+
+          cursorY += entry.blockHeight;
+        });
+
+        doc.setDrawColor(0, 214, 240);
+        doc.setLineWidth(0.6);
+        doc.line(lineX, firstDotY, lineX, lastDotY);
+      } else {
+        doc.setTextColor(120, 120, 120);
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(7.8);
+        doc.text('Sin cronograma detallado.', rightX + 1, contentTop);
+      }
+
+      return startY + boxH + 5;
     }
 
+    function agregarCabeceraPaginaPDF(doc, logoBase64, numContrato, subtitulo = 'Contrato de Prestación de Servicios') {
+      doc.setFillColor(13, 13, 18);
+      doc.rect(0, 0, 210, 20, 'F');
+      if (logoBase64) {
+        try { doc.addImage(logoBase64, 'PNG', 10, 2, 34, 16, `logoMini_${numContrato}_${doc.internal.getNumberOfPages()}`, 'FAST'); } catch (e) {}
+      }
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.text(`MR. FIESTA · ${subtitulo} · ${numContrato}`, 105, 12, { align: 'center' });
+      doc.setTextColor(30, 30, 30);
+    }
+
+    
     function generarPDFDoc() {
       const d = obtenerDatosFormulario();
       if (!validarDatosBase(d)) return null;
@@ -2063,11 +2133,19 @@ Esta acción no se puede deshacer. ¿Continuar?`
             try { docInst.addImage(logoBase64, 'PNG', 10, 277, 18, 12, `footerLogo${i}`, 'FAST'); } catch (e) {}
           }
 
-          docInst.setTextColor(255, 255, 255);
-          docInst.setFont('helvetica', 'normal');
+          docInst.setFont('helvetica', 'italic');
           docInst.setFontSize(8);
-          docInst.text('Web: mrfiesta-pe.github.io | Tel: 961 770 164 - 902 602 362 | Correo: mrfiesta.lima@gmail.com', 110, 282, { align: 'center' });
-          docInst.text('Facebook: Mr. Fiesta Lima | Instagram: @mrfiesta_lima | TikTok: @mrfiesta', 110, 287, { align: 'center' });
+          docInst.setTextColor(210, 210, 210);
+
+          const yFooterTop = 282;
+          const yFooterBottom = 287;
+
+          docInst.textWithLink('Web: mrfiesta-pe.github.io', 42, yFooterTop, { url: 'https://mrfiesta-pe.github.io' });
+          docInst.text(' | ', 92, yFooterTop);
+          docInst.textWithLink('Tel: 961 770 164', 99, yFooterTop, { url: 'https://wa.me/51961770164' });
+          docInst.text(' - 902 602 362 | Correo: mrfiesta.lima@gmail.com', 131, yFooterTop);
+
+          docInst.text('Facebook: Mr. Fiesta Lima | Instagram: @mrfiesta_lima | TikTok: @mrfiesta', 105, yFooterBottom, { align: 'center' });
           docInst.text(`Página ${i} de ${totalPages}`, 195, 292, { align: 'right' });
         }
       };
@@ -2141,40 +2219,23 @@ Esta acción no se puede deshacer. ¿Continuar?`
 
       doc.setFont('helvetica', 'bold');
       doc.text(`2. DETALLES DEL PAQUETE: ${(d.paquete || 'Personalizado').toUpperCase()}`, 15, y);
-      y += 6;
+      y += 5;
 
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
-
-      const detalleLineas = doc.splitTextToSize(`Incluye:
-${d.detalle_servicio || 'Servicios acordados mutuamente.'}`, 180);
-      doc.text(detalleLineas, 15, y);
-      y += (detalleLineas.length * 4.5) + 3;
+      y = renderBloqueServicioCronograma(doc, d, y);
 
       if (d.juegos_elegidos && d.juegos_elegidos.trim() !== '') {
         doc.setFont('helvetica', 'bold');
-        doc.text('Juegos elegidos:', 15, y);
+        doc.setTextColor(255, 47, 146);
+        doc.setFontSize(9.6);
+        doc.text('JUEGOS ELEGIDOS', 15, y);
         y += 5;
 
         doc.setFont('helvetica', 'normal');
+        doc.setTextColor(45, 45, 45);
+        doc.setFontSize(8.8);
         const juegosLineas = doc.splitTextToSize(d.juegos_elegidos, 180);
         doc.text(juegosLineas, 15, y);
         y += (juegosLineas.length * 4.5) + 3;
-      }
-
-      if (d.cronograma && d.cronograma.trim() !== '') {
-        const pasosCronograma = parsearCronograma(d.cronograma);
-        if (pasosCronograma.length) {
-          doc.setFont('helvetica', 'bold');
-          doc.setFontSize(11);
-          doc.setTextColor(255, 47, 146);
-          doc.text('3. CRONOGRAMA DEL EVENTO', 15, y);
-          y += 8;
-          y = dibujarTimelinePDF(doc, pasosCronograma, 15, y, 150);
-          y += 2;
-          doc.setTextColor(30, 30, 30);
-          doc.setFontSize(9);
-        }
       }
 
       if (d.adicionales && d.adicionales.trim() !== '') {
@@ -2188,53 +2249,66 @@ ${d.detalle_servicio || 'Servicios acordados mutuamente.'}`, 180);
         y += (adicLineas.length * 4.5) + 3;
       }
 
+      const espacioFirmas = 60;
+
+      if (y + espacioFirmas > 270) {
+        doc.addPage();
+        agregarMarcaAgua(doc);
+        agregarCabeceraPaginaPDF(doc, logoBase64, numContrato, 'Resumen económico y firmas');
+        y = 32;
+      } else {
+        y = 270 - espacioFirmas;
+      }
+
       doc.setFontSize(10);
-      y += 5;
-      doc.setFillColor(245, 245, 245);
-      doc.rect(15, y, 180, 20, 'F');
+      y += 4;
+      const econY = y;
+      const econH = 16;
+      doc.setFillColor(248, 248, 248);
+      doc.rect(15, econY, 180, econH, 'F');
       doc.setDrawColor(0, 234, 255);
-      doc.rect(15, y, 180, 20, 'S');
-      y += 6;
+      doc.rect(15, econY, 180, econH, 'S');
 
       doc.setFont('helvetica', 'bold');
-      doc.text('4. CONDICIONES ECONÓMICAS', 20, y);
-      y += 7;
+      doc.setTextColor(60, 60, 60);
+      doc.setFontSize(9.6);
+      doc.text('3. CONDICIONES ECONÓMICAS', 20, econY + 5.5);
 
       doc.setFont('helvetica', 'normal');
-      doc.text(`Costo Total: ${formatearMoneda(d.total)}`, 20, y);
-      doc.text(`Adelanto: ${formatearMoneda(d.adelanto)}`, 80, y);
+      doc.setFontSize(8.9);
+      doc.text(`Costo Total: ${formatearMoneda(d.total)}`, 20, econY + 11.5);
+      doc.text(`Adelanto: ${formatearMoneda(d.adelanto)}`, 80, econY + 11.5);
       doc.setTextColor(255, 0, 0);
       doc.setFont('helvetica', 'bold');
-      doc.text(`Saldo a Pagar: ${formatearMoneda(d.saldo)}`, 140, y);
+      doc.text(`Saldo a Pagar: ${formatearMoneda(d.saldo)}`, 140, econY + 11.5);
 
-      y += 20;
+      y = econY + econH + 12;
 
-      y = 245;
+      const firmaY = y + 5;
       if (firmaBase64) {
-        try { doc.addImage(firmaBase64, 'PNG', 125, 222, 50, 22, 'firmaAndre', 'FAST'); } catch (e) {}
+        try { doc.addImage(firmaBase64, 'PNG', 125, firmaY - 23, 50, 20, 'firmaAndre', 'FAST'); } catch (e) {}
       }
 
       doc.setDrawColor(0, 0, 0);
-      doc.line(25, y, 95, y);
-      doc.line(115, y, 185, y);
+      doc.line(25, firmaY, 95, firmaY);
+      doc.line(115, firmaY, 185, firmaY);
 
-      y += 5;
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(9);
       doc.setTextColor(30, 30, 30);
-      doc.text((d.cliente || 'CLIENTE').toUpperCase(), 60, y, { align: 'center', maxWidth: 70 });
-      doc.text('JOSÉ ANDRÉ HIDALGO A.', 150, y, { align: 'center' });
+      doc.text((d.cliente || 'CLIENTE').toUpperCase(), 60, firmaY + 5, { align: 'center', maxWidth: 70 });
+      doc.text('JOSÉ ANDRÉ HIDALGO A.', 150, firmaY + 5, { align: 'center' });
 
-      y += 4;
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
-      doc.text('EL CLIENTE', 60, y, { align: 'center' });
-      doc.text('MR. FIESTA', 150, y, { align: 'center' });
+      doc.text('EL CLIENTE', 60, firmaY + 9, { align: 'center' });
+      doc.text('MR. FIESTA', 150, firmaY + 9, { align: 'center' });
 
       doc.setTextColor(80, 80, 80);
       doc.setFont('helvetica', 'italic');
-      doc.setFontSize(7.5);
-      doc.text('* Las cláusulas y términos de este contrato se encuentran detalladas en la Página 2 del presente documento.', 105, 271, { align: 'center', maxWidth: 180 });
+      doc.setFontSize(7.2);
+      const notaY = Math.min(270, firmaY + 20);
+      doc.text('* Las cláusulas y términos del contrato continúan en la(s) página(s) siguiente(s).', 105, notaY, { align: 'center', maxWidth: 180 });
 
       doc.addPage();
       doc.setFillColor(13, 13, 18);
