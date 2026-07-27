@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Mr. Fiesta</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex">
+
+    <!-- Menú Lateral -->
+    <aside class="w-64 bg-slate-800 border-r border-slate-700 p-6 hidden md:flex flex-col justify-between">
+        <div>
+            <h2 class="text-xl font-bold text-amber-400 mb-8 tracking-wider">MR. FIESTA</h2>
+            <nav class="space-y-2 text-slate-300">
+                <a href="#" class="block py-2.5 px-4 rounded bg-amber-500/10 text-amber-400 font-medium border-l-4 border-amber-500">Mis Clientes</a>
+                <a href="#" class="block py-2.5 px-4 rounded hover:bg-slate-700/50 transition">Video Tutoriales</a>
+                <a href="#" class="block py-2.5 px-4 rounded hover:bg-slate-700/50 transition">Suscripción</a>
+            </nav>
+        </div>
+        <div class="text-xs text-slate-500 border-t border-slate-700 pt-4">
+            Panel Pro v2.5
+        </div>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-slate-700 pb-6 gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Gestión de Galerías</h1>
+                <p class="text-sm text-slate-400 mt-1">Administra límites, aprobaciones y accesos de clientes en tiempo real.</p>
+            </div>
+            <button onclick="abrirModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+                Agregar nuevo cliente
+            </button>
+        </header>
+
+        <!-- Barra de Filtros / Buscador -->
+        <div class="flex justify-between items-center mb-6 gap-4">
+            <div class="relative w-full md:w-80">
+                <input type="text" id="buscador" onkeyup="filtrarClientes()" placeholder="Buscar cliente..." 
+                       class="w-full bg-slate-800/80 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-amber-400 outline-none transition">
+            </div>
+            <div id="contador-clientes" class="text-xs font-semibold px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-400">
+                Cargando total...
+            </div>
+        </div>
+
+        <!-- Tabla de Clientes -->
+        <div class="bg-slate-800/60 backdrop-blur rounded-2xl overflow-hidden border border-slate-700/80 shadow-2xl">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-800 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-700">
+                        <th class="p-4">Cliente / Nombre</th>
+                        <th class="p-4">Slug (Enlace)</th>
+                        <th class="p-4">Paquete (Límite)</th>
+                        <th class="p-4">Estado Aprobación</th>
+                        <th class="p-4 text-center">Acciones de Control</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-clientes" class="divide-y divide-slate-700/50 text-sm">
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-slate-400 animate-pulse">Cargando base de datos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Modal para Agregar Cliente -->
+    <div id="modal-cliente" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+            <h2 class="text-xl font-bold mb-2 text-amber-400">Crear Nueva Galería</h2>
+            <p class="text-xs text-slate-400 mb-6">Se creará automáticamente la carpeta en tu Google Drive y el registro en Supabase.</p>
+            
+            <form id="form-nuevo-cliente" onsubmit="crearClienteAutomatico(event)">
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Nombre del Evento / Cliente</label>
+                    <input type="text" id="nombreCliente" required placeholder="Ej: Boda Lucía y Carlos" 
+                           class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-amber-400 outline-none transition text-sm">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Límite de Fotos del Paquete</label>
+                    <input type="number" id="limiteFotos" required value="100" min="1" max="1000"
+                           class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-amber-400 outline-none transition text-sm">
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="cerrarModal()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 rounded-xl text-sm font-medium transition">Cancelar</button>
+                    <button type="submit" id="btn-guardar" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition shadow-lg shadow-amber-500/20">Crear y Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://jejskqoserveuzstqjgg.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_XDLNumdR0AM4NF8ACor3ng_nLEI7SIf';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFNtOob4RPXFM9k2TIjxmJDGbbP67PlQw0UO-a83z7zLEm5LO_mJPRbKWOSTKz2b5M/exec";
+
+        let listaClientesGlobal = [];
+
+        async function cargarClientes() {
+            const { data, error } = await _supabase.from('galerias').select('*').order('id', { ascending: false });
+            const tbody = document.getElementById('tabla-clientes');
+            
+            if (error) {
+                console.error("Error Supabase:", error);
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-red-400">Error al cargar datos.</td></tr>`;
+                return;
+            }
+
+            listaClientesGlobal = data || [];
+            renderizarTabla(listaClientesGlobal);
+        }
+
+        function renderizarTabla(clientes) {
+            const tbody = document.getElementById('tabla-clientes');
+            tbody.innerHTML = '';
+
+            document.getElementById('contador-clientes').innerText = `Total: ${clientes.length} galerías`;
+
+            if (clientes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">No se encontraron galerías registradas.</td></tr>`;
+                return;
+            }
+
+            clientes.forEach(item => {
+                const aprobado = item.aprobado === true;
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-700/20 transition group";
+                tr.innerHTML = `
+                    <td class="p-4 font-semibold text-slate-100">${item.client_name}</td>
+                    <td class="p-4 text-amber-400 font-mono text-xs">?galeria=${item.slug}</td>
+                    <td class="p-4 text-slate-300 font-semibold">
+                        <span id="txt-limite-${item.id}">${item.limite_fotos || 100}</span> fotos 
+                        <button onclick="cambiarLimite(${item.id}, ${item.limite_fotos || 100})" class="ml-2 text-xs text-amber-400 hover:underline">✏️ Editar</button>
+                    </td>
+                    <td class="p-4">
+                        ${aprobado ? '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Aprobado / Descarga Activa</span>' : '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Pendiente</span>'}
+                    </td>
+                    <td class="p-4 text-center space-x-2">
+                        <a href="index.html?galeria=${item.slug}" target="_blank" class="bg-slate-700 hover:bg-amber-500 hover:text-slate-950 px-3 py-1.5 rounded-lg text-xs font-semibold transition inline-block shadow">Ver Galería</a>
+                        <button onclick="toggleAprobacion(${item.id}, ${aprobado})" class="${aprobado ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20 hover:bg-orange-500 hover:text-white' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white'} px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                            ${aprobado ? 'Bloquear' : '✅ Aprobar Selección'}
+                        </button>
+                        <button onclick="eliminarCliente(${item.id})" class="bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition border border-red-500/20">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function cambiarLimite(id, limiteActual) {
+            const nuevoLimite = prompt("Ingresa el nuevo límite de fotos para este paquete (ej: si compró extras, suma el total):", limiteActual);
+            if (nuevoLimite === null || isNaN(nuevoLimite)) return;
+
+            const { error } = await _supabase.from('galerias').update({ limite_fotos: parseInt(nuevoLimite) }).eq('id', id);
+            if (error) {
+                alert("Error al actualizar límite: " + error.message);
+            } else {
+                cargarClientes();
+            }
+        }
+
+        async function toggleAprobacion(id, estadoActual) {
+            const nuevoEstado = !estadoActual;
+            const mensaje = nuevoEstado ? "¿Aprobar la selección de este cliente para que pueda descargar sus fotos en Drive?" : "¿Bloquear la descarga y la selección de este cliente temporalmente?";
+            
+            if (!confirm(mensaje)) return;
+
+            const { error } = await _supabase.from('galerias').update({ aprobado: nuevoEstado }).eq('id', id);
+            if (error) {
+                alert("Error al cambiar estado: " + error.message);
+            } else {
+                cargarClientes();
+            }
+        }
+
+        function filtrarClientes() {
+            const texto = document.getElementById('buscador').value.toLowerCase();
+            const filtrados = listaClientesGlobal.filter(c => c.client_name.toLowerCase().includes(texto));
+            renderizarTabla(filtrados);
+        }
+
+        function abrirModal() { document.getElementById('modal-cliente').classList.remove('hidden'); }
+        function cerrarModal() { document.getElementById('modal-cliente').classList.add('hidden'); }
+
+        async function crearClienteAutomatico(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombreCliente').value.trim();
+            const limite = parseInt(document.getElementById('limiteFotos').value) || 100;
+            const slug = nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+            const btn = document.getElementById('btn-guardar');
+            
+            btn.innerText = "Creando en Drive...";
+            btn.disabled = true;
+
+            try {
+                let res = await fetch(`${APPS_SCRIPT_URL}?action=crearCarpeta&nombre=${encodeURIComponent(nombre)}`);
+                let resultado = await res.json();
+
+                if (!resultado.success) {
+                    alert("Error al crear carpeta: " + resultado.error);
+                    return;
+                }
+
+                const { error } = await _supabase.from('galerias').insert([
+                    { 
+                        client_name: nombre, 
+                        slug: slug, 
+                        folder_id: resultado.folderId,
+                        limite_fotos: limite,
+                        aprobado: false 
+                    }
+                ]);
+
+                if (error) {
+                    alert("Error al guardar en Supabase: " + error.message);
+                } else {
+                    cerrarModal();
+                    document.getElementById('form-nuevo-cliente').reset();
+                    document.getElementById('limiteFotos').value = "100";
+                    cargarClientes();
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Ocurrió un error de conexión.");
+            } finally {
+                btn.innerText = "Crear y Guardar";
+                btn.disabled = false;
+            }
+        }
+
+        async function eliminarCliente(id) {
+            if (!confirm("¿Estás seguro de eliminar este registro de la base de datos?")) return;
+
+            const { error } = await _supabase.from('galerias').delete().eq('id', id);
+            if (error) {
+                alert("Error al eliminar: " + error.message);
+            } else {
+                cargarClientes();
+            }
+        }
+
+        cargarClientes();
+    </script>
+</body>
+</html>
