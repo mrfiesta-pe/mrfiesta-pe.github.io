@@ -1,5 +1,7 @@
-import { db as _supabase } from './services/supabase.js';
-import { APPS_SCRIPT_URL } from './core/config.js';
+const SUPABASE_URL='https://jejskqoserveuzstqjgg.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_XDLNumdR0AM4NF8ACor3ng_nLEI7SIf';
+const _supabase=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxAo1Tx4ndMC7LNKX6w-_9aCrvGvWfzvmpUxGW5aATeZJ4d4bB3OaOE9Vvp_8VBa9c/exec';
 let listaClientesGlobal=[],seleccionesPorGaleria={};const $=s=>document.querySelector(s);
 function escapeHtml(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML}function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;$('#toast-stack').append(e);setTimeout(()=>e.remove(),3600)}
 async function cargarClientes(){const [{data,error},{data:selecciones}]=await Promise.all([_supabase.from('galerias').select('*').order('id',{ascending:false}),_supabase.from('selecciones').select('galeria_id')]);if(error){$('#lista-galerias').innerHTML='<div class="empty">No se pudieron cargar las galerías.</div>';toast(error.message);return}seleccionesPorGaleria=(selecciones||[]).reduce((a,x)=>(a[x.galeria_id]=(a[x.galeria_id]||0)+1,a),{});listaClientesGlobal=data||[];actualizarKpis();renderizarTabla();}
