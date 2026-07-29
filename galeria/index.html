@@ -22,15 +22,17 @@
             object-fit: contain;
             background-color: #090a0f;
         }
-        /* Scrollbar ultra minimalista */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #050608; }
-        ::-webkit-scrollbar-thumb { background: #1f242d; border-radius: 3px; }
+        /* Bloqueo estricto contra descargas accidentales o clics derechos en imágenes */
+        .no-download {
+            -webkit-user-select: none;
+            user-select: none;
+            pointer-events: auto;
+        }
     </style>
 </head>
-<body class="bg-[#050608] text-slate-100 min-h-screen selection:bg-amber-300 selection:text-slate-950">
+<body class="bg-[#050608] text-slate-100 min-h-screen selection:bg-amber-300 selection:text-slate-950" oncontextmenu="return false;">
 
-<!-- PORTADA ESTILO PIC-TIME (INMERSIVA Y LIMPIA) -->
+<!-- PORTADA ESTILO PIC-TIME -->
 <header id="seccion-portada" class="relative h-screen flex items-center justify-center text-center overflow-hidden">
     <div class="absolute inset-0 z-0">
         <img id="img-portada" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80" alt="Portada" class="w-full h-full object-cover filter brightness-[0.3] scale-105 transition duration-1000">
@@ -41,7 +43,7 @@
         <p class="text-amber-300/90 font-light tracking-[0.3em] text-xs uppercase mb-6">Galería Privada • Mr. Fiesta</p>
         <h1 id="titulo-evento" class="text-4xl md:text-7xl font-light tracking-tight mb-6 text-white drop-shadow-lg">Cargando Experiencia...</h1>
         <div class="w-12 h-[1px] bg-amber-300/55 mx-auto mb-6"></div>
-        <p class="text-slate-400 text-sm md:text-base font-light tracking-wide mb-10 max-w-md mx-auto">Guarda tus recuerdos favoritos seleccionando las tomas que formarán parte de tu historia.</p>
+        <p class="text-slate-400 text-sm md:text-base font-light tracking-wide mb-10 max-w-md mx-auto">Selecciona tus tomas favoritas para conformar el álbum de tu celebración.</p>
         
         <button onclick="explorarAlbum()" class="border border-white/20 hover:border-amber-300/80 bg-white/5 hover:bg-amber-300/10 text-white font-light px-8 py-3.5 rounded-full backdrop-blur-md transition-all duration-300 uppercase tracking-[0.2em] text-xs flex items-center gap-3 mx-auto">
             Explorar Álbum
@@ -52,19 +54,19 @@
     </div>
 </header>
 
-<!-- GALERÍA ESTILO REVISTA INTERNACIONAL -->
+<!-- GALERÍA ESTILO REVISTA -->
 <main id="seccion-galeria" class="max-w-[1400px] mx-auto px-4 md:px-8 py-24">
     <div class="text-center mb-20">
         <h2 class="text-2xl md:text-3xl font-light text-white tracking-wide mb-3">Colección Fotográfica</h2>
-        <p id="texto-instruccion" class="text-slate-400 text-xs md:text-sm font-light max-w-sm mx-auto">Haz clic en el corazón para seleccionar tus tomas predilectas.</p>
+        <p id="texto-instruccion" class="text-slate-400 text-xs md:text-sm font-light max-w-sm mx-auto">Haz clic en el corazón para marcar tus fotografías preferidas.</p>
     </div>
 
     <div id="grid-fotos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 auto-rows-[420px]">
-        <div class="col-span-full text-center py-20 text-slate-500 font-light text-sm tracking-widest animate-pulse">Cargando contenido multimedia...</div>
+        <div class="col-span-full text-center py-20 text-slate-500 font-light text-sm tracking-widest animate-pulse">Sincronizando archivos con Google Drive...</div>
     </div>
 </main>
 
-<!-- BARRA DE ESTADO FLOTANTE (MINIMALISTA) -->
+<!-- BARRA DE ESTADO FLOTANTE -->
 <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-[#0d0f14]/90 border border-white/10 backdrop-blur-xl px-8 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-between gap-10 z-50 max-w-lg w-[90%]">
     <div class="flex items-center gap-3">
         <span class="text-amber-300 text-sm">❤️</span>
@@ -81,19 +83,23 @@
 
         <div id="contenedor-descarga" class="hidden">
             <a id="enlace-descarga" href="#" target="_blank" class="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-medium px-6 py-2.5 rounded-full transition-all text-xs tracking-wider uppercase flex items-center gap-2">
-                Descargar Archivos
+                📥 Descargar Drive
             </a>
         </div>
     </div>
 </div>
 
-<!-- LIGHTBOX INMERSIVO DE ALTA DEFINICIÓN -->
-<div id="modal-lightbox" class="fixed inset-0 bg-black/98 backdrop-blur-2xl hidden items-center justify-center p-4 z-[100]">
+<!-- LIGHTBOX INMERSIVO (BLOQUEADO CONTRA DESCARGAS DIRECTAS) -->
+<div id="modal-lightbox" class="fixed inset-0 bg-black/98 backdrop-blur-2xl hidden items-center justify-center p-4 z-[100]" oncontextmenu="return false;">
     <button onclick="cerrarLightbox()" class="absolute top-6 right-6 text-slate-400 hover:text-white transition p-3 z-10">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
     </button>
     <div class="relative max-w-6xl max-h-[92vh] flex items-center justify-center">
-        <img id="img-lightbox" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+        <img id="img-lightbox" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl no-download" draggable="false">
+        <!-- Marca de agua opcional en el visor grande -->
+        <div id="watermark-lightbox" class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20 hidden">
+            <span class="text-white font-bold text-3xl tracking-[0.4em] uppercase rotate-[-30deg]">MR. FIESTA</span>
+        </div>
     </div>
 </div>
 
@@ -111,6 +117,7 @@
     let folderIdDrive = '';
     let subfolderIdDrive = '';
     let limiteMaximo = 100;
+    let conMarcaAgua = true;
     let fotosSeleccionadas = [];
     let fotosYaRegistradas = new Set();
     let seleccionYaEnviada = false;
@@ -140,6 +147,7 @@
         subfolderIdDrive = galeriaData.subfolder_id || ''; 
         galeriaUuid = galeriaData.id;
         limiteMaximo = parseInt(galeriaData.limite_fotos) || 100;
+        conMarcaAgua = galeriaData.con_marca_agua !== false; // por defecto activa
         galeriaAprobada = galeriaData.aprobado === true;
 
         const { data: seleccionesPrevias } = await _supabase
@@ -216,8 +224,15 @@
             div.className = `photo-card relative group rounded-xl overflow-hidden bg-[#0d0f14] cursor-pointer ${estaSeleccionada ? 'ring-2 ring-amber-300' : ''} ${spanClasses}`;
 
             div.innerHTML = `
-                <img src="${urlFoto}" onclick="abrirLightbox('${urlFoto}')" class="photo-img group-hover:scale-[1.02] transition duration-700" alt="Fotografía">
+                <img src="${urlFoto}" onclick="abrirLightbox('${urlFoto}')" class="photo-img group-hover:scale-[1.02] transition duration-700 no-download" alt="Fotografía" draggable="false">
                 
+                ${conMarcaAgua ? `
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-15 group-hover:opacity-25 transition">
+                    <span class="text-white font-black text-xl tracking-[0.3em] uppercase rotate-[-25deg] border border-white/40 px-3 py-1 rounded-lg">
+                        MR. FIESTA
+                    </span>
+                </div>` : ''}
+
                 <div class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center transition badge-corazon ${estaSeleccionada ? 'bg-amber-300 text-slate-950 border-amber-300' : 'text-white hover:bg-black/60'}" onclick="alternarSeleccion('${idFoto}', this.closest('.photo-card'), event)">
                     ❤️
                 </div>
@@ -276,6 +291,13 @@
 
     function abrirLightbox(url) {
         document.getElementById('img-lightbox').src = url;
+        if (conMarcaAgua) {
+            document.getElementById('watermark-lightbox').classList.remove('hidden');
+            document.getElementById('watermark-lightbox').classList.add('flex');
+        } else {
+            document.getElementById('watermark-lightbox').classList.remove('flex');
+            document.getElementById('watermark-lightbox').classList.add('hidden');
+        }
         const modal = document.getElementById('modal-lightbox');
         modal.classList.remove('hidden');
         modal.classList.add('flex');
