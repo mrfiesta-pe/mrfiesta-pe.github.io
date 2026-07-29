@@ -23,7 +23,7 @@
             </nav>
         </div>
         <div class="text-xs text-slate-500 border-t border-slate-700 pt-4">
-            Panel Pro v2.6
+            Panel Pro v2.7
         </div>
     </aside>
 
@@ -94,7 +94,7 @@
                 <div class="mb-6 flex items-center gap-3 bg-slate-900 p-3 rounded-xl border border-slate-700">
                     <input type="checkbox" id="conMarcaAgua" checked class="w-5 h-5 accent-amber-500 rounded cursor-pointer">
                     <label for="conMarcaAgua" class="text-xs font-semibold text-slate-300 cursor-pointer select-none">
-                        Activar Marca de Agua (Watermark "MR. FIESTA") en las fotos
+                        Activar Marca de Agua ("MR. FIESTA") en las fotos
                     </label>
                 </div>
 
@@ -142,17 +142,22 @@
 
             clientes.forEach(item => {
                 const aprobado = item.aprobado === true;
-                const tieneMarca = item.con_marca_agua !== false; // por defecto true si es null
+                const tieneMarca = item.con_marca_agua !== false; 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-700/20 transition group";
                 tr.innerHTML = `
                     <td class="p-4 font-semibold text-slate-100">${item.client_name}</td>
                     <td class="p-4 text-amber-400 font-mono text-xs">?galeria=${item.slug}</td>
                     <td class="p-4 text-slate-300">
-                        <span class="font-semibold">${item.limite_fotos || 100}</span> fotos<br>
-                        <span class="text-xs ${tieneMarca ? 'text-amber-400' : 'text-slate-500'}">
-                            ${tieneMarca ? '🛡️ Con marca de agua' : '✨ Sin marca de agua'}
-                        </span>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-semibold">${item.limite_fotos || 100}</span> fotos 
+                            <button onclick="cambiarLimite(${item.id}, ${item.limite_fotos || 100})" class="text-xs text-amber-400 hover:underline">✏️ Editar</button>
+                        </div>
+                        <div>
+                            <button onclick="toggleMarcaAgua(${item.id}, ${tieneMarca})" class="text-xs px-2 py-0.5 rounded border transition ${tieneMarca ? 'bg-amber-500/10 text-amber-400 border-amber-500/30 hover:bg-amber-500/20' : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'}">
+                                ${tieneMarca ? '🛡️ Marca Activada' : '✨ Sin Marca'}
+                            </button>
+                        </div>
                     </td>
                     <td class="p-4">
                         ${aprobado ? '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Aprobado / Descarga Activa</span>' : '<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">Pendiente</span>'}
@@ -167,6 +172,32 @@
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        async function cambiarLimite(id, limiteActual) {
+            const nuevoLimite = prompt("Ingresa el nuevo límite de fotos para este paquete:", limiteActual);
+            if (nuevoLimite === null || isNaN(nuevoLimite)) return;
+
+            const { error } = await _supabase.from('galerias').update({ limite_fotos: parseInt(nuevoLimite) }).eq('id', id);
+            if (error) {
+                alert("Error al actualizar límite: " + error.message);
+            } else {
+                cargarClientes();
+            }
+        }
+
+        async function toggleMarcaAgua(id, estadoActual) {
+            const nuevoEstado = !estadoActual;
+            const mensaje = nuevoEstado ? "¿Activar la marca de agua para esta galería?" : "¿Desactivar la marca de agua y dejar las fotos limpias?";
+            
+            if (!confirm(mensaje)) return;
+
+            const { error } = await _supabase.from('galerias').update({ con_marca_agua: nuevoEstado }).eq('id', id);
+            if (error) {
+                alert("Error al actualizar marca de agua: " + error.message);
+            } else {
+                cargarClientes();
+            }
         }
 
         async function toggleAprobacion(id, estadoActual) {
