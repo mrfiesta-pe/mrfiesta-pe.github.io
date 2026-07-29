@@ -6,20 +6,34 @@
     <title>Álbum de Recuerdos - Mr. Fiesta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Estilos personalizados para el efecto de Álbum Físico / Fotolibro */
+        .photo-card {
+            break-inside: avoid;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Ajuste óptimo para imágenes verticales y horizontales sin deformación */
+        .photo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: #0b0f19;
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen selection:bg-amber-400 selection:text-slate-950">
+<body class="bg-slate-950 text-white min-h-screen selection:bg-amber-400 selection:text-slate-950 font-sans">
 
     <!-- 1. PORTADA ESTILO REVISTA (Hero) -->
     <header id="seccion-portada" class="relative h-screen flex items-center justify-center text-center overflow-hidden">
         <div class="absolute inset-0 z-0">
-            <img id="img-portada" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80" alt="Portada" class="w-full h-full object-cover filter brightness-45 scale-105 transition duration-1000">
+            <img id="img-portada" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80" alt="Portada" class="w-full h-full object-cover filter brightness-40 scale-105 transition duration-1000">
         </div>
         <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent z-10"></div>
         
         <div class="relative z-20 px-4 max-w-4xl mx-auto">
             <span class="text-amber-400 font-mono tracking-widest text-xs md:text-sm uppercase mb-3 block border border-amber-400/30 rounded-full px-4 py-1.5 w-max mx-auto bg-amber-400/10 backdrop-blur-md">Galería Privada • Mr. Fiesta</span>
             <h1 id="titulo-evento" class="text-4xl md:text-7xl font-extrabold text-white tracking-tight mb-4 drop-shadow-2xl">Cargando Álbum...</h1>
-            <p class="text-slate-300 text-sm md:text-base mb-8 max-w-xl mx-auto">Selecciona tus fotos favoritas para tu álbum exclusivo.</p>
+            <p class="text-slate-300 text-sm md:text-base mb-8 max-w-xl mx-auto">Selecciona tus fotos favoritas para tu álbum exclusivo estilo revista.</p>
             <button onclick="explorarAlbum()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-8 py-4 rounded-2xl shadow-2xl shadow-amber-500/20 transition transform hover:scale-105 uppercase tracking-wider text-sm flex items-center gap-3 mx-auto">
                 Explorar Álbum
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -29,14 +43,15 @@
         </div>
     </header>
 
-    <!-- 2. CUERPO DEL ÁLBUM / GALERÍA DINÁMICA -->
+    <!-- 2. CUERPO DEL ÁLBUM / GALERÍA DINÁMICA TIPO FOTOLIBRO -->
     <main id="seccion-galeria" class="max-w-7xl mx-auto px-4 py-20">
         <div class="text-center mb-16">
             <h2 class="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">Páginas del Recuerdo</h2>
-            <p id="texto-instruccion" class="text-slate-400 text-sm max-w-lg mx-auto">Haz clic sobre las fotos que deseas conservar. Tu selección se guarda automáticamente.</p>
+            <p id="texto-instruccion" class="text-slate-400 text-sm max-w-lg mx-auto">Haz clic sobre las fotos que deseas conservar en tu álbum. Tu selección se guarda de forma inteligente.</p>
         </div>
 
-        <div id="grid-fotos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 auto-rows-[280px]">
+        <!-- Cuadrícula dinámica estilo álbum físico (mezcla proporciones armónicamente) -->
+        <div id="grid-fotos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[320px]">
             <div class="col-span-full text-center py-20 text-slate-500 animate-pulse">Buscando las fotos en Google Drive...</div>
         </div>
     </main>
@@ -135,7 +150,17 @@
                     return;
                 }
 
-                renderizarFotos(resultado.fotos);
+                // DETECCIÓN INTELIGENTE DE PORTADA (Busca archivo con prefijo PORTADA_ en Google Drive)
+                let fotosLista = resultado.fotos;
+                let fotoPortadaObj = fotosLista.find(f => f.name && f.name.toUpperCase().startsWith('PORTADA_'));
+                
+                if (fotoPortadaObj) {
+                    document.getElementById('img-portada').src = fotoPortadaObj.url;
+                } else if (fotosLista.length > 0) {
+                    document.getElementById('img-portada').src = fotosLista[0].url; // Por defecto la primera foto
+                }
+
+                renderizarFotos(fotosLista);
 
                 const btnEnviar = document.getElementById('btn-enviar');
                 const contenedorDescarga = document.getElementById('contenedor-descarga');
@@ -169,31 +194,32 @@
                 const idFoto = foto.id; 
                 const urlFoto = foto.url; 
 
+                // Estilo asimétrico dinámico tipo revista / álbum físico
                 let spanClasses = "";
-                if (index % 3 === 0) spanClasses = "md:row-span-2";
-                if (index % 5 === 0) spanClasses = "md:col-span-2";
+                if (index % 4 === 0) spanClasses = "md:row-span-2";
+                if (index % 7 === 0) spanClasses = "md:col-span-2";
 
                 const estaSeleccionada = fotosSeleccionadas.includes(idFoto);
 
                 const div = document.createElement('div');
-                div.className = `relative group rounded-3xl overflow-hidden shadow-2xl bg-slate-900 border transition transform hover:-translate-y-1 cursor-pointer ${estaSeleccionada ? 'ring-4 ring-amber-400 border-amber-400' : 'border-slate-800'} ${spanClasses}`;
+                div.className = `photo-card relative group rounded-3xl overflow-hidden shadow-2xl bg-slate-900 border transition transform hover:-translate-y-1.5 cursor-pointer ${estaSeleccionada ? 'ring-4 ring-amber-400 border-amber-400 shadow-amber-500/20' : 'border-slate-800/80'} ${spanClasses}`;
                 div.onclick = () => alternarSeleccion(idFoto, div);
 
                 div.innerHTML = `
-                    <img src="${urlFoto}" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt="Foto evento">
+                    <img src="${urlFoto}" class="photo-img group-hover:scale-105 transition duration-700" alt="Foto álbum">
                     
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20 group-hover:opacity-30 transition">
-                        <span class="text-white font-black text-xl tracking-widest uppercase rotate-[-25deg] border-2 border-white px-3 py-1 rounded-lg">
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-15 group-hover:opacity-25 transition">
+                        <span class="text-white font-black text-xl tracking-widest uppercase rotate-[-25deg] border-2 border-white/60 px-3 py-1 rounded-lg">
                             MR. FIESTA
                         </span>
                     </div>
 
-                    <div class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-slate-900/80 backdrop-blur-md border border-slate-700 flex items-center justify-center text-slate-400 transition badge-corazon ${estaSeleccionada ? 'bg-amber-400 text-slate-950 font-bold' : ''}">
+                    <div class="absolute top-4 right-4 z-10 w-10 h-10 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-700 flex items-center justify-center text-slate-300 transition badge-corazon shadow-lg ${estaSeleccionada ? 'bg-amber-400 text-slate-950 font-bold border-amber-300' : 'hover:bg-slate-800'}">
                         ❤️
                     </div>
 
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-5">
-                        <span class="text-xs text-amber-400 font-bold uppercase tracking-wider">${galeriaAprobada ? 'Galería aprobada' : 'Hacer clic para favorita'}</span>
+                        <span class="text-xs text-amber-400 font-bold uppercase tracking-wider">${galeriaAprobada ? 'Galería aprobada' : 'Clic para marcar favorita'}</span>
                     </div>
                 `;
                 grid.appendChild(div);
@@ -211,8 +237,9 @@
 
             if (index > -1) {
                 fotosSeleccionadas.splice(index, 1);
-                elemento.classList.remove('ring-4', 'ring-amber-400', 'border-amber-400');
-                badge.classList.remove('bg-amber-400', 'text-slate-950');
+                elemento.classList.remove('ring-4', 'ring-amber-400', 'border-amber-400', 'shadow-amber-500/20');
+                badge.classList.remove('bg-amber-400', 'text-slate-950', 'border-amber-300');
+                badge.classList.add('bg-slate-900/80', 'text-slate-300');
             } else {
                 if (fotosSeleccionadas.length >= limiteMaximo) {
                     alert(`¡Atención! Has alcanzado el límite máximo de ${limiteMaximo} fotos permitidas para tu paquete.`);
@@ -220,8 +247,9 @@
                 }
                 
                 fotosSeleccionadas.push(idFoto);
-                elemento.classList.add('ring-4', 'ring-amber-400', 'border-amber-400');
-                badge.classList.add('bg-amber-400', 'text-slate-950');
+                elemento.classList.add('ring-4', 'ring-amber-400', 'border-amber-400', 'shadow-amber-500/20');
+                badge.classList.remove('bg-slate-900/80', 'text-slate-300');
+                badge.classList.add('bg-amber-400', 'text-slate-950', 'border-amber-300');
             }
 
             actualizarContadorUI();
@@ -304,6 +332,7 @@
                 btn.disabled = false;
             }
         }
+        
         inicializarGaleria();
     </script>
 </body>
