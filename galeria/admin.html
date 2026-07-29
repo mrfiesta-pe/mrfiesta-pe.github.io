@@ -8,17 +8,26 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .sidebar-logo img {
+            width: 140px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
 </head>
 <body class="bg-slate-900 text-white min-h-screen flex">
 
     <!-- Menú Lateral -->
     <aside class="w-64 bg-slate-800 border-r border-slate-700 p-6 hidden md:flex flex-col justify-between">
         <div>
-            <h2 class="text-xl font-bold text-amber-400 mb-8 tracking-wider">MR. FIESTA</h2>
+            <!-- Logotipo de Mr. Fiesta en PNG -->
+            <div class="sidebar-logo mb-8">
+                <img src="logo.png" alt="Mr. Fiesta">
+            </div>
             <nav class="space-y-2 text-slate-300">
                 <a href="#" class="block py-2.5 px-4 rounded bg-amber-500/10 text-amber-400 font-medium border-l-4 border-amber-500">Mis Clientes</a>
-                <a href="#" class="block py-2.5 px-4 rounded hover:bg-slate-700/50 transition">Video Tutoriales</a>
-                <a href="#" class="block py-2.5 px-4 rounded hover:bg-slate-700/50 transition">Suscripción</a>
             </nav>
         </div>
         <div class="text-xs text-slate-500 border-t border-slate-700 pt-4">
