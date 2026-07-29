@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#161616">
+  <title>Álbum · Mr. Fiesta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/album.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <main class="album-app">
+    <header class="album-topbar">
+      <a class="back-link" href="admin.html"><i data-lucide="arrow-left" size="17"></i> Studio</a>
+      <div class="album-identity"><span>MR. FIESTA</span><i></i><span id="album-status">ÁLBUM DE REVISIÓN</span></div>
+      <button id="fullscreen" class="icon-button" aria-label="Pantalla completa"><i data-lucide="maximize" size="18"></i></button>
+    </header>
+    <section class="album-stage" id="album-stage">
+      <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+      <div id="album-loading" class="album-loading"><span></span><p>Componiendo los recuerdos</p></div>
+      <article class="book hidden" id="book" aria-live="polite">
+        <div class="book-shadow"></div>
+        <div class="book-spread" id="book-spread"></div>
+        <div class="book-spine"></div>
+      </article>
+      <div class="album-error hidden" id="album-error"></div>
+    </section>
+    <footer class="album-controls hidden" id="album-controls">
+      <button class="nav-button" id="previous-page" aria-label="Página anterior"><i data-lucide="arrow-left" size="18"></i><span>Anterior</span></button>
+      <div class="page-progress"><strong id="page-count">1 — 2</strong><span id="page-caption">Portada</span><div><i id="page-bar"></i></div></div>
+      <button class="nav-button next" id="next-page" aria-label="Página siguiente"><span>Siguiente</span><i data-lucide="arrow-right" size="18"></i></button>
+    </footer>
+  </main>
+  <script type="module" src="js/album.js"></script>
+</body></html>
