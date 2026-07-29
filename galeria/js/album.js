@@ -44,11 +44,11 @@ async function cargarAlbum() {
 function prepararSpreads(fotos) {
   spreads = [{ tipo: 'portada' }];
   
-  // Agrupamos de a 4 fotos por pliegue para llenar la doble página con elegancia
-  for (let index = 0; index < fotos.length; index += 4) {
+  // Agrupamos de a 8 fotos por cada pliegue (4 para la página izquierda y 4 para la derecha)
+  for (let index = 0; index < fotos.length; index += 8) {
     spreads.push({
       tipo: 'fotos',
-      bloque: fotos.slice(index, index + 4)
+      bloque: fotos.slice(index, index + 8)
     });
   }
   
@@ -87,7 +87,7 @@ function renderizarSpread() {
         <span class="page-number">Álbum compuesto digitalmente</span>
       </section>`;
   } else {
-    // Dividimos el bloque de 4 fotos en dos páginas (2 fotos a la izquierda y 2 a la derecha)
+    // Dividimos las 8 fotos del bloque: 4 para la página izquierda y 4 para la derecha
     const mitad = Math.ceil(spread.bloque.length / 2);
     const fotosIzquierda = spread.bloque.slice(0, mitad);
     const fotosDerecha = spread.bloque.slice(mitad);
