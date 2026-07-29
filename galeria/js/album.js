@@ -29,6 +29,7 @@ async function cargarAlbum() {
     if (!resultado.success) throw new Error(resultado.error || 'No se pudieron cargar las fotografías');
     const fotos = (resultado.fotos || []).filter(foto => idsSeleccionados.has(foto.id));
     if (!fotos.length) return mostrarError('No hay fotografías disponibles para componer el álbum.');
+    
     prepararSpreads(fotos);
     $('#album-loading').classList.add('hidden');
     $('#book').classList.remove('hidden');
@@ -42,15 +43,16 @@ async function cargarAlbum() {
 
 function prepararSpreads(fotos) {
   spreads = [{ tipo: 'portada' }];
-  for (let index = 0; index < fotos.length; index += 2) {
-    spreads.push({ tipo: 'fotos', izquierda: fotos[index], derecha: fotos[index + 1] || null });
+  
+  // Agrupamos de a 4 fotos por pliegue para llenar la doble página con elegancia
+  for (let index = 0; index < fotos.length; index += 4) {
+    spreads.push({
+      tipo: 'fotos',
+      bloque: fotos.slice(index, index + 4)
+    });
   }
+  
   spreads.push({ tipo: 'final' });
-}
-
-function paginaFoto(foto, numero) {
-  if (!foto) return `<section class="page page-title"><div><span class="page-kicker">MR. FIESTA · ÁLBUM</span></div><div><h2>El recuerdo continúa.</h2></div><span class="page-number">—</span></section>`;
-  return `<section class="page image-page"><img src="${foto.url}" alt="Fotografía seleccionada ${numero}" draggable="false"></section>`;
 }
 
 function renderizarSpread() {
@@ -61,19 +63,58 @@ function renderizarSpread() {
   contenedor.classList.add('is-turning');
 
   if (spread.tipo === 'portada') {
-    contenedor.innerHTML = `<section class="page page-title"><div><span class="page-kicker">MR. FIESTA · SELECCIÓN PRIVADA</span></div><div><h1>${escapeHtml(albumName)}</h1></div><span class="page-number">Álbum de revisión</span></section><section class="page page-title"><div><span class="page-kicker">UNA HISTORIA EN IMÁGENES</span></div><div><h2>Una selección creada para recordar lo que realmente importa.</h2></div><span class="page-number">01</span></section>`;
+    contenedor.innerHTML = `
+      <section class="page page-title">
+        <div><span class="page-kicker">MR. FIESTA · SELECCIÓN PRIVADA</span></div>
+        <div><h1>${escapeHtml(albumName)}</h1></div>
+        <span class="page-number">Álbum de revisión</span>
+      </section>
+      <section class="page page-title">
+        <div><span class="page-kicker">UNA HISTORIA EN IMÁGENES</span></div>
+        <div><h2>Una selección creada para recordar lo que realmente importa.</h2></div>
+        <span class="page-number">01</span>
+      </section>`;
   } else if (spread.tipo === 'final') {
-    contenedor.innerHTML = `<section class="page page-title"><div><span class="page-kicker">MR. FIESTA</span></div><div><h1>Fin.</h1></div><span class="page-number">Gracias por confiar tus recuerdos.</span></section><section class="page page-title"><div><span class="page-kicker">REVISIÓN DEL ESTUDIO</span></div><div><h2>Aprueba la selección cuando esté lista para su entrega.</h2></div><span class="page-number">Álbum compuesto digitalmente</span></section>`;
+    contenedor.innerHTML = `
+      <section class="page page-title">
+        <div><span class="page-kicker">MR. FIESTA</span></div>
+        <div><h1>Fin.</h1></div>
+        <span class="page-number">Gracias por confiar tus recuerdos.</span>
+      </section>
+      <section class="page page-title">
+        <div><span class="page-kicker">REVISIÓN DEL ESTUDIO</span></div>
+        <div><h2>Aprueba la selección cuando esté lista para su entrega.</h2></div>
+        <span class="page-number">Álbum compuesto digitalmente</span>
+      </section>`;
   } else {
-    const base = (currentSpread - 1) * 2 + 1;
-    contenedor.innerHTML = paginaFoto(spread.izquierda, base) + paginaFoto(spread.derecha, base + 1);
+    // Dividimos el bloque de 4 fotos en dos páginas (2 fotos a la izquierda y 2 a la derecha)
+    const mitad = Math.ceil(spread.bloque.length / 2);
+    const fotosIzquierda = spread.bloque.slice(0, mitad);
+    const fotosDerecha = spread.bloque.slice(mitad);
+
+    contenedor.innerHTML = generarPaginaColage(fotosIzquierda) + generarPaginaColage(fotosDerecha);
   }
+
   const paginaInicio = currentSpread * 2 + 1;
   $('#page-count').textContent = `${paginaInicio} — ${Math.min(paginaInicio + 1, spreads.length * 2)}`;
   $('#page-caption').textContent = spread.tipo === 'portada' ? 'Portada' : spread.tipo === 'final' ? 'Cierre' : 'Selección del cliente';
   $('#page-bar').style.width = `${((currentSpread + 1) / spreads.length) * 100}%`;
   $('#previous-page').disabled = currentSpread === 0;
   $('#next-page').disabled = currentSpread === spreads.length - 1;
+}
+
+function generarPaginaColage(fotosPagina) {
+  if (!fotosPagina || !fotosPagina.length) {
+    return `<section class="page multi-image-page"><div class="photo-grid-layout"></div></section>`;
+  }
+
+  const htmlFotos = fotosPagina.map((foto, i) => `
+    <div class="album-photo-frame">
+      <img src="${foto.url}" alt="Fotografía ${i + 1}" draggable="false" style="object-fit: contain; width: 100%; height: 100%; background: rgba(0,0,0,0.02);">
+    </div>
+  `).join('');
+
+  return `<section class="page multi-image-page"><div class="photo-grid-layout">${htmlFotos}</div></section>`;
 }
 
 function mover(paso) {
@@ -99,11 +140,13 @@ $('#fullscreen').addEventListener('click', () => {
   if (!document.fullscreenElement) $('#album-stage').requestFullscreen?.();
   else document.exitFullscreen?.();
 });
+
 let inicioX = 0;
 $('#book').addEventListener('touchstart', event => { inicioX = event.changedTouches[0].screenX; }, { passive: true });
 $('#book').addEventListener('touchend', event => {
   const diferencia = event.changedTouches[0].screenX - inicioX;
   if (Math.abs(diferencia) > 45) mover(diferencia < 0 ? 1 : -1);
 }, { passive: true });
+
 lucide.createIcons();
 cargarAlbum();
