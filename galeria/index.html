@@ -3,337 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Álbum de Recuerdos - Mr. Fiesta</title>
+    <title>Álbum Privado • Mr. Fiesta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Estilos personalizados para el efecto de Álbum Físico / Fotolibro */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
         .photo-card {
-            break-inside: avoid;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        /* Ajuste óptimo para imágenes verticales y horizontales sin deformación */
+        .photo-card:hover {
+            transform: translateY(-4px);
+        }
         .photo-img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            background-color: #0b0f19;
+            background-color: #090a0f;
         }
+        /* Scrollbar ultra minimalista */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050608; }
+        ::-webkit-scrollbar-thumb { background: #1f242d; border-radius: 3px; }
     </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen selection:bg-amber-400 selection:text-slate-950 font-sans">
+<body class="bg-[#050608] text-slate-100 min-h-screen selection:bg-amber-300 selection:text-slate-950">
 
-    <!-- 1. PORTADA ESTILO REVISTA (Hero) -->
-    <header id="seccion-portada" class="relative h-screen flex items-center justify-center text-center overflow-hidden">
-        <div class="absolute inset-0 z-0">
-            <img id="img-portada" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80" alt="Portada" class="w-full h-full object-cover filter brightness-40 scale-105 transition duration-1000">
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent z-10"></div>
+<!-- PORTADA ESTILO PIC-TIME (INMERSIVA Y LIMPIA) -->
+<header id="seccion-portada" class="relative h-screen flex items-center justify-center text-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+        <img id="img-portada" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80" alt="Portada" class="w-full h-full object-cover filter brightness-[0.3] scale-105 transition duration-1000">
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#050608] via-transparent to-[#050608]/60 z-10"></div>
+    
+    <div class="relative z-20 px-6 max-w-3xl mx-auto">
+        <p class="text-amber-300/90 font-light tracking-[0.3em] text-xs uppercase mb-6">Galería Privada • Mr. Fiesta</p>
+        <h1 id="titulo-evento" class="text-4xl md:text-7xl font-light tracking-tight mb-6 text-white drop-shadow-lg">Cargando Experiencia...</h1>
+        <div class="w-12 h-[1px] bg-amber-300/55 mx-auto mb-6"></div>
+        <p class="text-slate-400 text-sm md:text-base font-light tracking-wide mb-10 max-w-md mx-auto">Guarda tus recuerdos favoritos seleccionando las tomas que formarán parte de tu historia.</p>
         
-        <div class="relative z-20 px-4 max-w-4xl mx-auto">
-            <span class="text-amber-400 font-mono tracking-widest text-xs md:text-sm uppercase mb-3 block border border-amber-400/30 rounded-full px-4 py-1.5 w-max mx-auto bg-amber-400/10 backdrop-blur-md">Galería Privada • Mr. Fiesta</span>
-            <h1 id="titulo-evento" class="text-4xl md:text-7xl font-extrabold text-white tracking-tight mb-4 drop-shadow-2xl">Cargando Álbum...</h1>
-            <p class="text-slate-300 text-sm md:text-base mb-8 max-w-xl mx-auto">Selecciona tus fotos favoritas para tu álbum exclusivo estilo revista.</p>
-            <button onclick="explorarAlbum()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-8 py-4 rounded-2xl shadow-2xl shadow-amber-500/20 transition transform hover:scale-105 uppercase tracking-wider text-sm flex items-center gap-3 mx-auto">
-                Explorar Álbum
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-            </button>
-        </div>
-    </header>
+        <button onclick="explorarAlbum()" class="border border-white/20 hover:border-amber-300/80 bg-white/5 hover:bg-amber-300/10 text-white font-light px-8 py-3.5 rounded-full backdrop-blur-md transition-all duration-300 uppercase tracking-[0.2em] text-xs flex items-center gap-3 mx-auto">
+            Explorar Álbum
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 animate-bounce text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+        </button>
+    </div>
+</header>
 
-    <!-- 2. CUERPO DEL ÁLBUM / GALERÍA DINÁMICA TIPO FOTOLIBRO -->
-    <main id="seccion-galeria" class="max-w-7xl mx-auto px-4 py-20">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">Páginas del Recuerdo</h2>
-            <p id="texto-instruccion" class="text-slate-400 text-sm max-w-lg mx-auto">Haz clic sobre las fotos que deseas conservar en tu álbum. Tu selección se guarda de forma inteligente.</p>
-        </div>
+<!-- GALERÍA ESTILO REVISTA INTERNACIONAL -->
+<main id="seccion-galeria" class="max-w-[1400px] mx-auto px-4 md:px-8 py-24">
+    <div class="text-center mb-20">
+        <h2 class="text-2xl md:text-3xl font-light text-white tracking-wide mb-3">Colección Fotográfica</h2>
+        <p id="texto-instruccion" class="text-slate-400 text-xs md:text-sm font-light max-w-sm mx-auto">Haz clic en el corazón para seleccionar tus tomas predilectas.</p>
+    </div>
 
-        <!-- Cuadrícula dinámica estilo álbum físico (mezcla proporciones armónicamente) -->
-        <div id="grid-fotos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[320px]">
-            <div class="col-span-full text-center py-20 text-slate-500 animate-pulse">Buscando las fotos en Google Drive...</div>
-        </div>
-    </main>
+    <div id="grid-fotos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 auto-rows-[420px]">
+        <div class="col-span-full text-center py-20 text-slate-500 font-light text-sm tracking-widest animate-pulse">Cargando contenido multimedia...</div>
+    </div>
+</main>
 
-    <!-- 3. PANEL FLOTANTE DE CONTROL Y SELECCIÓN -->
-    <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900/90 border border-slate-700/80 backdrop-blur-xl px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-6 z-50 max-w-xl w-[92%] justify-between">
-        <div class="flex items-center gap-3">
-            <div class="bg-amber-500/10 border border-amber-500/30 p-2.5 rounded-xl text-amber-400">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-            </div>
-            <div>
-                <p id="estado-contador" class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Elegidas / Límite</p>
-                <span id="contador-favoritas" class="text-xl font-black text-amber-400">0 / 0</span>
-            </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-            <button id="btn-enviar" onclick="enviarSeleccion()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-5 py-3 rounded-xl transition text-xs md:text-sm shadow-lg shadow-amber-500/20 uppercase tracking-wide">
-                Guardar Selección
-            </button>
-
-            <div id="contenedor-descarga" class="hidden">
-                <a id="enlace-descarga" href="#" target="_blank" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold px-5 py-3 rounded-xl transition text-xs md:text-sm flex items-center gap-2 shadow-lg shadow-emerald-500/20 uppercase tracking-wide">
-                    📥 Descargar Drive
-                </a>
-            </div>
+<!-- BARRA DE ESTADO FLOTANTE (MINIMALISTA) -->
+<div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-[#0d0f14]/90 border border-white/10 backdrop-blur-xl px-8 py-4 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-between gap-10 z-50 max-w-lg w-[90%]">
+    <div class="flex items-center gap-3">
+        <span class="text-amber-300 text-sm">❤️</span>
+        <div>
+            <p id="estado-contador" class="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-medium">Seleccionadas</p>
+            <span id="contador-favoritas" class="text-lg font-light text-white tracking-tight">0 / 0</span>
         </div>
     </div>
 
-    <script>
-        const SUPABASE_URL = 'https://jejskqoserveuzstqjgg.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_XDLNumdR0AM4NF8ACor3ng_nLEI7SIf';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAo1Tx4ndMC7LNKX6w-_9aCrvGvWfzvmpUxGW5aATeZJ4d4bB3OaOE9Vvp_8VBa9c/exec";
+    <div class="flex items-center gap-3">
+        <button id="btn-enviar" onclick="enviarSeleccion()" class="bg-amber-300 hover:bg-amber-200 text-slate-950 font-medium px-6 py-2.5 rounded-full transition-all text-xs tracking-wider uppercase">
+            Guardar Selección
+        </button>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const slugGaleria = urlParams.get('galeria');
+        <div id="contenedor-descarga" class="hidden">
+            <a id="enlace-descarga" href="#" target="_blank" class="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-medium px-6 py-2.5 rounded-full transition-all text-xs tracking-wider uppercase flex items-center gap-2">
+                Descargar Archivos
+            </a>
+        </div>
+    </div>
+</div>
 
-        let galeriaUuid = '';
-        let folderIdDrive = '';
-        let subfolderIdDrive = '';
-        let limiteMaximo = 100;
-        let fotosSeleccionadas = [];
-        let fotosYaRegistradas = new Set();
-        let seleccionYaEnviada = false;
-        let galeriaAprobada = false;
+<!-- LIGHTBOX INMERSIVO DE ALTA DEFINICIÓN -->
+<div id="modal-lightbox" class="fixed inset-0 bg-black/98 backdrop-blur-2xl hidden items-center justify-center p-4 z-[100]">
+    <button onclick="cerrarLightbox()" class="absolute top-6 right-6 text-slate-400 hover:text-white transition p-3 z-10">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <div class="relative max-w-6xl max-h-[92vh] flex items-center justify-center">
+        <img id="img-lightbox" src="" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+    </div>
+</div>
 
-        async function inicializarGaleria() {
-            if (!slugGaleria) {
-                document.getElementById('titulo-evento').innerText = "Galería No Encontrada";
-                document.getElementById('grid-fotos').innerHTML = `<div class="col-span-full text-center text-red-400 py-10">Falta el parámetro de galería en el enlace.</div>`;
+<script>
+    const SUPABASE_URL = 'https://jejskqoserveuzstqjgg.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_XDLNumdR0AM4NF8ACor3ng_nLEI7SIf';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAo1Tx4ndMC7LNKX6w-_9aCrvGvWfzvmpUxGW5aATeZJ4d4bB3OaOE9Vvp_8VBa9c/exec";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const slugGaleria = urlParams.get('galeria');
+
+    let galeriaUuid = '';
+    let folderIdDrive = '';
+    let subfolderIdDrive = '';
+    let limiteMaximo = 100;
+    let fotosSeleccionadas = [];
+    let fotosYaRegistradas = new Set();
+    let seleccionYaEnviada = false;
+    let galeriaAprobada = false;
+
+    async function inicializarGaleria() {
+        if (!slugGaleria) {
+            document.getElementById('titulo-evento').innerText = "Acceso Restringido";
+            document.getElementById('grid-fotos').innerHTML = `<div class="col-span-full text-center text-red-400/80 font-light py-10">Enlace de galería inválido.</div>`;
+            return;
+        }
+
+        const { data: galeriaData, error: galeriaError } = await _supabase
+            .from('galerias')
+            .select('*')
+            .eq('slug', slugGaleria)
+            .single();
+
+        if (galeriaError || !galeriaData) {
+            document.getElementById('titulo-evento').innerText = "Evento No Disponible";
+            document.getElementById('grid-fotos').innerHTML = `<div class="col-span-full text-center text-red-400/80 font-light py-10">La galería solicitada no existe.</div>`;
+            return;
+        }
+
+        document.getElementById('titulo-evento').innerText = galeriaData.client_name;
+        folderIdDrive = galeriaData.folder_id;
+        subfolderIdDrive = galeriaData.subfolder_id || ''; 
+        galeriaUuid = galeriaData.id;
+        limiteMaximo = parseInt(galeriaData.limite_fotos) || 100;
+        galeriaAprobada = galeriaData.aprobado === true;
+
+        const { data: seleccionesPrevias } = await _supabase
+            .from('selecciones')
+            .select('foto_id')
+            .eq('galeria_id', galeriaUuid);
+
+        if (seleccionesPrevias && seleccionesPrevias.length > 0) {
+            fotosYaRegistradas = new Set(seleccionesPrevias.map(item => item.foto_id));
+            fotosSeleccionadas = [...fotosYaRegistradas];
+            seleccionYaEnviada = true;
+        }
+
+        actualizarContadorUI();
+
+        try {
+            let res = await fetch(`${APPS_SCRIPT_URL}?action=obtenerFotos&folderId=${folderIdDrive}`);
+            let resultado = await res.json();
+
+            if (!resultado.success || resultado.fotos.length === 0) {
+                document.getElementById('grid-fotos').innerHTML = `<div class="col-span-full text-center text-slate-500 font-light py-10">Preparando contenido visual...</div>`;
                 return;
             }
 
-            const { data: galeriaData, error: galeriaError } = await _supabase
-                .from('galerias')
-                .select('*')
-                .eq('slug', slugGaleria)
-                .single();
-
-            if (galeriaError || !galeriaData) {
-                document.getElementById('titulo-evento').innerText = "Evento no disponible";
-                document.getElementById('grid-fotos').innerHTML = `<div class="col-span-full text-center text-red-400 py-10">La galería solicitada no existe.</div>`;
-                return;
-            }
-
-            document.getElementById('titulo-evento').innerText = galeriaData.client_name;
-            folderIdDrive = galeriaData.folder_id;
-            subfolderIdDrive = galeriaData.subfolder_id || ''; 
-            galeriaUuid = galeriaData.id;
-            limiteMaximo = parseInt(galeriaData.limite_fotos) || 100;
-            galeriaAprobada = galeriaData.aprobado === true;
-
-            const { data: seleccionesPrevias } = await _supabase
-                .from('selecciones')
-                .select('foto_id')
-                .eq('galeria_id', galeriaUuid);
-
-            if (seleccionesPrevias && seleccionesPrevias.length > 0) {
-                fotosYaRegistradas = new Set(seleccionesPrevias.map(item => item.foto_id));
-                fotosSeleccionadas = [...fotosYaRegistradas];
-                seleccionYaEnviada = true;
-            }
-
-            actualizarContadorUI();
-
-            try {
-                let res = await fetch(`${APPS_SCRIPT_URL}?action=obtenerFotos&folderId=${folderIdDrive}`);
-                let resultado = await res.json();
-
-                if (!resultado.success || resultado.fotos.length === 0) {
-                    document.getElementById('grid-fotos').innerHTML = `<div class="col-span-full text-center text-slate-400 py-10">Esta carpeta de Google Drive aún no tiene fotos subidas.</div>`;
-                    return;
-                }
-
-                // DETECCIÓN INTELIGENTE DE PORTADA (Busca archivo con prefijo PORTADA_ en Google Drive)
-                let fotosLista = resultado.fotos;
-                let fotoPortadaObj = fotosLista.find(f => f.name && f.name.toUpperCase().startsWith('PORTADA_'));
-                
-                if (fotoPortadaObj) {
-                    document.getElementById('img-portada').src = fotoPortadaObj.url;
-                } else if (fotosLista.length > 0) {
-                    document.getElementById('img-portada').src = fotosLista[0].url; // Por defecto la primera foto
-                }
-
-                renderizarFotos(fotosLista);
-
-                const btnEnviar = document.getElementById('btn-enviar');
-                const contenedorDescarga = document.getElementById('contenedor-descarga');
-
-                if (galeriaAprobada) {
-                    btnEnviar.classList.add('hidden');
-                    const idDestinoDescarga = subfolderIdDrive ? subfolderIdDrive : folderIdDrive;
-                    document.getElementById('enlace-descarga').href = `https://drive.google.com/drive/folders/${idDestinoDescarga}`;
-                    contenedorDescarga.classList.remove('hidden');
-                    document.getElementById('texto-instruccion').innerText = "¡Tu selección ha sido aprobada! Ya puedes descargar tus fotos seleccionadas.";
-                } else if (seleccionYaEnviada) {
-                    btnEnviar.innerText = "Selección Enviada (En revisión)";
-                    document.getElementById('texto-instruccion').innerText = "Tu selección está guardada y organizada. Esperando aprobación del estudio Mr. Fiesta.";
-                }
-
-            } catch (err) {
-                console.error(err);
-                document.getElementById('grid-fotos').innerHTML = `<div class="col-span-full text-center text-red-400 py-10">Error al conectar con Google Drive.</div>`;
-            }
-        }
-
-        function explorarAlbum() {
-            document.getElementById('seccion-galeria').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function renderizarFotos(fotos) {
-            const grid = document.getElementById('grid-fotos');
-            grid.innerHTML = '';
-
-            fotos.forEach((foto, index) => {
-                const idFoto = foto.id; 
-                const urlFoto = foto.url; 
-
-                // Estilo asimétrico dinámico tipo revista / álbum físico
-                let spanClasses = "";
-                if (index % 4 === 0) spanClasses = "md:row-span-2";
-                if (index % 7 === 0) spanClasses = "md:col-span-2";
-
-                const estaSeleccionada = fotosSeleccionadas.includes(idFoto);
-
-                const div = document.createElement('div');
-                div.className = `photo-card relative group rounded-3xl overflow-hidden shadow-2xl bg-slate-900 border transition transform hover:-translate-y-1.5 cursor-pointer ${estaSeleccionada ? 'ring-4 ring-amber-400 border-amber-400 shadow-amber-500/20' : 'border-slate-800/80'} ${spanClasses}`;
-                div.onclick = () => alternarSeleccion(idFoto, div);
-
-                div.innerHTML = `
-                    <img src="${urlFoto}" class="photo-img group-hover:scale-105 transition duration-700" alt="Foto álbum">
-                    
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-15 group-hover:opacity-25 transition">
-                        <span class="text-white font-black text-xl tracking-widest uppercase rotate-[-25deg] border-2 border-white/60 px-3 py-1 rounded-lg">
-                            MR. FIESTA
-                        </span>
-                    </div>
-
-                    <div class="absolute top-4 right-4 z-10 w-10 h-10 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-700 flex items-center justify-center text-slate-300 transition badge-corazon shadow-lg ${estaSeleccionada ? 'bg-amber-400 text-slate-950 font-bold border-amber-300' : 'hover:bg-slate-800'}">
-                        ❤️
-                    </div>
-
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-5">
-                        <span class="text-xs text-amber-400 font-bold uppercase tracking-wider">${galeriaAprobada ? 'Galería aprobada' : 'Clic para marcar favorita'}</span>
-                    </div>
-                `;
-                grid.appendChild(div);
-            });
-        }
-
-        function alternarSeleccion(idFoto, elemento) {
-            if (galeriaAprobada) {
-                alert("Tu galería ya fue aprobada y cerrada definitivamente. No se pueden modificar las fotos.");
-                return;
-            }
-
-            const index = fotosSeleccionadas.indexOf(idFoto);
-            const badge = elemento.querySelector('.badge-corazon');
-
-            if (index > -1) {
-                fotosSeleccionadas.splice(index, 1);
-                elemento.classList.remove('ring-4', 'ring-amber-400', 'border-amber-400', 'shadow-amber-500/20');
-                badge.classList.remove('bg-amber-400', 'text-slate-950', 'border-amber-300');
-                badge.classList.add('bg-slate-900/80', 'text-slate-300');
-            } else {
-                if (fotosSeleccionadas.length >= limiteMaximo) {
-                    alert(`¡Atención! Has alcanzado el límite máximo de ${limiteMaximo} fotos permitidas para tu paquete.`);
-                    return;
-                }
-                
-                fotosSeleccionadas.push(idFoto);
-                elemento.classList.add('ring-4', 'ring-amber-400', 'border-amber-400', 'shadow-amber-500/20');
-                badge.classList.remove('bg-slate-900/80', 'text-slate-300');
-                badge.classList.add('bg-amber-400', 'text-slate-950', 'border-amber-300');
-            }
-
-            actualizarContadorUI();
-        }
-
-        function actualizarContadorUI() {
-            const faltantes = limiteMaximo - fotosSeleccionadas.length;
-            document.getElementById('contador-favoritas').innerText = `${fotosSeleccionadas.length} / ${limiteMaximo}`;
+            let fotosLista = resultado.fotos;
+            let fotoPortadaObj = fotosLista.find(f => f.name && f.name.toUpperCase().startsWith('PORTADA_'));
             
+            if (fotoPortadaObj) {
+                document.getElementById('img-portada').src = fotoPortadaObj.url;
+            } else if (fotosLista.length > 0) {
+                document.getElementById('img-portada').src = fotosLista[0].url;
+            }
+
+            renderizarFotos(fotosLista);
+
+            const btnEnviar = document.getElementById('btn-enviar');
+            const contenedorDescarga = document.getElementById('contenedor-descarga');
+
             if (galeriaAprobada) {
-                document.getElementById('estado-contador').innerText = `¡Proceso finalizado!`;
-            } else if (faltantes > 0) {
-                document.getElementById('estado-contador').innerText = `Te faltan ${faltantes} por elegir`;
-            } else {
-                document.getElementById('estado-contador').innerText = `¡Límite completado!`;
+                btnEnviar.classList.add('hidden');
+                const idDestinoDescarga = subfolderIdDrive ? subfolderIdDrive : folderIdDrive;
+                document.getElementById('enlace-descarga').href = `https://drive.google.com/drive/folders/${idDestinoDescarga}`;
+                contenedorDescarga.classList.remove('hidden');
+                document.getElementById('texto-instruccion').innerText = "Selección aprobada. Descarga activa en alta definición.";
+            } else if (seleccionYaEnviada) {
+                btnEnviar.innerText = "En revisión";
+                document.getElementById('texto-instruccion').innerText = "Tus selecciones fueron enviadas al estudio correctamente.";
             }
+
+        } catch (err) {
+            console.error(err);
+            document.getElementById('grid-fotos').innerHTML = `<div class="col-span-full text-center text-red-400/80 font-light py-10">Error de conexión con el servidor.</div>`;
+        }
+    }
+
+    function explorarAlbum() {
+        document.getElementById('seccion-galeria').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function renderizarFotos(fotos) {
+        const grid = document.getElementById('grid-fotos');
+        grid.innerHTML = '';
+
+        fotos.forEach((foto, index) => {
+            const idFoto = foto.id; 
+            const urlFoto = foto.url; 
+
+            let spanClasses = "";
+            if (index % 5 === 0) spanClasses = "md:col-span-2";
+
+            const estaSeleccionada = fotosSeleccionadas.includes(idFoto);
+
+            const div = document.createElement('div');
+            div.className = `photo-card relative group rounded-xl overflow-hidden bg-[#0d0f14] cursor-pointer ${estaSeleccionada ? 'ring-2 ring-amber-300' : ''} ${spanClasses}`;
+
+            div.innerHTML = `
+                <img src="${urlFoto}" onclick="abrirLightbox('${urlFoto}')" class="photo-img group-hover:scale-[1.02] transition duration-700" alt="Fotografía">
+                
+                <div class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center transition badge-corazon ${estaSeleccionada ? 'bg-amber-300 text-slate-950 border-amber-300' : 'text-white hover:bg-black/60'}" onclick="alternarSeleccion('${idFoto}', this.closest('.photo-card'), event)">
+                    ❤️
+                </div>
+
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6 pointer-events-none">
+                    <span class="text-[11px] text-amber-300 font-light tracking-widest uppercase">${galeriaAprobada ? 'Finalizado' : 'Clic en corazón para favorita'}</span>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+    }
+
+    function alternarSeleccion(idFoto, elemento, event) {
+        if (event) event.stopPropagation();
+
+        if (galeriaAprobada) {
+            alert("La galería ya fue aprobada y cerrada.");
+            return;
         }
 
-        async function enviarSeleccion() {
-            if (fotosSeleccionadas.length === 0) {
-                alert("Por favor, selecciona al menos una foto antes de guardar.");
+        const index = fotosSeleccionadas.indexOf(idFoto);
+        const badge = elemento.querySelector('.badge-corazon');
+
+        if (index > -1) {
+            fotosSeleccionadas.splice(index, 1);
+            elemento.classList.remove('ring-2', 'ring-amber-300');
+            badge.classList.remove('bg-amber-300', 'text-slate-950', 'border-amber-300');
+            badge.classList.add('bg-black/40', 'text-white');
+        } else {
+            if (fotosSeleccionadas.length >= limiteMaximo) {
+                alert(`Límite alcanzado: máximo ${limiteMaximo} fotografías.`);
                 return;
             }
-
-            if (!confirm(`¿Estás seguro de enviar tu selección final de ${fotosSeleccionadas.length} fotos al estudio Mr. Fiesta?`)) return;
-
-            const btn = document.getElementById('btn-enviar');
-            btn.innerText = "Procesando...";
-            btn.disabled = true;
-
-            // 1. Guardar en Supabase
-            await _supabase.from('selecciones').delete().eq('galeria_id', galeriaUuid);
-            const registrosParaEnviar = fotosSeleccionadas.map(idDriveFoto => ({
-                galeria_id: galeriaUuid,
-                foto_id: idDriveFoto
-            }));
-
-            const { error } = await _supabase.from('selecciones').insert(registrosParaEnviar);
-
-            if (error) {
-                alert("Hubo un error al guardar: " + error.message);
-                btn.innerText = "Guardar Selección";
-                btn.disabled = false;
-                return;
-            }
-
-            // 2. Ordenar a Apps Script mediante POST que cree la subcarpeta y copie las fotos
-            try {
-                let response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: "procesarSeleccion",
-                        folderId: folderIdDrive,
-                        ids: fotosSeleccionadas
-                    })
-                });
-                let resultado = await response.json();
-
-                if (resultado.success) {
-                    subfolderIdDrive = resultado.subfolderId;
-
-                    // Guardamos el subfolder_id en Supabase
-                    await _supabase.from('galerias').update({ subfolder_id: subfolderIdDrive }).eq('id', galeriaUuid);
-
-                    seleccionYaEnviada = true;
-                    alert("¡Selección enviada y organizada con éxito! El estudio Mr. Fiesta validará tu paquete.");
-                    btn.innerText = "Selección Enviada (En revisión)";
-                    document.getElementById('texto-instruccion').innerText = "Tu selección está guardada y organizada. Esperando aprobación del estudio.";
-                    actualizarContadorUI();
-                } else {
-                    alert("Se guardó en la base de datos, pero hubo un detalle en Drive: " + (resultado.error || 'Desconocido'));
-                    btn.innerText = "Guardar Selección";
-                    btn.disabled = false;
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Error de conexión al procesar las fotos en Drive.");
-                btn.innerText = "Guardar Selección";
-                btn.disabled = false;
-            }
+            
+            fotosSeleccionadas.push(idFoto);
+            elemento.classList.add('ring-2', 'ring-amber-300');
+            badge.classList.remove('bg-black/40', 'text-white');
+            badge.classList.add('bg-amber-300', 'text-slate-950', 'border-amber-300');
         }
+
+        actualizarContadorUI();
+    }
+
+    function actualizarContadorUI() {
+        const faltantes = limiteMaximo - fotosSeleccionadas.length;
+        document.getElementById('contador-favoritas').innerText = `${fotosSeleccionadas.length} / ${limiteMaximo}`;
         
-        inicializarGaleria();
-    </script>
+        if (galeriaAprobada) {
+            document.getElementById('estado-contador').innerText = `Completado`;
+        } else if (faltantes > 0) {
+            document.getElementById('estado-contador').innerText = `Faltan ${faltantes}`;
+        } else {
+            document.getElementById('estado-contador').innerText = `Límite cubierto`;
+        }
+    }
+
+    function abrirLightbox(url) {
+        document.getElementById('img-lightbox').src = url;
+        const modal = document.getElementById('modal-lightbox');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function cerrarLightbox() {
+        const modal = document.getElementById('modal-lightbox');
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }
+
+    async function enviarSeleccion() {
+        if (fotosSeleccionadas.length === 0) {
+            alert("Selecciona al menos una fotografía.");
+            return;
+        }
+
+        if (!confirm(`¿Deseas confirmar tu selección de ${fotosSeleccionadas.length} fotos?`)) return;
+
+        const btn = document.getElementById('btn-enviar');
+        btn.innerText = "Enviando...";
+        btn.disabled = true;
+
+        await _supabase.from('selecciones').delete().eq('galeria_id', galeriaUuid);
+        const registrosParaEnviar = fotosSeleccionadas.map(idDriveFoto => ({
+            galeria_id: galeriaUuid,
+            foto_id: idDriveFoto
+        }));
+
+        const { error } = await _supabase.from('selecciones').insert(registrosParaEnviar);
+
+        if (error) {
+            alert("Error al guardar: " + error.message);
+            btn.innerText = "Guardar Selección";
+            btn.disabled = false;
+            return;
+        }
+
+        try {
+            let response = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    action: "procesarSeleccion",
+                    folderId: folderIdDrive,
+                    ids: fotosSeleccionadas
+                })
+            });
+            let resultado = await response.json();
+
+            if (resultado.success) {
+                subfolderIdDrive = resultado.subfolderId;
+                await _supabase.from('galerias').update({ subfolder_id: subfolderIdDrive }).eq('id', galeriaUuid);
+
+                seleccionYaEnviada = true;
+                alert("¡Selección enviada con éxito!");
+                btn.innerText = "En revisión";
+                document.getElementById('texto-instruccion').innerText = "Tus archivos favoritos ya fueron entregados al estudio.";
+                actualizarContadorUI();
+            } else {
+                alert("Guardado en base de datos, pero hubo un detalle en Drive: " + (resultado.error || 'Desconocido'));
+                btn.innerText = "Guardar Selección";
+                btn.disabled = false;
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error de conexión con el servidor.");
+            btn.innerText = "Guardar Selección";
+            btn.disabled = false;
+        }
+    }
+    
+    inicializarGaleria();
+</script>
 </body>
 </html>
