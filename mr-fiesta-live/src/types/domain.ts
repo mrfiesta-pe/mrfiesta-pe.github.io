@@ -1,0 +1,59 @@
+export type EventStatus = 'draft' | 'active' | 'finished'
+export type RequestStatus = 'pending' | 'queued' | 'playing' | 'completed' | 'rejected'
+export type PhotoStatus = 'published' | 'pending' | 'hidden'
+
+export interface Event {
+  id: string
+  name: string
+  slug: string
+  celebrant_name: string
+  celebrant_age: number | null
+  event_date: string
+  status: EventStatus
+  cover_url: string | null
+  theme: { gallery_moderation?: 'auto' | 'manual' } | null
+  created_at: string
+}
+
+export interface Guest {
+  id: string
+  event_id: string
+  display_name: string
+  table_number: string | null
+  created_at: string
+}
+
+export interface SongRequest {
+  id: string
+  event_id: string
+  guest_id: string
+  guest_name: string
+  table_number: string | null
+  song_title: string
+  artist: string | null
+  dedication: string | null
+  status: RequestStatus
+  position: number | null
+  created_at: string
+  approved_at: string | null
+  started_at: string | null
+  completed_at: string | null
+  votes?: number
+}
+
+export interface Photo {
+  id: string
+  event_id: string
+  guest_id: string
+  guest_name: string
+  storage_path: string
+  caption: string | null
+  status: PhotoStatus
+  created_at: string
+  public_url?: string
+  likes?: number
+  reactions?: Record<string, number>
+  likedByMe?: boolean
+}
+
+export interface ToastMessage { id: number; title: string; body?: string; kind?: 'success' | 'error' | 'info' }

@@ -1,0 +1,2 @@
+-- Producción: no se insertan eventos ni datos ficticios automáticamente.
+-- Crea cada evento real desde /admin tras configurar un usuario administrador.
