@@ -63,6 +63,8 @@ export interface CrmEvent {
   cliente: string
   agasajado: string
   tipo_evento: string
+  edad: number | null
+  invitados: number | null
   telefono: string
   fecha_evento: string
   hora_inicio: string
