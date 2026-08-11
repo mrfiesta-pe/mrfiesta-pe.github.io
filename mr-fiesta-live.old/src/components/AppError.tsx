@@ -1,0 +1,3 @@
+import { AlertTriangle, Settings } from 'lucide-react'
+import { isSupabaseConfigured } from '../lib/supabase'
+export function AppError({ message }: { message?: string }) { return <main className="error-screen"><div className="error-orb"><AlertTriangle /></div><h1>La fiesta necesita un pequeño ajuste</h1><p>{message ?? 'No pudimos cargar este evento. Comprueba el enlace o vuelve a intentarlo.'}</p>{!isSupabaseConfigured && <div className="setup-note"><Settings /><span>Falta conectar Supabase. Copia <code>.env.example</code> a <code>.env.local</code> e indica las claves públicas del proyecto.</span></div>}</main> }

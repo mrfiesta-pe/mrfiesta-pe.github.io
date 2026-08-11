@@ -57,27 +57,3 @@ export interface Photo {
 }
 
 export interface ToastMessage { id: number; title: string; body?: string; kind?: 'success' | 'error' | 'info' }
-
-export interface CrmEvent {
-  id: string
-  cliente: string
-  agasajado: string
-  tipo_evento: string
-  telefono: string
-  fecha_evento: string
-  hora_inicio: string
-  hora_fin: string
-  lugar: string
-  direccion: string
-  paquete: string
-  detalle_servicio: string
-  cronograma: string
-  observaciones: string
-  estado_pago: 'Reservado' | 'Pendiente' | 'Pagado'
-  total: number
-  adelanto: number
-  saldo: number
-  drive_pdf_url: string | null
-  created_at: string
-  updated_at: string
-}
