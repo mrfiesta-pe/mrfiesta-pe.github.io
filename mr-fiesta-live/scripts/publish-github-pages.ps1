@@ -9,6 +9,9 @@ try {
   $env:VITE_BASE_PATH = '/live/'
   $env:VITE_ROUTER = 'hash'
   npm.cmd run build
+  if ($LASTEXITCODE -ne 0) {
+    throw 'La compilación falló. Se conservó la carpeta live anterior.'
+  }
 
   if (Test-Path $publishDirectory) {
     Remove-Item -LiteralPath $publishDirectory -Recurse -Force
