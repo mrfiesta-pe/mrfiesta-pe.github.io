@@ -71,9 +71,14 @@ export interface CrmEvent {
   hora_fin: string
   lugar: string
   direccion: string
+  referencia: string
+  tematica_invitacion: string
+  cancion_invitacion: string
   paquete: string
   detalle_servicio: string
+  juegos_elegidos: string
   cronograma: string
+  adicionales_requerimientos: string
   observaciones: string
   estado_pago: 'Reservado' | 'Pendiente' | 'Pagado'
   total: number

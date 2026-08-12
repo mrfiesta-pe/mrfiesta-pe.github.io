@@ -217,9 +217,14 @@ create table if not exists public.crm_events (
   hora_fin text not null default '',
   lugar text not null default '',
   direccion text not null default '',
+  referencia text not null default '',
+  tematica_invitacion text not null default '',
+  cancion_invitacion text not null default '',
   paquete text not null default 'Personalizado',
   detalle_servicio text not null default '',
+  juegos_elegidos text not null default '',
   cronograma text not null default '',
+  adicionales_requerimientos text not null default '',
   observaciones text not null default '',
   estado_pago text not null default 'Reservado' check (estado_pago in ('Reservado','Pendiente','Pagado')),
   total numeric not null default 0 check (total >= 0),
@@ -235,3 +240,10 @@ drop policy if exists "admins manage crm events" on public.crm_events;
 create policy "admins manage crm events" on public.crm_events for all to authenticated using (public.is_admin()) with check (public.is_admin());
 drop trigger if exists crm_events_updated_at on public.crm_events;
 create trigger crm_events_updated_at before update on public.crm_events for each row execute function public.set_updated_at();
+
+-- Ejecuta estas dos líneas una sola vez en el proyecto Supabase LIVE si la tabla ya existe.
+alter table public.crm_events add column if not exists juegos_elegidos text not null default '';
+alter table public.crm_events add column if not exists adicionales_requerimientos text not null default '';
+alter table public.crm_events add column if not exists referencia text not null default '';
+alter table public.crm_events add column if not exists tematica_invitacion text not null default '';
+alter table public.crm_events add column if not exists cancion_invitacion text not null default '';
