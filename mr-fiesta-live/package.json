@@ -8,13 +8,11 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test:capture": "node tests/clientCapture.cjs",
-    "test:contracts": "node tests/contracts.cjs"
+    "test:capture": "node tests/clientCapture.cjs"
   },
   "dependencies": {
-    "@react-pdf/renderer": "4.9.0",
     "@supabase/supabase-js": "^2.112.2",
-    "buffer": "6.0.3",
+    "jspdf": "^2.5.2",
     "lucide-react": "^1.30.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.8",
@@ -29,7 +27,6 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "oxlint": "^1.75.0",
-    "react-test-renderer": "19.2.8",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.0"
