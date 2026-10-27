@@ -8,11 +8,14 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test:capture": "node tests/clientCapture.cjs"
+    "test:capture": "node tests/clientCapture.cjs",
+    "test:production": "node --import tsx --test tests/production*.test.ts",
+    "test:production:browser": "node --import tsx tests/production-browser.mjs",
+    "test": "npm run test:capture && node tests/contactExport.cjs && node tests/contractPagination.cjs && npm run test:production"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.2",
-    "jspdf": "^2.5.2",
+    "jspdf": "4.2.1",
     "lucide-react": "^1.30.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.8",
@@ -20,6 +23,7 @@
     "react-router-dom": "^7.18.2"
   },
   "devDependencies": {
+    "@playwright/test": "1.56.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.3",
     "@types/qrcode": "^1.5.6",
@@ -28,6 +32,7 @@
     "@vitejs/plugin-react": "^6.0.4",
     "oxlint": "^1.75.0",
     "tailwindcss": "^4.3.3",
+    "tsx": "4.23.15",
     "typescript": "~6.0.2",
     "vite": "^8.2.0"
   }
