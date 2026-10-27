@@ -4,7 +4,7 @@
 
 El módulo está integrado en el CRM existente, en el repositorio `mrfiesta-pe/mrfiesta-pe.github.io`, carpeta fuente `mr-fiesta-live`. Conserva React, TypeScript, Vite, el router existente, la sesión Supabase y la identidad visual. La carpeta MR FIESTA STUDIO es otro producto y no se usa como aplicación del CRM.
 
-La auditoría del 27 de octubre de 2026 comprobó 104 reservas en `public.crm_events` y los cinco eventos del 31 de octubre. `crm_collaborators` es el registro real de personal. André y Jochetín ya aparecen después de que administración los agregó. El módulo no requiere esos nombres ni esa fecha: funciona con cualquier reserva accesible del CRM.
+La auditoría del 27 de octubre de 2026 comprobó 104 reservas en `public.crm_events` y los cinco eventos del 31 de octubre. `crm_collaborators` es el registro real de personal. El módulo no requiere esos nombres ni esa fecha: funciona con cualquier reserva accesible del CRM.
 
 Los datos comerciales ya existentes incluyen cliente, protagonista, teléfono, invitados, dirección, distrito, paquete, detalles de servicio, juegos, cronograma textual, adicionales, observaciones, total, adelanto y enlace PDF. Se mantienen también los campos históricos `adicionales`, `movilidad` y `dni` para consultar registros anteriores. La extracción de servicios usa texto contractual explícito; el nombre del paquete y el valor predeterminado de movilidad no se toman como promesas.
 
@@ -64,7 +64,7 @@ npm run dev -- --host 127.0.0.1 --port 1431
 npm run test:production:browser
 ```
 
-Las pruebas de TypeScript cubren horarios en Lima, medianoche, cronogramas textuales, referencias históricas, servicios negativos y alternativos, roles compatibles, reservas multidía, sugerencias, excepciones, saldo con centavos y privacidad de PDF/mensajes. Se ejecutan también las pruebas existentes de captura, contactos y paginación de contratos tras actualizar jsPDF a 4.2.1. La compilación y el linter se ejecutan contra la aplicación completa.
+Pasaron 38 pruebas nuevas de TypeScript y 20 comprobaciones de navegador. Las pruebas de TypeScript cubren horarios en Lima, medianoche, cronogramas textuales, referencias históricas, servicios negativos y alternativos, roles compatibles, reservas multidía, sugerencias, excepciones, saldo con centavos y privacidad de PDF/mensajes. Se ejecutan también las pruebas existentes de captura, contactos y paginación de contratos tras actualizar jsPDF a 4.2.1. La compilación y el linter se ejecutan contra la aplicación completa.
 
 Las pruebas SQL ejecutadas contra Supabase incluyen 11 aserciones de persistencia, revisión, auditoría y permisos, y 8 de preparación y conflictos. Todas las filas de prueba se revierten con ROLLBACK. El checksum de las 104 reservas antes y después fue idéntico: `335c5894fc1ab3425cda4cf121d53a16`. No quedaron planes, activos ni bitácoras de prueba. Los asesores no identificaron nuevos problemas de seguridad en las tablas de producción; permanecen avisos previos ajenos al módulo.
 
