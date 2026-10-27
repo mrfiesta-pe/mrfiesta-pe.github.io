@@ -5,6 +5,7 @@ const GuestPage = lazy(() => import('./pages/GuestPage').then((module) => ({ def
 const DJPage = lazy(() => import('./pages/DJPage').then((module) => ({ default: module.DJPage })))
 const AdminPage = lazy(() => import('./pages/AdminPage').then((module) => ({ default: module.AdminPage })))
 const CrmPage = lazy(() => import('./pages/CrmPage').then((module) => ({ default: module.CrmPage })))
+const ProductionPage = lazy(() => import('./production/ProductionPage').then((module) => ({ default: module.ProductionPage })))
 
 export default function App() {
   const Router = import.meta.env.VITE_ROUTER === 'hash' ? HashRouter : BrowserRouter
@@ -13,6 +14,8 @@ export default function App() {
     <Route path="/cabina/:slug" element={<DJPage />} />
     <Route path="/admin" element={<AdminPage />} />
     <Route path="/crm" element={<CrmPage />} />
+    <Route path="/production" element={<ProductionPage />} />
+    <Route path="/production/:eventId" element={<ProductionPage />} />
     <Route path="/" element={<Navigate to="/admin" replace />} />
     <Route path="*" element={<Navigate to="/admin" replace />} />
   </Routes></Suspense></Router>

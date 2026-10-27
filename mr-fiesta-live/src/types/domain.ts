@@ -80,6 +80,10 @@ export interface CrmEvent {
   juegos_elegidos: string
   cronograma: string
   adicionales_requerimientos: string
+  /** Original CRM columns retained for older contractual records. */
+  adicionales?: string | null
+  movilidad?: string | null
+  dni?: string | null
   observaciones: string
   estado_pago: 'Reservado' | 'Pendiente' | 'Pagado'
   total: number
