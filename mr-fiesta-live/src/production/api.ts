@@ -69,13 +69,12 @@ export async function isProductionAdmin(): Promise<boolean> {
 export async function loadProduction(): Promise<ProductionData> {
   if (!await isProductionAdmin()) throw readableError({ code: '42501' })
   // Load all reservations, including adjacent dates: equipment can remain installed overnight.
-  const [events, collaborators, assets, records] = await Promise.all([
+  const [events, collaborators, records] = await Promise.all([
     readAll<CrmEvent>('crm_events', 'id'),
     readAll<CrmCollaborator>('crm_collaborators', 'id'),
-    readAll<EquipmentAsset>('crm_production_assets', 'id'),
     readAll<PlanRow>('crm_production_plans', 'event_id'),
   ])
-  return { events, collaborators, assets, records: records.map(mapRecord) }
+  return { events, collaborators, assets: [], records: records.map(mapRecord) }
 }
 
 /** An atomic compare-and-save. A successful network response is the only saved state. */

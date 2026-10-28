@@ -137,6 +137,6 @@ export interface JournalEntry {
 }
 
 export const productionStatuses: Record<ProductionStatus, string> = {
-  unorganized: 'Sin organizar', planning: 'En planificación', confirming: 'Personal y equipos por confirmar',
+  unorganized: 'Sin organizar', planning: 'En planificación', confirming: 'Personal por confirmar',
   ready: 'Listo para ejecución', setup: 'En montaje', live: 'En desarrollo', finished: 'Finalizado', closed: 'Cerrado',
 }
