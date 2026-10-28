@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test:capture": "node tests/clientCapture.cjs",
     "test:production": "node --import tsx --test tests/production*.test.ts",
-    "test:production:browser": "node --import tsx tests/production-browser.mjs",
+    "test:production:browser": "node --import tsx tests/production-browser.mjs && npm run test:production:lifecycle",
+    "test:production:lifecycle": "node --import tsx tests/production-lifecycle-browser.mjs",
     "test": "npm run test:capture && node tests/contactExport.cjs && node tests/contractPagination.cjs && npm run test:production"
   },
   "dependencies": {

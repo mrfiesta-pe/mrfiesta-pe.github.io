@@ -105,6 +105,30 @@ export async function loadJournal(eventId: string): Promise<JournalEntry[]> {
   }
 }
 
+/** Advanced resources are fetched only when the user opens administration. */
+export async function loadAssets(): Promise<EquipmentAsset[]> {
+  return readAll<EquipmentAsset>('crm_production_assets', 'id')
+}
+
+export async function updateAsset(id: string, input: Partial<Omit<EquipmentAsset, 'id'>>): Promise<EquipmentAsset> {
+  const patch: Partial<Omit<EquipmentAsset, 'id'>> = {}
+  for (const key of ['name', 'identifier', 'category'] as const) {
+    if (input[key] === undefined) continue
+    const value = input[key].trim()
+    if (!value) throw new Error('El nombre, identificador y categoría no pueden quedar vacíos.')
+    patch[key] = value
+  }
+  if (input.status !== undefined) {
+    if (!['available', 'maintenance'].includes(input.status)) throw new Error('Estado de inventario no válido.')
+    patch.status = input.status
+  }
+  if (input.notes !== undefined) patch.notes = input.notes.trim()
+  if (!Object.keys(patch).length) throw new Error('No hay cambios de inventario para guardar.')
+  const result = await requireSupabase().from('crm_production_assets').update(patch).eq('id', id).select('*').single()
+  if (result.error) throw readableError(result.error)
+  return result.data as EquipmentAsset
+}
+
 export async function createAsset(input: Omit<EquipmentAsset, 'id'>): Promise<EquipmentAsset> {
   const name = input.name.trim()
   const identifier = input.identifier.trim()

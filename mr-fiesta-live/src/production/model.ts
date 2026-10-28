@@ -14,6 +14,10 @@ export interface Activity {
   kind: ActivityKind
   serviceKey?: string
   exception?: string
+  confirmed?: boolean
+  confirmedAt?: string
+  agendaOriginId?: string
+  agendaOriginKey?: string
 }
 export interface StaffAssignment {
   id: string
@@ -93,6 +97,8 @@ export interface Agreement { id: string; date: string; responsible: string; note
 export interface Cost { id: string; category: string; description: string; amount: number }
 /** Payments are additional to crm_events.adelanto, never a copy of that deposit. */
 export interface AdditionalPayment { id: string; amount: number; date: string; note: string }
+export interface ActivityTemplate { id: string; name: string; kind: ActivityKind; offsetMinutes?: number; durationMinutes?: number; serviceKey?: string }
+export interface AgendaShare { id: string; scope: 'event' | 'day'; at: string; fingerprint: string }
 export interface ProductionPlan {
   version: 1
   eventId: string
@@ -109,6 +115,8 @@ export interface ProductionPlan {
   notes: string
   reviewedContract: boolean
   exceptions: { key: string; reason: string }[]
+  agendaShares?: AgendaShare[]
+  activityTemplates?: ActivityTemplate[]
 }
 export interface ContractService {
   key: string
@@ -117,7 +125,7 @@ export interface ContractService {
   evidence: string
   durationMinutes?: number
 }
-export interface ProductionContext { event: CrmEvent; plan: ProductionPlan }
+export interface ProductionContext { event: CrmEvent; plan: ProductionPlan; revision?: number }
 export interface Alert {
   key: string
   severity: 'critical' | 'warning'

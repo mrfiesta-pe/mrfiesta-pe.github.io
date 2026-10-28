@@ -3,7 +3,8 @@ import type { CrmCollaborator, CrmEvent } from '../types/domain'
 import type { EquipmentAsset, ProductionContext, ProductionPlan } from './model'
 import { productionStatuses } from './model'
 import { balance, costTotal, operationalUtility } from './rules'
-import { automaticActivities, simpleChecklist } from './simpleWorkflow'
+import { simpleChecklist } from './simpleWorkflow'
+import { buildEventAgenda } from './agenda'
 
 const money = (value: number) => `S/ ${Number(value || 0).toFixed(2)}`
 export function productionDate(value: string): string {
@@ -16,7 +17,7 @@ export function productionDate(value: string): string {
 /** Explicitly contains operational information only; private notes, fees and client finances are excluded. */
 export function collaboratorMessage(event: CrmEvent, plan: ProductionPlan, person: CrmCollaborator): string {
   const assignments = plan.staff.filter(item => item.collaboratorId === person.id)
-  const activities = automaticActivities(event)
+  const activities = buildEventAgenda(event, plan)
   return [
     '*MR FIESTA · HOJA DE TRABAJO*',
     `Para: ${person.nombre}`,
@@ -79,7 +80,7 @@ export function buildProductionPdf(contexts: ProductionContext[], collaborators:
     if (!staff.length) line('Personal por asignar.')
     staff.forEach(item => line(`${names([item.collaboratorId])} · ${item.role} · Llegada ${productionDate(item.arrival)} · Inicio ${productionDate(item.start)} · Salida ${productionDate(item.end)} · ${item.confirmation === 'confirmed' ? 'Confirmado' : item.confirmation === 'declined' ? 'Rechazado' : 'Por confirmar'}`))
     line('CRONOGRAMA', true)
-    const schedule = automaticActivities(event)
+    const schedule = buildEventAgenda(event, plan)
     if (!schedule.length) line(event.cronograma || 'Sin cronograma registrado en el CRM.')
     schedule.forEach(item => {
       line(`${productionDate(item.start)} - ${productionDate(item.end)} · ${item.name} · ${names(item.responsibleIds)} · ${item.status}`)
