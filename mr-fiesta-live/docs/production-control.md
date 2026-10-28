@@ -1,73 +1,58 @@
-# Centro de producción MR FIESTA
+# Organizador sencillo de MR FIESTA
 
-## Alcance y diagnóstico
+El organizador tiene tres apartados: **Personal**, **Checklist** y **Resumen del evento**. Se abre inicialmente en el checklist. Funciona para cualquier reserva y fecha del CRM existente.
 
-El módulo está integrado en el CRM existente, en el repositorio `mrfiesta-pe/mrfiesta-pe.github.io`, carpeta fuente `mr-fiesta-live`. Conserva React, TypeScript, Vite, el router existente, la sesión Supabase y la identidad visual. La carpeta MR FIESTA STUDIO es otro producto y no se usa como aplicación del CRM.
+## Checklist automático de salida
 
-La auditoría del 27 de octubre de 2026 comprobó 104 reservas en `public.crm_events` y los cinco eventos del 31 de octubre. `crm_collaborators` es el registro real de personal. El módulo no requiere esos nombres ni esa fecha: funciona con cualquier reserva accesible del CRM.
+La lista sirve únicamente para preparar la salida del almacén. No incluye tareas de montaje, show, cierre ni retorno.
 
-Los datos comerciales ya existentes incluyen cliente, protagonista, teléfono, invitados, dirección, distrito, paquete, detalles de servicio, juegos, cronograma textual, adicionales, observaciones, total, adelanto y enlace PDF. Se mantienen también los campos históricos `adicionales`, `movilidad` y `dni` para consultar registros anteriores. La extracción de servicios usa texto contractual explícito; el nombre del paquete y el valor predeterminado de movilidad no se toman como promesas.
+Se genera según los servicios del paquete contratado. El catálogo es el mismo que usa el CRM (`src/lib/crmPackages.ts`), sin duplicar sus precios o descripciones en el frontend. Si la reserva ya tiene un detalle de servicio específico, ese texto prevalece, incluidas las exclusiones. El catálogo se usa como respaldo cuando el detalle está vacío.
 
-El CRM genera contratos con jsPDF y los descarga localmente. Los cinco contratos de la jornada no tienen `drive_pdf_url`; solo existe un bucket de fotografías. Por eso se muestra el texto disponible y una advertencia de PDF ausente, sin fabricar documentos, versiones ni fechas de generación. Los enlaces HTTPS existentes y vistas previas reconocidas de Google Drive se reutilizan; el acceso y la descarga siguen dependiendo del proveedor. No se pudo verificar un PDF original real de esa jornada.
+Los campos **Adicionales / requerimientos** y **Adicionales históricos** se incorporan directamente a la lista. Cada línea o elemento separado por punto y coma conserva su texto exacto. No hay que volver a escribir los extras ni pulsar un botón para regenerar la lista. Al volver a abrir o actualizar el evento se toman los datos actuales del CRM.
 
-Los saldos históricos de los cinco eventos son cero a pesar de existir diferencias entre total y adelanto. No hay una tabla de pagos separada en el esquema auditado. Producción calcula en centavos `total − adelanto − pagos adicionales de producción`. Estos pagos son adicionales al adelanto, nunca su duplicado. Los descuentos no tienen campo independiente: se consulta el valor contractual y se señala esa limitación.
+Los adicionales tienen identificadores basados en su contenido. Si se cambia o agrega un extra, aparece sin marcar; las tareas sin cambios conservan su avance. Los adicionales retirados dejan de aparecer, conservando los registros anteriores en el documento guardado.
 
-## Uso
+La salida incluye solo los kits y materiales relevantes: DJ, sonido, pista LED, proyección, luces, Glitter, decoración, efectos, juegos y accesorios, según lo contratado. Humo o burbujas se presenta como una alternativa cuando así está expresado. El checklist de retorno queda fuera de esta versión.
 
-1. Inicia sesión en el CRM con una cuenta de administración.
-2. Pulsa **📋 ORGANIZAR EVENTO** en cualquier reserva. Se abre otra pestaña con su identificador real. **🎛️ CENTRO DE PRODUCCIÓN** abre la vista general, cuyo selector permite elegir cualquier fecha.
-3. Si todavía no hay plan guardado, el sistema genera automáticamente un borrador desde esa reserva. Importa los horarios textuales inequívocos, crea actividades según los servicios explícitos, prepara el checklist y traslada puntos logísticos reconocidos. Las horas aproximadas conservan esa indicación. Los horarios ambiguos y las duraciones desconocidas quedan pendientes.
-4. **Actualizar borrador desde contrato** incorpora nuevas actividades, tareas y compromisos sin reemplazar las ediciones, asignaciones, confirmaciones, acuerdos ni costos ya registrados.
-5. **Sugerir recursos disponibles** busca colaboradores activos por sus funciones registradas y equipos identificados. Comprueba ocupación, mantenimiento y márgenes de traslado. Necesita intervalos completos para evaluar disponibilidad. Las propuestas de personal quedan pendientes de confirmación; nunca supone que una participación fue acordada. Los honorarios y las horas de llegada propuestos necesitan revisión.
-6. Revisa contrato, cronograma, responsables, logística y equipos; completa fechas de instalación y recojo incluso si ocurren en días distintos. Una misma persona puede cumplir funciones compatibles. Los responsables se vinculan al registro real de colaboradores.
-7. Pulsa **Guardar producción**. El aviso de guardado aparece solo después de la confirmación de Supabase. Cambiar un campo vuelve a mostrar **Cambios sin guardar**. El navegador advierte al salir con un borrador pendiente. Si otra pestaña guardó una revisión nueva, se rechaza la escritura obsoleta y se conservan los cambios en pantalla para revisarlos.
-8. Para pasar a **Listo para ejecución**, resuelve las alertas críticas y completa el checklist previo, el cronograma, las pruebas, la instalación, los recursos y la revisión contractual. Puedes guardar borradores incompletos en planificación. Las excepciones justificables requieren al menos ocho caracteres. Un recurso físicamente ocupado en dos eventos no puede aprobarse con una nota.
-9. En el centro general elige tarjetas, tabla, cronograma, personal, equipos o logística. Las vistas operativas incluyen también instalaciones y reservas que atraviesan varios días. Las ubicaciones representan planificación registrada, no GPS ni seguimiento en vivo.
-10. Descarga el PDF operativo, el reporte del día o una hoja de trabajo. Los mensajes y hojas individuales excluyen costos, honorarios, utilidad, acuerdos y comentarios internos. WhatsApp abre contenido preparado; el envío se confirma en WhatsApp.
+## Personal
 
-Los cambios coordinados con el cliente se registran como acuerdos con fecha, responsable y observación. No reemplazan el documento contractual original ni se presentan como una adenda legal ya emitida. La bitácora de Supabase conserva usuario, fecha y documentos anterior/nuevo. Las incidencias internas quedan separadas de esos acuerdos.
+Selecciona colaboradores del registro existente o pulsa **Sugerir personal**. La función y el período se completan con la información disponible del contrato. Las propuestas quedan pendientes de confirmación y se evitan los cruces de horario conocidos. Una persona puede tener varias funciones compatibles.
 
-## Archivos
+La vista principal muestra función, inicio, salida y confirmación. Honorarios, llegada, traslado y observaciones quedan en un apartado opcional. Las hojas de trabajo y los enlaces de WhatsApp excluyen los datos financieros y notas privadas; no se envían mensajes automáticamente.
 
-- `src/App.tsx`: rutas `/production` y `/production/:eventId` compatibles con HashRouter y BrowserRouter.
-- `src/pages/CrmPage.tsx` y su CSS: accesos al centro y al organizador; manejo del rechazo al intentar eliminar una reserva con historial asociado.
-- `src/types/domain.ts`: campos opcionales históricos del CRM.
-- `src/production/model.ts`: actividades, personal, recursos, logística, compromisos, checklist, pagos y estados.
-- `src/production/rules.ts`: servicios con evidencia, disponibilidad, duración, preparación, conflictos y cálculos monetarios.
-- `src/production/autoplan.ts`: importación de cronogramas, generación del borrador, actualización conservadora y sugerencias de recursos.
-- `src/production/api.ts`: lectura paginada, permisos administrativos, guardado con revisión y bitácora.
-- `src/production/ProductionPage.tsx`: sesión, carga, guardado, protección de cambios y alertas. Al cambiar de cuenta borra datos anteriores y descarta respuestas tardías.
-- `src/production/Organizer.tsx`: las nueve secciones de trabajo.
-- `src/production/ProductionCenter.tsx` y `production.css`: las seis vistas operativas y diseño adaptable.
-- `src/production/contractDocument.ts` y `exports.ts`: enlaces contractuales, PDF y mensajes de trabajo.
-- `supabase/production-control.sql` y `production-control-hardening.sql`: estructuras y validaciones aplicadas; detalles en `production-database.md`.
-- `tests/production*.test.ts`, `production-browser.mjs` y los dos archivos SQL de pruebas: verificación del dominio, automatización, privacidad, interfaz y permisos reales.
+## Resumen del evento
 
-## Base de datos y privacidad
+Es el último apartado y contiene cliente, protagonista, fecha, horarios, dirección, invitados, paquete, detalle completo del servicio, adicionales, cronograma y personal asignado. El cronograma se consulta automáticamente desde la reserva, sin un formulario adicional.
 
-Se aplicaron las migraciones `20261027230018_crm_production_control` y `20261027230352_crm_production_hardening` al proyecto existente. Crean `crm_production_plans`, `crm_production_assets` y `crm_production_audit`, más el RPC `save_crm_production_plan` y funciones privadas de validación. No se crean reservas duplicadas ni se actualizan filas contractuales. Un documento JSONB por evento permite guardar todo el plan en una transacción; las referencias de personal y equipos se verifican en el servidor.
+El visor abre el PDF original si existe un enlace HTTPS accesible. Si no existe, se muestra el contenido estructurado del CRM y se indica que no hay PDF enlazado. No se inventan documentos, versiones ni fechas de generación.
 
-Las tres tablas tienen RLS y acceso exclusivo de administradores del CRM. Las cuentas autenticadas sin pertenencia administrativa, incluidas las de colaboradores, no pueden consultar datos personales o financieros de producción. El frontend reutiliza la clave pública y la sesión existentes; no contiene `service_role`. La auditoría se genera en servidor y no admite edición desde clientes.
+Las finanzas están integradas al resumen: total, adelanto, saldo calculado, costos y utilidad. Registrar pagos adicionales y gastos es opcional. El saldo se calcula en centavos con total menos adelanto menos pagos adicionales; no utiliza el campo histórico saldo. El precio contractual no se edita desde producción.
 
-No se cargaron asignaciones particulares como decisiones nuevas ni se marcaron confirmaciones durante las pruebas. Las referencias de Bellavista proporcionadas en la conversación no cambian silenciosamente su contrato: la interfaz general permite registrar esos acuerdos operativos. El inventario debe contener los equipos reales para poder proponerlos. No se inventó inventario.
+Se retiraron de la interfaz Equipamiento, Logística, Bitácora, el editor manual de cronograma y la matriz de múltiples checks contractuales. El centro diario muestra tarjetas, tabla y personal del día.
+
+## Guardado y permisos
+
+Pulsa **Guardar producción** para confirmar los cambios en Supabase. La aplicación muestra guardado solo después de la respuesta del servidor. Los borradores incompletos se pueden guardar; para marcar el evento listo se revisan el checklist de salida y el personal confirmado, sin exigir los formularios retirados.
+
+Se mantienen la sesión del CRM, RLS para administradores, el control de revisión contra sobrescrituras entre pestañas y el registro automático interno de cambios. No se carga una pantalla de bitácora ni un inventario. Las estructuras anteriores permanecen almacenadas para conservar información, sin trabajo adicional para el usuario.
+
+La migración `supabase/production-simple-workflow.sql` reemplaza la validación anterior y añade funciones privadas que generan los requisitos del checklist de salida en el servidor. No elimina tablas ni actualiza contratos, eventos o planes existentes. Se aplica después de las dos migraciones originales. Los detalles están en `production-database.md`.
+
+## Archivos principales
+
+- `src/lib/crmPackages.ts` y `src/pages/CrmPage.tsx`: catálogo compartido con las mismas definiciones comerciales.
+- `src/production/simpleWorkflow.ts`: checklist automático, extras, progreso, personal y validación sencilla.
+- `src/production/Organizer.tsx` y `simple.css`: tres apartados y campos opcionales plegados.
+- `src/production/ProductionPage.tsx` y `api.ts`: carga, guardado y protección de sesión.
+- `src/production/ProductionCenter.tsx`: centro diario sin gestión de equipos ni logística.
+- `src/production/exports.ts`: resumen y hojas de trabajo con cronograma automático.
+- `supabase/production-simple-workflow.sql` y `production-simple-tests.sql`: validación y pruebas reales de base de datos.
+- `tests/production-simple.test.ts` y `production-browser.mjs`: automatización y flujo simplificado.
 
 ## Verificación y publicación
 
-```powershell
-npm ci
-npm test
-npm run build
-npm run lint
-npm audit
-# Servidor local en otra terminal:
-npm run dev -- --host 127.0.0.1 --port 1431
-npm run test:production:browser
-```
+Se ejecutan `npm test`, `npm run build`, `npm run lint` y `npm run test:production:browser`. Las pruebas incluyen paquetes, exclusiones, adicionales automáticos, cambios de extras que deben revisarse otra vez, conservación de checks, personal, saldo y privacidad. Se conservan las pruebas de contratos, captura y contactos existentes.
 
-Pasaron 38 pruebas nuevas de TypeScript y 20 comprobaciones de navegador. Las pruebas de TypeScript cubren horarios en Lima, medianoche, cronogramas textuales, referencias históricas, servicios negativos y alternativos, roles compatibles, reservas multidía, sugerencias, excepciones, saldo con centavos y privacidad de PDF/mensajes. Se ejecutan también las pruebas existentes de captura, contactos y paginación de contratos tras actualizar jsPDF a 4.2.1. La compilación y el linter se ejecutan contra la aplicación completa.
+Las pruebas SQL usan los roles reales de Supabase y revierten sus datos temporales con ROLLBACK. Las pruebas de interfaz usan Edge con la API interceptada y fixtures aislados; comprueban guardado, errores, permisos y diseño adaptable sin modificar datos reales. El inventario y la bitácora ya no se consultan desde esta interfaz.
 
-Las pruebas SQL ejecutadas contra Supabase incluyen 11 aserciones de persistencia, revisión, auditoría y permisos, y 8 de preparación y conflictos. Todas las filas de prueba se revierten con ROLLBACK. El checksum de las 104 reservas antes y después fue idéntico: `335c5894fc1ab3425cda4cf121d53a16`. No quedaron planes, activos ni bitácoras de prueba. Los asesores no identificaron nuevos problemas de seguridad en las tablas de producción; permanecen avisos previos ajenos al módulo.
-
-La prueba de navegador usa Edge con la API de Supabase completamente interceptada. Verifica interacción, guardado y recuperación del adaptador simulado, errores, permisos de interfaz y tamaños de escritorio/tablet/móvil. Esta prueba no acredita un inicio de sesión real de administración ni una descarga desde Drive. La validación de escritura y RLS reales corresponde a las pruebas SQL separadas. Capturas e informe se generan en `artifacts/`, que está ignorado por Git.
-
-Para publicar se conserva `scripts/publish-github-pages.ps1`: compila con `/live/` y router hash y prepara la carpeta `live/` del repositorio de publicación. El resultado se entrega junto al código fuente, las migraciones y las pruebas; la URL del centro es `https://mrfiesta-pe.github.io/live/#/production`.
+La publicación conserva el script `scripts/publish-github-pages.ps1` y la ruta existente: https://mrfiesta-pe.github.io/live/#/production.

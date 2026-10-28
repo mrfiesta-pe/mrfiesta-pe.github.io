@@ -2,7 +2,7 @@
 
 Aplicación móvil para invitados y cabina DJ en tiempo real. React + Vite + TypeScript + Tailwind CSS + Supabase.
 
-El CRM incluye el [Centro de producción](docs/production-control.md): organizador por evento, generación automática desde el contrato, cronogramas, sugerencias de recursos, logística, alertas, finanzas internas y reportes. Consulta [persistencia y permisos](docs/production-database.md) para las migraciones y pruebas de Supabase.
+El CRM incluye el [Centro de producción](docs/production-control.md): personal, checklist de salida automático por paquete y adicionales, contrato, cronograma automático y finanzas en un resumen final. Consulta [persistencia y permisos](docs/production-database.md) para las migraciones y pruebas de Supabase.
 
 ## Qué está implementado
 

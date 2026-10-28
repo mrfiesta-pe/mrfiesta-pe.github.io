@@ -5,7 +5,7 @@ import { newPlan } from '../src/production/rules'
 import { buildProductionPdf, collaboratorMessage, productionDate, whatsappLink } from '../src/production/exports'
 import { contractUrl } from '../src/production/contractDocument'
 
-const event: CrmEvent = { id: 'example-event', cliente: 'Cliente', agasajado: 'Celebracion', tipo_evento: 'Prueba', edad: null, invitados: null, telefono: '999999999', fecha_evento: '2026-10-31', hora_inicio: '18:00', hora_fin: '21:00', lugar: 'Surco', direccion: 'Direccion operativa 123', dni_ruc: '', referencia: '', tematica_invitacion: '', cancion_invitacion: '', paquete: 'Personalizado', detalle_servicio: 'CONTRACT_PRIVATE', juegos_elegidos: '', cronograma: '', adicionales_requerimientos: '', observaciones: 'CRM_PRIVATE', estado_pago: 'Reservado', total: 1000.35, adelanto: 300.1, saldo: 0, drive_pdf_url: null, created_at: '', updated_at: '' }
+const event: CrmEvent = { id: 'example-event', cliente: 'Cliente', agasajado: 'Celebracion', tipo_evento: 'Prueba', edad: null, invitados: null, telefono: '999999999', fecha_evento: '2026-10-31', hora_inicio: '18:00', hora_fin: '21:00', lugar: 'Surco', direccion: 'Direccion operativa 123', dni_ruc: '', referencia: '', tematica_invitacion: '', cancion_invitacion: '', paquete: 'Personalizado', detalle_servicio: 'CONTRACT_PRIVATE', juegos_elegidos: '', cronograma: 'Actuacion DJ 18:00 a 21:00', adicionales_requerimientos: '', observaciones: 'CRM_PRIVATE', estado_pago: 'Reservado', total: 1000.35, adelanto: 300.1, saldo: 0, drive_pdf_url: null, created_at: '', updated_at: '' }
 const person: CrmCollaborator = { id: 'person-1', nombre: 'Persona asignada', rol: 'DJ', telefono: '999999999', activo: true, created_at: '' }
 function plan() {
   const document = newPlan(event)

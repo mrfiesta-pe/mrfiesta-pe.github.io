@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { BrandLogo } from '../components/BrandLogo'
 import { supabase } from '../lib/supabase'
-import { createAsset, isProductionAdmin, loadJournal, loadProduction, savePlan } from './api'
-import type { JournalEntry, ProductionPlan, ProductionStatus } from './model'
+import { isProductionAdmin, loadProduction, savePlan } from './api'
+import type { ProductionPlan, ProductionStatus } from './model'
 import { productionStatuses } from './model'
-import { progress, readiness } from './rules'
+import { mergeSimpleChecklist, simpleProgress, simpleReadiness } from './simpleWorkflow'
 import { autoPlan } from './autoplan'
 import { Organizer } from './Organizer'
 import { ProductionCenter } from './ProductionCenter'
@@ -21,7 +21,6 @@ export function ProductionPage() {
   const [data, setData] = useState<Dataset>()
   const [draft, setDraft] = useState<ProductionPlan>()
   const [baseline, setBaseline] = useState('')
-  const [journal, setJournal] = useState<JournalEntry[]>([])
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
@@ -35,7 +34,7 @@ export function ProductionPage() {
     const applyIdentity = (next: string | null) => {
       if (identity.current === next) return
       identity.current = next; authVersion.current++
-      setData(undefined); setDraft(undefined); setJournal([]); setDenied(false); setError(''); setNotice('')
+      setData(undefined); setDraft(undefined); setDenied(false); setError(''); setNotice('')
       setUserId(next)
     }
     void supabase.auth.getSession().then(({ data: auth }) => { if (!authVersion.current) applyIdentity(auth.session?.user.id ?? null) })
@@ -63,13 +62,11 @@ export function ProductionPage() {
   useEffect(() => { if (userId) void reload() }, [userId, reload])
   useEffect(() => {
     const event = data?.events.find(item => item.id === eventId)
-    if (!event) { setDraft(undefined); setJournal([]); return }
+    if (!event) { setDraft(undefined); return }
     const record = data?.records.find(item => item.eventId === eventId)
-    const document = record?.document ?? autoPlan(event)
-    setDraft(structuredClone(document)); setBaseline(record ? JSON.stringify(document) : "")
-    let active = true
-    void loadJournal(event.id).then(items => { if (active) setJournal(items) }).catch(caught => { if (active) setError(messageOf(caught)) })
-    return () => { active = false }
+    const stored = record?.document ?? autoPlan(event)
+    const document = mergeSimpleChecklist(event, stored)
+    setDraft(structuredClone(document)); setBaseline(record ? JSON.stringify(record.document) : "")
   }, [data?.events, data?.records, eventId])
 
   useEffect(() => {
@@ -81,14 +78,14 @@ export function ProductionPage() {
 
   const contexts = useMemo(() => data?.events.map(event => ({ event, plan: event.id === eventId && draft ? draft : data.records.find(record => record.eventId === event.id)?.document ?? autoPlan(event) })) ?? [], [data, draft, eventId])
   const selected = contexts.find(context => context.event.id === eventId)
-  const analysis = selected ? readiness(selected.event, selected.plan, contexts, data?.assets ?? []) : { alerts: [], blocking: [] }
-  const alerts = analysis.alerts
+  const analysis = selected ? simpleReadiness(selected.event, selected.plan, contexts) : { alerts: [], blocking: [] }
+  const alerts = analysis.alerts.filter(alert => !alert.key.startsWith('checklist-'))
   const unresolved = analysis.blocking
 
   const save = async () => {
     if (!eventId || !draft || !data) return
     if (['ready', 'setup', 'live', 'finished', 'closed'].includes(draft.status) && unresolved.length) {
-      setError('Resuelve las alertas críticas antes de avanzar a ejecución. Puedes guardar el trabajo en planificación.'); return
+      setError('Completa el checklist de salida y confirma al personal antes de marcar el evento listo. Puedes guardar el avance en planificación.'); return
     }
     setBusy(true); setError(''); setNotice('')
     const version = authVersion.current
@@ -98,8 +95,6 @@ export function ProductionPage() {
       setData(current => current ? { ...current, records: [...current.records.filter(item => item.eventId !== eventId), record] } : current)
       setBaseline(JSON.stringify(record.document))
       setNotice(`Guardado en Supabase · revisión ${record.revision}.`)
-      const entries = await loadJournal(eventId)
-      if (authVersion.current === version) setJournal(entries)
     } catch (caught) { if (authVersion.current === version) setError(messageOf(caught)) }
     finally { if (authVersion.current === version) setBusy(false) }
   }
@@ -111,9 +106,9 @@ export function ProductionPage() {
     <header className="prod-header"><a href={crmHref} className="prod-brand"><BrandLogo /><span>MR FIESTA <small>CENTRO DE PRODUCCIÓN</small></span></a><div className="prod-actions"><a href={crmHref}>Volver al CRM</a>{eventId && <Link to="/production" target="_blank" rel="noopener noreferrer">Vista del día ↗</Link>}<button type="button" disabled={busy} onClick={() => { if (!dirty || window.confirm('Hay cambios sin guardar. ¿Recargar desde Supabase y descartarlos?')) void reload() }}>Actualizar</button></div></header>
     {error && <div role="alert" className="prod-banner prod-danger">{error}<button type="button" onClick={() => setError('')} aria-label="Cerrar error">×</button></div>}
     {denied ? <section className="prod-section"><h1>Acceso restringido</h1><p>Tu cuenta no tiene permisos de administración del CRM.</p></section> : !data ? <section className="prod-section"><h1>{busy ? 'Cargando producción…' : 'No se pudo cargar producción'}</h1><button onClick={() => void reload()} disabled={busy}>Reintentar</button></section> : !eventId ? <ProductionCenter contexts={contexts} assets={data.assets} collaborators={data.collaborators} /> : !selected || !draft ? <section className="prod-section"><h1>Evento no encontrado</h1><p>No existe o no tienes acceso a esta reserva.</p></section> : <>
-      <section className="prod-event-head"><div><span className="eyebrow">ORGANIZADOR DEL EVENTO</span><h1>{selected.event.agasajado || selected.event.cliente}</h1><p>{selected.event.cliente} · {selected.event.fecha_evento} · {selected.event.hora_inicio}–{selected.event.hora_fin || 'Por confirmar'} · {selected.event.lugar}</p><p>{selected.event.direccion || 'Dirección pendiente'} · {selected.event.paquete}</p><p>Cliente: {selected.event.telefono || 'Teléfono pendiente'} · Invitados: {selected.event.invitados ?? 'Sin dato'} · Reserva / pago: {selected.event.estado_pago}</p></div><div className="prod-save-panel"><label>Estado de producción<select aria-label="Estado de producción" disabled={busy} value={draft.status} onChange={event => setDraft({ ...draft, status: event.target.value as ProductionStatus })}>{Object.entries(productionStatuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><button className="primary-button" disabled={busy || !dirty} onClick={() => void save()}>{busy ? 'Guardando…' : 'Guardar producción'}</button><span role="status" aria-live="polite">{dirty ? 'Cambios sin guardar' : notice || 'Sin cambios pendientes'}</span><small>{progress(draft)}% preparado · {unresolved.length} alertas críticas</small></div></section>
-      {!!alerts.length && <details className="prod-alerts"><summary>{unresolved.length ? '🔴 RIESGO' : '🟡 EN PREPARACIÓN'} · {alerts.length} avisos operativos</summary>{alerts.map(alert => { const exception = draft.exceptions.find(item => item.key === alert.key); return <article key={alert.key} className={`prod-alert ${alert.severity}`}><strong>{alert.message}</strong><p>{alert.fix}</p>{alert.canJustify && <label>Justificación de excepción<input disabled={busy} aria-label={`Justificación: ${alert.message}`} placeholder="Motivo acordado, responsable y referencia" value={exception?.reason ?? ''} onChange={event => setDraft({ ...draft, exceptions: [...draft.exceptions.filter(item => item.key !== alert.key), { key: alert.key, reason: event.target.value }] })} /></label>}</article> })}</details>}
-      <fieldset disabled={busy} className="prod-edit-fieldset"><Organizer event={selected.event} plan={draft} onChange={setDraft} collaborators={data.collaborators} assets={data.assets} contexts={contexts} journal={journal} userId={userId} onCreateAsset={async input => { const asset = await createAsset(input); setData(current => current ? { ...current, assets: [...current.assets, asset] } : current); return asset }} /></fieldset>
+      <section className="prod-event-head"><div><span className="eyebrow">ORGANIZADOR DEL EVENTO</span><h1>{selected.event.agasajado || selected.event.cliente}</h1><p>{selected.event.cliente} · {selected.event.fecha_evento} · {selected.event.hora_inicio}–{selected.event.hora_fin || 'Por confirmar'} · {selected.event.lugar}</p><p>{selected.event.direccion || 'Dirección pendiente'} · {selected.event.paquete}</p><p>Cliente: {selected.event.telefono || 'Teléfono pendiente'} · Invitados: {selected.event.invitados ?? 'Sin dato'} · Reserva / pago: {selected.event.estado_pago}</p></div><div className="prod-save-panel"><label>Estado de producción<select aria-label="Estado de producción" disabled={busy} value={draft.status} onChange={event => setDraft({ ...draft, status: event.target.value as ProductionStatus })}>{Object.entries(productionStatuses).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><button className="primary-button" disabled={busy || !dirty} onClick={() => void save()}>{busy ? 'Guardando…' : 'Guardar producción'}</button><span role="status" aria-live="polite">{dirty ? 'Cambios sin guardar' : notice || 'Sin cambios pendientes'}</span><small>{simpleProgress(selected.event, draft)}% preparado · {unresolved.length} pendientes</small></div></section>
+      {!!alerts.length && <details className="prod-alerts"><summary>{unresolved.some(alert => alert.key.startsWith('resource:')) ? '🔴 Cruce de personal' : '🟡 Por revisar'} · {alerts.length} avisos</summary>{alerts.map(alert => { const exception = draft.exceptions.find(item => item.key === alert.key); return <article key={alert.key} className={`prod-alert ${alert.severity}`}><strong>{alert.message}</strong><p>{alert.fix}</p>{alert.canJustify && <label>Justificación de excepción<input disabled={busy} aria-label={`Justificación: ${alert.message}`} placeholder="Motivo acordado, responsable y referencia" value={exception?.reason ?? ''} onChange={event => setDraft({ ...draft, exceptions: [...draft.exceptions.filter(item => item.key !== alert.key), { key: alert.key, reason: event.target.value }] })} /></label>}</article> })}</details>}
+      <fieldset disabled={busy} className="prod-edit-fieldset"><Organizer event={selected.event} plan={draft} onChange={setDraft} collaborators={data.collaborators} assets={data.assets} contexts={contexts} userId={userId} /></fieldset>
     </>}
   </main>
 }
