@@ -2,3 +2,5 @@
 
 .floral-frame{position:absolute;inset:0;pointer-events:none;width:100%;height:100%;left:0;opacity:1}.floral-frame img{position:absolute;width:clamp(180px,27vw,375px);height:auto}.floral-frame .tl{top:0;left:0}.floral-frame .tr{top:0;right:0}.floral-frame .bl{bottom:0;left:0}.floral-frame .br{bottom:0;right:0}.cover .floral-frame{opacity:.72}.hero .floral-frame{opacity:.85}@media(max-width:700px){.floral-frame img{width:190px}.cover .floral-frame{opacity:.65}.hero .floral-frame{opacity:.75}}
 .floral-frame .tl,.floral-frame .tr{mask-image:linear-gradient(to bottom,#000 78%,transparent 100%)}.floral-frame .bl,.floral-frame .br{mask-image:linear-gradient(to top,#000 78%,transparent 100%)}
+
+.music-button{width:46px;height:46px;justify-content:center;padding:0}.music-icon{line-height:1}.sister h3{margin-top:20px}

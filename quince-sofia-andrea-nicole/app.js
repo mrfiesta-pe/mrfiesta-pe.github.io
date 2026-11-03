@@ -1,14 +1,13 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const frame=$('music-frame'),panel=$('music-panel'),widget=$('music-widget'),toggle=$('music-toggle');
-let musicLoaded=false;
-function loadMusic(){if(!musicLoaded){frame.src='https://www.youtube-nocookie.com/embed/qQkJe0zzf9w?autoplay=1&loop=1&playlist=qQkJe0zzf9w&rel=0';musicLoaded=true;}widget.classList.remove('stopped');}
-function setPanel(open){panel.hidden=!open;toggle.setAttribute('aria-expanded',String(open));}
-function enter(withMusic){$('invitation').inert=false;document.body.classList.remove('locked');$('cover').classList.add('out');widget.hidden=false;widget.classList.toggle('stopped',!withMusic);if(withMusic){setPanel(true);loadMusic();}burst();setTimeout(()=>{$('cover').hidden=true;$('inicio').setAttribute('tabindex','-1');$('inicio').focus({preventScroll:true});},reduced?0:1000);}
+const music=$('background-music'),widget=$('music-widget'),toggle=$('music-toggle');
+function updateMusic(){const playing=!music.paused;toggle.setAttribute('aria-pressed',String(playing));toggle.setAttribute('aria-label',playing?'Pausar música':'Reproducir música');toggle.querySelector('span').textContent=playing?'Ⅱ':'♫';}
+function playMusic(){music.play().catch(updateMusic);}
+music.addEventListener('play',updateMusic);music.addEventListener('pause',updateMusic);music.addEventListener('error',updateMusic);
+function enter(withMusic){$('invitation').inert=false;document.body.classList.remove('locked');$('cover').classList.add('out');widget.hidden=false;if(withMusic)playMusic();burst();setTimeout(()=>{$('cover').hidden=true;$('inicio').setAttribute('tabindex','-1');$('inicio').focus({preventScroll:true});},reduced?0:1000);}
 $('open').addEventListener('click',()=>enter(true));$('open-silent').addEventListener('click',()=>enter(false));
-toggle.onclick=()=>{const open=panel.hidden;setPanel(open);if(open)loadMusic();};
-$('music-stop').onclick=()=>{frame.removeAttribute('src');musicLoaded=false;widget.classList.add('stopped');setPanel(false);toggle.focus();};
+toggle.onclick=()=>{if(music.paused)playMusic();else music.pause();};
 const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add('seen');observer.unobserve(entry.target);}},{threshold:.12});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 const start=new Date('2026-12-12T15:00:00-05:00').getTime(),end=new Date('2026-12-12T21:00:00-05:00').getTime();
 function tick(){const now=Date.now(),s=Math.max(0,Math.floor((start-now)/1000));const v=[Math.floor(s/86400),Math.floor(s%86400/3600),Math.floor(s%3600/60),s%60];['days','hours','minutes','seconds'].forEach((id,i)=>$(id).textContent=String(v[i]).padStart(2,'0'));if(now>=start)$('count-title').textContent=now<end?'¡Hoy celebramos!':'Un recuerdo para siempre';}tick();setInterval(tick,1000);
