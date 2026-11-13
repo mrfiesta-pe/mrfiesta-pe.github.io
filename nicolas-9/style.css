@@ -8,3 +8,13 @@
 footer{position:relative;z-index:2;background:#13052b}
 @keyframes mirrorTurn{to{transform:rotate(360deg)}}
 @keyframes partyBreath{to{transform:scale(1.015)}}
+.entry-open{overflow:hidden}
+.entry[hidden]{display:none}
+.entry{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:24px;overflow-y:auto;background:radial-gradient(ellipse at 30% 20%,#920b7045,transparent 60%),radial-gradient(ellipse at 75% 80%,#00d5ff25,transparent 65%),#13052bf5;backdrop-filter:blur(8px)}
+.entry-card{width:min(420px,100%);padding:36px 22px;border:1px solid #ff54d98c;border-radius:18px;box-shadow:0 0 45px #ff36d52b,inset 0 0 35px #3af9ff0d;background:#1c0838c9}
+.entry-spark{font-size:46px;color:var(--cyan);text-shadow:0 0 18px var(--cyan);margin:10px auto}
+.entry h2{font-size:52px;margin:12px 0 22px}
+.entry .copy{font-size:12px}
+.entry .button{width:100%;font-size:10px;letter-spacing:.4px;gap:10px;margin-top:26px}
+.entry-silent{display:block;margin:22px auto 0;padding:10px 14px;background:transparent;border:0;color:#cbb2dc;font-size:11px;text-decoration:underline;text-underline-offset:4px}
+@media(max-width:360px){.entry{padding:18px}.entry-card{padding:25px 18px}.entry h2{font-size:45px}.entry .button{font-size:9px;padding-inline:12px}}

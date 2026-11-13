@@ -5,3 +5,16 @@ const colors=['#ff36d5','#3af9ff','#c9ff21','#fff824','#b281ff'];function resize
 function animate(time){if(!moving||document.hidden){previous=0;return}const dt=previous?Math.min((time-previous)/1000,.05):0;previous=time;ctx.clearRect(0,0,w,h);particles.forEach(p=>{p.y+=p.speed*dt;p.x+=Math.sin(time/1200+p.angle)*dt*14+p.drift*dt;p.angle+=dt;if(p.y>h+10){p.y=-15;p.x=Math.random()*w}if(p.x<-10)p.x=w+5;if(p.x>w+10)p.x=-5;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.angle);ctx.globalAlpha=.65;ctx.fillStyle=p.color;ctx.shadowBlur=5;ctx.shadowColor=p.color;ctx.fillRect(-p.size/2,-p.size,p.size,p.size*1.7);ctx.restore()});frame=requestAnimationFrame(animate)}if(moving)frame=requestAnimationFrame(animate);
 const motion=document.getElementById('motion');function motionState(){document.body.classList.toggle('paused',!moving);motion.setAttribute('aria-pressed',String(moving));motion.setAttribute('aria-label',moving?'Pausar animaciones':'Activar animaciones');motion.textContent=moving?'Ⅱ':'▷';cancelAnimationFrame(frame);previous=0;if(moving&&!document.hidden)frame=requestAnimationFrame(animate)}motionState();motion.onclick=()=>{moving=!moving;motionState()};reduced.addEventListener('change',()=>{moving=!reduced.matches;motionState()});document.addEventListener('visibilitychange',()=>{cancelAnimationFrame(frame);previous=0;if(moving&&!document.hidden)frame=requestAnimationFrame(animate)});
 const music=document.getElementById('music'),sound=document.getElementById('sound'),status=document.getElementById('status');music.volume=.5;function soundState(){sound.setAttribute('aria-pressed',String(!music.paused));sound.setAttribute('aria-label',music.paused?'Activar música':'Pausar música');sound.textContent=music.paused?'♫':'♪'}sound.onclick=async()=>{if(!music.paused){music.pause();return}try{await music.play();status.textContent=''}catch{status.textContent='No se pudo iniciar la música. Puedes volver a intentarlo.';setTimeout(()=>status.textContent='',4000)}};music.addEventListener('play',soundState);music.addEventListener('pause',soundState);
+// El primer toque abre la invitación e inicia el audio dentro del gesto del usuario.
+const entry=document.getElementById('entry'),page=document.querySelector('.page'),controls=document.querySelector('.controls'),enterMusic=document.getElementById('enter-music');
+entry.hidden=false;page.inert=true;controls.inert=true;document.body.classList.add('entry-open');enterMusic.focus({preventScroll:true});
+function openInvitation(withMusic){
+  if(withMusic){
+    const playback=music.play();
+    if(playback)playback.catch(()=>{status.textContent='Toca ♫ para activar la música.';setTimeout(()=>status.textContent='',5000)});
+  }
+  entry.hidden=true;page.inert=false;controls.inert=false;document.body.classList.remove('entry-open');document.querySelector('header a').focus({preventScroll:true});
+}
+enterMusic.addEventListener('click',()=>openInvitation(true));
+document.getElementById('enter-silent').addEventListener('click',()=>openInvitation(false));
+entry.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();openInvitation(false)}});
