@@ -85,11 +85,11 @@ function tick(){const left=Math.max(0,Math.floor((new Date('2026-11-26T17:00:00-
 const title='Mathías cumple 10 | Chicoteca Champions Party';
 const details='¡Te esperamos para celebrar los 10 años de Mathías! Música, luces, baile y diversión. Referencia: entre Av. de la Cultura y Av. Ferrocarril.';
 const address='Av. de la Cultura, Mz. D, lote 4, Asociación Las Begonias, Santa Anita, Lima, Perú';
-const start='20261126T170000',end='20261126T200000';
+const start='20261126T170000',end='20261126T180000';
 const google=new URL('https://calendar.google.com/calendar/render');google.searchParams.set('action','TEMPLATE');google.searchParams.set('text',title);google.searchParams.set('dates',start+'/'+end);google.searchParams.set('ctz','America/Lima');google.searchParams.set('details',details);google.searchParams.set('location',address);document.getElementById('google-calendar').href=google.href;
 document.getElementById('download-ics').addEventListener('click',()=>{
 const esc=s=>s.replace(/\\/g,'\\\\').replace(/,/g,'\\,').replace(/;/g,'\\;').replace(/\n/g,'\\n');
-const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//MR FIESTA//Invitacion Mathias//ES','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:mathias10-20261126@mrfiesta-pe.github.io','DTSTAMP:20261113T120000Z','DTSTART:20261126T220000Z','DTEND:20261127T010000Z','SUMMARY:'+esc(title),'DESCRIPTION:'+esc(details),'LOCATION:'+esc(address),'BEGIN:VALARM','TRIGGER:-P1D','ACTION:DISPLAY','DESCRIPTION:¡Mañana es la fiesta de Mathías!','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n')+'\r\n';
+const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//MR FIESTA//Invitacion Mathias//ES','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:mathias10-20261126@mrfiesta-pe.github.io','DTSTAMP:20261113T120000Z','DTSTART:20261126T220000Z','DTEND:20261126T230000Z','SUMMARY:'+esc(title),'DESCRIPTION:'+esc(details),'LOCATION:'+esc(address),'BEGIN:VALARM','TRIGGER:-P1D','ACTION:DISPLAY','DESCRIPTION:¡Mañana es la fiesta de Mathías!','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n')+'\r\n';
 const url=URL.createObjectURL(new Blob([ics],{type:'text/calendar;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='Mathias-10-anos.ics';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);notify('Archivo de calendario descargado. Ábrelo para agregar el evento.')
 });
 if(location.hash){history.replaceState(null,'',location.pathname+location.search);scrollTo(0,0)}
