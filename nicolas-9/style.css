@@ -18,3 +18,29 @@ footer{position:relative;z-index:2;background:#13052b}
 .entry .button{width:100%;font-size:10px;letter-spacing:.4px;gap:10px;margin-top:26px}
 .entry-silent{display:block;margin:22px auto 0;padding:10px 14px;background:transparent;border:0;color:#cbb2dc;font-size:11px;text-decoration:underline;text-underline-offset:4px}
 @media(max-width:360px){.entry{padding:18px}.entry-card{padding:25px 18px}.entry h2{font-size:45px}.entry .button{font-size:9px;padding-inline:12px}}
+/* La portada de acceso forma parte del mismo universo neón de la invitación. */
+.entry{padding:0;display:block;background:radial-gradient(ellipse at 10% 30%,#760b5e40,transparent 60%),#0c041a;backdrop-filter:none;overscroll-behavior:contain}
+.entry-scene{position:relative;isolation:isolate;width:min(100%,620px);min-height:max(780px,100svh);margin:0 auto;overflow:hidden;background:radial-gradient(ellipse at 50% 70%,#7e0c7433,transparent 55%),#190638;box-shadow:0 0 100px #bb16fa30}
+.entry-scene:after{content:'';position:absolute;inset:auto 0 0;height:180px;background:url('assets/neon-party.jpg') center bottom/100% auto no-repeat;mask-image:linear-gradient(transparent,#000);pointer-events:none;z-index:-1}
+.entry-art{position:absolute;inset:0 0 auto;height:auto;aspect-ratio:2/3;background:url('assets/neon-party.jpg') center top/100% auto no-repeat;mask-image:linear-gradient(#000 0 70%,transparent 100%);animation:partyBreath 8s ease-in-out infinite alternate;transform-origin:top;z-index:-1}
+.entry-disco{top:clamp(18px,4.7vw,29px)}
+.entry-content{position:relative;z-index:2;width:78%;max-width:440px;margin:0 auto;padding:clamp(175px,41vw,235px) 0 75px}
+.entry .overline{font-size:8px;letter-spacing:1.5px;margin-bottom:20px;text-shadow:0 0 12px #c9ff2140}
+.entry-party{font:400 clamp(39px,10vw,60px)/1 'Yellowtail',cursive;color:#bbffff;-webkit-text-stroke:.3px #e8ffff;text-shadow:0 0 4px #55ffff,0 0 15px #05cbd6,0 0 28px #05cbd655;transform:rotate(-8deg);margin:0 auto 18px}
+.entry h2{margin:0 auto 18px;text-transform:none;line-height:1}
+.neon-name,.hero h1.neon-name,.entry .neon-name{background:linear-gradient(125deg,#9effff 5%,#f0ffff 21%,#64f4ff 35%,#d0a2ff 47%,#ff4ad4 65%,#ffe6fb 81%,#ff72df 95%);background-size:200% 100%;background-clip:text;-webkit-background-clip:text;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:.5px #ffdbfa;text-shadow:none;filter:drop-shadow(0 0 3px #fda2ec99) drop-shadow(-3px 1px 13px #00eaff66) drop-shadow(3px 3px 19px #ff00c97a);animation:neonGradient 9s ease-in-out infinite alternate}
+.entry-name{display:block;font:400 clamp(72px,20vw,116px)/1.35 'Yellowtail',cursive;letter-spacing:-2px;transform:rotate(-5deg);padding:0 10px 7px;margin-inline:-15px}
+.entry-birthday{display:flex;justify-content:center;align-items:center;gap:12px;font:700 clamp(24px,6.5vw,37px)/1 'Barlow Condensed',sans-serif;letter-spacing:1.2px;color:#c9ffff;text-shadow:0 0 3px #bdffff,0 0 15px #17dce680;white-space:nowrap;margin-top:7px}
+.neon-age,.birthday strong.neon-age{background:linear-gradient(160deg,#feffcf 0%,#eaff31 30%,#aaff1b 50%,#46fff6 79%,#edffff 100%);background-clip:text;-webkit-background-clip:text;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:1px #f8ffbc;text-shadow:none;filter:drop-shadow(0 0 4px #ddff4aaa) drop-shadow(0 0 17px #9aff284d)}
+.entry-birthday .neon-age{display:block;font:800 clamp(93px,25vw,140px)/1 'Barlow Condensed',sans-serif;letter-spacing:-2px}
+.entry .light-dots{width:95%;margin:20px auto 20px}
+.entry .copy{font-size:12px;line-height:1.8;color:#f4d9ff;text-shadow:0 2px 12px #13002b}
+.entry .button{width:100%;margin-top:24px;min-height:54px;font-size:10px;letter-spacing:.4px;gap:8px;background:linear-gradient(115deg,#a90f9b,#d81eae 45%,#6b34bc);border:1px solid #ffb3f0;box-shadow:0 0 8px #ff36d566,0 0 24px #ff36d550,inset 0 0 18px #ff6bdd29}
+.entry .button:focus-visible{outline:2px solid var(--cyan);outline-offset:5px}
+.entry-silent{margin:15px auto 0;font-size:10px;color:#dbc7e8;text-shadow:0 1px 8px #170423}
+.entry-date{font-size:8px;letter-spacing:2px;color:var(--lime);margin:20px auto 0}
+.entry-open #confetti{z-index:41}
+@keyframes neonGradient{to{background-position:100% 50%}}
+@media(min-width:620px){.entry-scene{min-height:max(940px,100svh)}.entry-content{padding-top:235px}.entry .overline{font-size:10px}.entry .copy{font-size:14px}.entry .button{font-size:12px}.entry-birthday{gap:18px}}
+@media(max-width:360px){.entry{padding:0}.entry-content{width:80%;padding-top:160px;padding-bottom:65px}.entry-party{font-size:38px}.entry .overline{font-size:7px;letter-spacing:1.1px}.entry-name{font-size:70px}.entry-birthday{font-size:23px;gap:9px}.entry-birthday .neon-age{font-size:92px}.entry .button{font-size:9px;padding-inline:12px}.entry .copy{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.neon-name,.entry-art{animation:none!important}}
