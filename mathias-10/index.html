@@ -47,11 +47,51 @@
 @media(max-height:760px){#inicio{padding-top:64px;padding-bottom:36px}#inicio .eyebrow{font-size:9px}#inicio .party-strip{margin-top:5px}#inicio h1{font-size:clamp(38px,9.6vw,61px)}#inicio .copy{font-size:12px;margin:7px 0 10px}#inicio .note{font-size:9px}}
 @media(max-width:360px){.party-strip{font-size:9px;letter-spacing:.8px;padding:7px 10px}#inicio h1{font-size:clamp(37px,10.6vw,52px)}}
 @media(prefers-reduced-motion:reduce){.equalizer i,#inicio:after{animation:none!important}}
+
+/* Responsive premium: fecha, reloj LED y legibilidad en celular */
+html,body{max-width:100%;overflow-x:clip}
+.scene{height:auto;min-height:100svh}
+.stage{max-width:100%;min-width:0}
+#fecha{height:auto;min-height:max(100svh,780px);padding:90px 18px 120px;overflow:hidden}
+#fecha:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(180deg,#02091ca8 0%,#04163478 45%,#030b22ba 72%,#02091c28 100%)}
+#fecha .stage{width:min(100%,460px);position:relative;z-index:2}
+#fecha .eyebrow{font-size:clamp(11px,2.8vw,14px);letter-spacing:2.5px;color:#e6eaff;text-shadow:0 2px 9px #031029}
+#fecha .title{font-size:clamp(44px,10.2vw,67px);line-height:1.05;margin:12px 0 24px}
+#fecha .date{gap:clamp(12px,5vw,23px);flex-wrap:nowrap}
+#fecha .date .big{font-size:clamp(88px,21vw,110px)}
+#fecha .date .side{padding-left:clamp(12px,3.5vw,20px)}
+#fecha .date strong{font-size:clamp(23px,5.8vw,29px)}
+#fecha .time{font-size:clamp(21px,5.7vw,27px);font-weight:800;color:#fff;letter-spacing:3px;margin:20px 0 22px;text-shadow:0 0 16px #57b6ff}
+#fecha .count-label{font-size:clamp(10px,2.7vw,12px);font-weight:800;line-height:1.45;letter-spacing:1.5px;color:#f2e8ff;text-shadow:0 2px 8px #020e25;margin:0 0 13px}
+#fecha .countdown{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;width:min(100%,445px);margin:0 auto 10px;padding:13px;border:1px solid #a4caff99;border-radius:20px;background:linear-gradient(125deg,#061c3cf5,#10123af2 60%,#1b1043f2);box-shadow:0 15px 32px #000b,0 0 22px #5d8fff37,inset 0 1px #d2e9ff3d;backdrop-filter:blur(14px)}
+#fecha .countdown>div{min-width:0;min-height:85px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 3px 8px;border-radius:13px;background:linear-gradient(155deg,#214470c7,#0c2148de);border:1px solid #80bdff5c}
+#fecha .countdown>div:nth-child(2){background:linear-gradient(145deg,#2a316b,#14194b);border-color:#ac9aff72}
+#fecha .countdown>div:nth-child(3){background:linear-gradient(145deg,#3a245f,#231443);border-color:#c18dff80}
+#fecha .countdown>div:nth-child(4){background:linear-gradient(145deg,#453057,#241c42);border-color:#ffa1df70}
+#fecha .countdown b{display:block;font:800 clamp(33px,8vw,48px)/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.5px;color:#e8f7ff;text-shadow:0 0 15px #7acaff8c;font-variant-numeric:tabular-nums}
+#fecha .countdown>div:nth-child(2) b{color:#e2d8ff}#fecha .countdown>div:nth-child(3) b{color:#e4bfff}#fecha .countdown>div:nth-child(4) b{color:#ffd5f2}
+#fecha .countdown span{display:block;margin:0;font-size:clamp(9px,2.2vw,11px);letter-spacing:.7px;font-weight:800;line-height:1.2;color:#e4ecff}
+#fecha .calendar-actions{width:min(100%,445px);margin:15px auto 0;gap:10px}
+#fecha .calendar-button{font-size:clamp(10px,2.6vw,12px);min-height:51px;padding:13px 11px;letter-spacing:.4px;white-space:normal;line-height:1.4}
+#fecha .next{bottom:calc(22px + env(safe-area-inset-bottom));font-size:10px;text-shadow:0 2px 8px #000}
+@media(max-width:390px){
+#fecha{min-height:max(100svh,820px);padding:74px 15px 98px}
+#fecha .title{font-size:clamp(39px,11vw,48px);margin:12px 0 20px}
+#fecha .date .big{font-size:85px}
+#fecha .date strong{font-size:23px}
+#fecha .countdown{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:12px;width:min(100%,315px)}
+#fecha .countdown>div{min-height:69px;padding:8px 4px;gap:5px}
+#fecha .countdown b{font-size:40px}
+#fecha .countdown span{font-size:10px}
+#fecha .calendar-actions{width:min(100%,315px)}
+}
+@media(min-width:391px) and (max-height:780px){#fecha{padding-top:70px;padding-bottom:90px;min-height:780px}#fecha .title{margin:10px 0 15px}#fecha .time{margin:14px 0 15px}}
+@media(min-width:700px){#fecha{min-height:850px}#fecha .stage{width:460px}}
 </style></head><body class="locked"><div class="backdrop" aria-hidden="true"></div><div class="beam" aria-hidden="true"></div><div class="beam right" aria-hidden="true"></div><div id="particles" aria-hidden="true"></div><div class="progress" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i></div><div class="top">CHAMPIONS LEAGUE PARTY</div>
 <main>
 <section class="scene visible" id="inicio"><div class="stage"><div class="eyebrow">TIENES UNA CONVOCATORIA</div><div class="party-strip"><span>⚽ CHAMPIONS</span><b>×</b><span>✦ CHICOTECA</span></div><div class="line"></div><h1 class="chrome">LA GRAN FINAL<br>ESTÁ POR<br>COMENZAR</h1><div class="equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p class="copy">¡La Champions se enciende con luces, música y baile!<br>Ven a celebrar como un verdadero campeón.</p><div class="intro-actions"><button class="button filled" id="open"><span class="cta-ball" aria-hidden="true">⚽</span> ABRIR MI INVITACIÓN</button><a class="button confirm-first" href="https://wa.me/51939619570?text=%C2%A1Hola!%20Confirmo%20mi%20asistencia%20al%20cumple%20de%20Math%C3%ADas%20el%2026%20de%20noviembre%20a%20las%205%20p.%20m.%20Mi%20nombre%20es%3A%20" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">✦</span> CONFIRMAR ASISTENCIA <span aria-hidden="true">↗</span></a></div><p class="note" id="sound-note">Una celebración de Mathías para su equipo favorito: sus amigos.</p></div></section>
 <section class="scene" id="mathias"><div class="stage"><div class="eyebrow">ESTÁS INVITADO A UNA CHICOTECA DE CAMPEONES</div><h2 class="name chrome">MATHÍAS</h2><p class="mis">MIS</p><p class="age chrome">10</p><div class="anos">AÑOS</div><p class="name-copy">Luces LED, música, baile y fútbol.<br>¡La fiesta de campeones es contigo!</p></div><a class="next" href="#fecha">LA FECHA DEL ENCUENTRO<span aria-hidden="true">⌄</span></a></section>
-<section class="scene" id="fecha"><div class="stage"><div class="eyebrow">RESERVA ESTE DÍA</div><h2 class="title chrome">UNA NOCHE<br>DE CAMPEONES</h2><div class="date"><div class="big chrome">26</div><div class="side"><strong>JUEVES<br>NOVIEMBRE</strong><small>2026</small></div></div><div class="time">5:00 P. M.</div><div class="calendar-actions"><a class="button filled calendar-button" id="google-calendar" href="#" target="_blank" rel="noopener noreferrer">▦ AGREGAR A GOOGLE CALENDAR</a><button class="button calendar-button" type="button" id="download-ics">♡ AGREGAR A MI AGENDA</button></div><div class="line"></div><div class="count-label" id="count-label">EL GRAN DÍA ESTÁ CADA VEZ MÁS CERCA</div><div class="countdown" id="countdown" role="timer" aria-label="Tiempo hasta el cumpleaños"><div><b id="days">00</b><span>DÍAS</span></div><div><b id="hours">00</b><span>HORAS</span></div><div><b id="minutes">00</b><span>MINUTOS</span></div><div><b id="seconds">00</b><span>SEGUNDOS</span></div></div></div><a class="next" href="#ubicacion">DESCUBRE LA SEDE<span aria-hidden="true">⌄</span></a></section>
+<section class="scene" id="fecha"><div class="stage"><div class="eyebrow">RESERVA ESTE DÍA</div><h2 class="title chrome">UNA NOCHE<br>DE CAMPEONES</h2><div class="date"><div class="big chrome">26</div><div class="side"><strong>JUEVES<br>NOVIEMBRE</strong><small>2026</small></div></div><div class="time">5:00 P. M.</div><div class="count-label" id="count-label">EL GRAN DÍA ESTÁ CADA VEZ MÁS CERCA</div><div class="countdown" id="countdown" role="timer" aria-label="Tiempo hasta el cumpleaños"><div><b id="days">00</b><span>DÍAS</span></div><div><b id="hours">00</b><span>HORAS</span></div><div><b id="minutes">00</b><span>MINUTOS</span></div><div><b id="seconds">00</b><span>SEGUNDOS</span></div></div><div class="calendar-actions"><a class="button filled calendar-button" id="google-calendar" href="#" target="_blank" rel="noopener noreferrer">▦ AGREGAR A GOOGLE CALENDAR</a><button class="button calendar-button" type="button" id="download-ics">♡ AGREGAR A MI AGENDA</button></div></div><a class="next" href="#ubicacion">DESCUBRE LA SEDE<span aria-hidden="true">⌄</span></a></section>
 <section class="scene" id="ubicacion"><div class="stage"><div class="eyebrow">AQUÍ SE JUEGA LA FINAL</div><h2 class="title chrome">NOS VEMOS<br>EN SANTA ANITA</h2><svg class="pin" viewBox="0 0 32 40" fill="none" aria-hidden="true"><path d="M16 38S2 24 2 16a14 14 0 0 1 28 0c0 8-14 22-14 22Z" stroke="#a7ddff" stroke-width="1.7"/><circle cx="16" cy="16" r="5" stroke="#a7ddff" stroke-width="1.7"/></svg><p class="address"><strong>Av. de la Cultura, Mz. D, lote 4</strong><br>Asociación Las Begonias<br>Santa Anita</p><p class="reference">Referencia: entre la Av. de la Cultura<br>y la Av. Ferrocarril.</p><a class="button" href="https://maps.app.goo.gl/c27vfYt3jkdXeBdS9" target="_blank" rel="noopener noreferrer">VER UBICACIÓN <span aria-hidden="true">↗</span></a></div><a class="next" href="#confirmar">FALTA ALGO IMPORTANTE<span aria-hidden="true">⌄</span></a></section>
 <section class="scene closing" id="confirmar"><div class="stage"><div class="eyebrow">MI EQUIPO NO ESTÁ COMPLETO SIN TI</div><h2 class="title chrome">¡TE ESPERO<br>EN MI<br>GRAN FINAL!</h2><p class="copy">Prepárate para celebrar, bailar y pasarla increíble. Confirma tu asistencia y ven a vivir mis 10 años conmigo.</p><a class="button filled" href="https://wa.me/51939619570?text=%C2%A1Hola!%20Confirmo%20mi%20asistencia%20al%20cumple%20de%20Math%C3%ADas%20el%2026%20de%20noviembre%20a%20las%205%20p.%20m.%20Mi%20nombre%20es%3A%20" target="_blank" rel="noopener noreferrer">CONFIRMAR ASISTENCIA <span aria-hidden="true">↗</span></a><div class="signature">Con cariño, Mathías</div></div><a class="brand" href="https://mrfiesta-pe.github.io/" target="_blank" rel="noopener noreferrer" aria-label="Visitar la web de MR FIESTA">Una invitación de <span>MR FIESTA</span></a></section>
 </main><audio id="audio" preload="none" loop src="assets/musica-mrfiesta.mp3"></audio><button class="music" id="music" aria-label="Activar música" aria-pressed="false">♫</button><div class="music-status" role="status" id="status"></div>
