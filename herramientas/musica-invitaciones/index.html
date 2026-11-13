@@ -28,7 +28,7 @@ button{width:100%;border:0;background:linear-gradient(110deg,#eabd62,#ffda8e);co
 <details class="direct-uploader"><summary>O subir una canción directamente a esta invitación</summary><label for="audio">Archivo musical</label><input id="audio" type="file" accept="audio/*,.m4a,.mp3,.ogg,.wav"></details>
 <div class="grid"><div><label for="start">Comenzar en segundo</label><input type="number" id="start" min="0" step=".1" value="5"></div><div><label for="branch">Rama</label><input id="branch" value="main"></div></div>
 <button id="publish">Aplicar música a la invitación</button><div class="log" id="log" role="status" aria-live="polite">Lista para publicar.</div>
-<p><small>La página debe contener un elemento &lt;audio&gt; en su <code>index.html</code>. El cambio afecta solo la carpeta elegida. La reproducción empieza cuando el visitante pulsa para activar la música, conforme a las reglas de los navegadores.</small></p>
+<p><small>Si la invitación todavía no tiene reproductor, la herramienta lo añadirá automáticamente al publicarla. El cambio afecta solo la carpeta elegida. La reproducción empieza cuando el visitante pulsa para activar la música, conforme a las reglas de los navegadores.</small></p>
 </div><p>© MR FIESTA · <a href="https://mrfiesta-pe.github.io/">Sitio principal</a></p></main>
 <script>
 const $=id=>document.getElementById(id), log=$('log');
@@ -44,8 +44,29 @@ function encodeUtf8Base64(str){const bytes=new TextEncoder().encode(str);let s='
 async function req(url,token,method='GET',body){const r=await fetch('https://api.github.com'+url,{method,headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+token,'X-GitHub-Api-Version':'2022-11-28',...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});const json=await r.json().catch(()=>({}));if(!r.ok)throw Error((json.message||r.statusText)+' ('+r.status+')');return json}
 function safePath(v){return v.trim().replace(/^\/+|\/+$/g,'').split('/').filter(Boolean).map(x=>encodeURIComponent(x)).join('/')}
 function settingsScript(start){return '<script id="mrfiesta-music-settings">\n(function(){const music=document.querySelector("audio#music")||document.querySelector("audio");if(!music)return;const start='+start+';function jump(){if(music.duration&&start<music.duration&&music.currentTime<start-0.25)music.currentTime=start}music.addEventListener("loadedmetadata",jump);music.addEventListener("timeupdate",()=>{if(!music.paused)jump()});if(music.readyState>=1)jump()})();\n<\/script>'}
-function patch(html,src,start){if(!/<audio\b/i.test(html))throw Error('Esta invitación no contiene etiqueta audio; requiere adaptación manual.');const escaped=src.replace(/&/g,'&amp;').replace(/"/g,'&quot;');html=html.replace(/<audio\b[^>]*>/i,tag=>{let t=tag.replace(/\s+src\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i,'');return t.replace(/>$/,' src="'+escaped+'">')});html=html.replace(/<script\s+id=["']mrfiesta-music-settings["'][\s\S]*?<\/script>/i,'');if(!/<\/body>/i.test(html))throw Error('No se encontró el cierre del documento HTML.');return html.replace(/<\/body>/i,settingsScript(start)+'\n</body>')}
-
+function patch(html,src,start){
+  if(!/<\/body>/i.test(html))throw Error('No se encontró el cierre del HTML de la invitación.');
+  const escaped=src.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+  const hasAudio=/<audio\b/i.test(html);
+  if(hasAudio){
+    html=html.replace(/<audio\b[^>]*>/i,tag=>{
+      const clean=tag.replace(/\s+src\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i,'');
+      return clean.replace(/>$/,' src="'+escaped+'">');
+    });
+  }else{
+    html=html.replace(/<\/body>/i,'<audio id="music" src="'+escaped+'" preload="metadata" loop></audio>\n</body>');
+  }
+  html=html.replace(/<script\s+id=["']mrfiesta-music-settings["'][\s\S]*?<\/script>/i,'');
+  const script='<script id="mrfiesta-music-settings">\n'+
+   '(function(){'+
+   'const music=document.querySelector("audio#music")||document.querySelector("audio");if(!music)return;'+
+   'const start='+JSON.stringify(start)+';let initialized=false;'+
+   'function seek(){if(Number.isFinite(music.duration)&&start<music.duration&&music.currentTime<start-.25)music.currentTime=start;}'+
+   'music.addEventListener("loadedmetadata",seek);music.addEventListener("play",seek);if(music.readyState>=1)seek();'+
+   (hasAudio?'':'const b=document.createElement("button");b.type="button";b.textContent="♫";b.title="Pausar o reproducir música";b.setAttribute("aria-label","Pausar o reproducir música");b.style.cssText="position:fixed;bottom:22px;right:20px;z-index:9999;border:1px solid #ffffff66;border-radius:999px;background:#15102bdc;color:white;width:48px;height:48px;box-shadow:0 5px 25px #0006;font-size:24px;cursor:pointer;display:none";document.body.appendChild(b);function sync(){b.textContent=music.paused?"♫":"Ⅱ";b.setAttribute("aria-label",music.paused?"Reproducir música":"Pausar música")}music.addEventListener("play",sync);music.addEventListener("pause",sync);b.addEventListener("click",()=>{if(music.paused){seek();music.play().catch(()=>{});}else music.pause()});const enter=document.getElementById("enter");if(enter){enter.addEventListener("click",()=>{b.style.display="block";seek();music.play().catch(()=>{});});}else document.addEventListener("click",function first(e){if(e.target===b)return;b.style.display="block";seek();music.play().catch(()=>{});document.removeEventListener("click",first)}, {once:true});')+
+   '})();\n<\/script>';
+  return html.replace(/<\/body>/i,script+'\n</body>');
+}
 const LIBRARY_FOLDER='biblioteca-musical';
 const allowedExtensions=['mp3','m4a','ogg','wav','aac'];
 const libraryFiles=new Map();
