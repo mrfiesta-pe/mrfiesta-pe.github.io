@@ -87,7 +87,39 @@ html,body{max-width:100%;overflow-x:clip}
 }
 @media(min-width:391px) and (max-height:780px){#fecha{padding-top:70px;padding-bottom:90px;min-height:780px}#fecha .title{margin:10px 0 15px}#fecha .time{margin:14px 0 15px}}
 @media(min-width:700px){#fecha{min-height:850px}#fecha .stage{width:460px}}
-</style></head><body class="locked"><div class="backdrop" aria-hidden="true"></div><div class="beam" aria-hidden="true"></div><div class="beam right" aria-hidden="true"></div><div id="particles" aria-hidden="true"></div><div class="progress" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i></div><div class="top">CHAMPIONS LEAGUE PARTY</div>
+
+/* Chicoteca XL: iluminación dinámica, disco ball y confeti grande */
+.party-fixtures{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;isolation:isolate}
+.progress,.top{z-index:12}
+.scene{isolation:isolate}
+.scene .stage{position:relative;z-index:3}
+#particles{z-index:2;opacity:.85}
+.particle.party-confetti{background:var(--confetti);border-radius:2px;opacity:.82;box-shadow:0 0 10px color-mix(in srgb,var(--confetti),transparent 40%);transform-origin:center}
+.mirror-ball{position:absolute;top:calc(63px + env(safe-area-inset-top));right:max(13px,calc((100vw - 620px)/2));width:clamp(47px,11vw,77px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 29% 25%,#fff 1%,#d9f6ff 15%,#8ca4ff 36%,#543d8f 70%,#192d5b 95%),repeating-linear-gradient(0deg,transparent 0 9px,#ffffffaa 10px 11px);box-shadow:0 0 0 2px #e8e9ff70,0 0 24px #a4afffa1,0 0 55px #478fffb0;animation:mirrorPulse 5s ease-in-out infinite alternate}
+.mirror-ball:before{content:"";position:absolute;bottom:0;inset:0;border-radius:50%;background:repeating-linear-gradient(0deg,transparent 0 8px,#eafaff6b 9px 10px),repeating-linear-gradient(90deg,transparent 0 8px,#eafaff66 9px 10px);mix-blend-mode:screen}
+.mirror-ball:after{content:"";position:absolute;height:65px;width:2px;bottom:100%;left:50%;background:linear-gradient(transparent,#c2e0ff)}
+@keyframes mirrorPulse{to{transform:rotate(20deg) scale(1.04);box-shadow:0 0 0 2px #eee8ffb0,0 0 35px #e4a2ffb5,0 0 75px #7d3cff7a}}
+.club-beam{position:absolute;top:-10vh;width:48vw;height:75vh;opacity:.62;filter:blur(8px);mix-blend-mode:screen;transform-origin:top center;animation:clubSweep 8s ease-in-out infinite alternate}
+.club-beam-one{left:-18vw;background:conic-gradient(from 161deg at 50% 0,transparent 0deg,#2adaff42 12deg,transparent 25deg);animation-delay:-2s}
+.club-beam-two{right:-19vw;background:conic-gradient(from 161deg at 50% 0,transparent 0deg,#cc58ff40 12deg,transparent 25deg);animation-delay:-6s}
+.club-beam-three{left:25vw;top:-27vh;width:50vw;background:conic-gradient(from 158deg at 50% 0,transparent 0deg,#ff4ea42b 11deg,transparent 24deg);animation-delay:-4s}
+@keyframes clubSweep{to{transform:rotate(18deg);opacity:.23}}
+#inicio .eyebrow,#mathias .eyebrow,#fecha .eyebrow,#ubicacion .eyebrow,#confirmar .eyebrow{font-size:clamp(12px,2.85vw,15px);line-height:1.5}
+#inicio .copy{font-size:clamp(14px,3.5vw,16px);line-height:1.52;text-shadow:0 2px 12px #01152f}
+#inicio .note{font-size:clamp(11px,2.7vw,13px);max-width:310px}
+#inicio h1{font-size:clamp(43px,10.75vw,78px)}
+#mathias .name-copy,#ubicacion .address,#confirmar .copy{font-size:clamp(15px,3.75vw,17px);line-height:1.65;text-shadow:0 3px 10px #020b27}
+#mathias .name{font-size:clamp(60px,17vw,105px)}
+#mathias .mis{font-size:clamp(22px,5vw,27px)}
+#mathias .anos{font-size:clamp(27px,6.5vw,34px)}
+#fecha .count-label{font-size:clamp(12px,3vw,14px);line-height:1.4}
+#fecha .countdown span{font-size:clamp(10px,2.3vw,12px)}
+#ubicacion .reference{font-size:clamp(12px,3vw,15px)}
+#confirmar .signature{font-size:clamp(22px,5.4vw,27px)}
+@media(max-width:390px){.mirror-ball{top:calc(58px + env(safe-area-inset-top));width:45px;right:8px;opacity:.8}#inicio h1{font-size:clamp(37px,10vw,51px)}#inicio .copy{font-size:13px}.party-confetti{opacity:.68!important}#mathias .name{font-size:16vw}}
+@media(max-height:730px){.mirror-ball{top:34px;width:45px}#inicio .copy{font-size:13px}#inicio .note{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.mirror-ball,.club-beam{animation:none!important}.club-beam-three{display:none}.party-confetti{animation:none!important;display:none}}
+</style></head><body class="locked"><div class="backdrop" aria-hidden="true"></div><div class="beam" aria-hidden="true"></div><div class="beam right" aria-hidden="true"></div><div id="particles" aria-hidden="true"></div><div class="party-fixtures" aria-hidden="true"><div class="mirror-ball"></div><div class="club-beam club-beam-one"></div><div class="club-beam club-beam-two"></div><div class="club-beam club-beam-three"></div></div><div class="progress" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i></div><div class="top">CHAMPIONS LEAGUE PARTY</div>
 <main>
 <section class="scene visible" id="inicio"><div class="stage"><div class="eyebrow">TIENES UNA CONVOCATORIA</div><div class="party-strip"><span>⚽ CHAMPIONS</span><b>×</b><span>✦ CHICOTECA</span></div><div class="line"></div><h1 class="chrome">LA GRAN FINAL<br>ESTÁ POR<br>COMENZAR</h1><div class="equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p class="copy">¡La Champions se enciende con luces, música y baile!<br>Ven a celebrar como un verdadero campeón.</p><div class="intro-actions"><button class="button filled" id="open"><span class="cta-ball" aria-hidden="true">⚽</span> ABRIR MI INVITACIÓN</button><a class="button confirm-first" href="https://wa.me/51939619570?text=%C2%A1Hola!%20Confirmo%20mi%20asistencia%20al%20cumple%20de%20Math%C3%ADas%20el%2026%20de%20noviembre%20a%20las%205%20p.%20m.%20Mi%20nombre%20es%3A%20" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">✦</span> CONFIRMAR ASISTENCIA <span aria-hidden="true">↗</span></a></div><p class="note" id="sound-note">Una celebración de Mathías para su equipo favorito: sus amigos.</p></div></section>
 <section class="scene" id="mathias"><div class="stage"><div class="eyebrow">ESTÁS INVITADO A UNA CHICOTECA DE CAMPEONES</div><h2 class="name chrome">MATHÍAS</h2><p class="mis">MIS</p><p class="age chrome">10</p><div class="anos">AÑOS</div><p class="name-copy">Luces LED, música, baile y fútbol.<br>¡La fiesta de campeones es contigo!</p></div><a class="next" href="#fecha">LA FECHA DEL ENCUENTRO<span aria-hidden="true">⌄</span></a></section>
@@ -105,7 +137,7 @@ music.onclick=()=>{if(audio.paused)startMusic();else audio.pause()};audio.onplay
 fetch(audio.getAttribute('src'),{method:'HEAD'}).then(r=>{if(r.ok&&r.headers.get('content-type')?.includes('audio')){hasMusic=true;music.classList.add('ready');document.getElementById('sound-note').textContent='Activa el sonido y entra a la celebración ♫'}}).catch(()=>{});
 const observer=new IntersectionObserver(entries=>entries.forEach(e=>{e.target.classList.toggle('visible',e.isIntersecting);if(e.isIntersecting&&e.intersectionRatio>.5){const i=scenes.indexOf(e.target);bars.forEach((b,j)=>b.classList.toggle('on',j<=i))}}),{threshold:[.15,.55]});scenes.forEach(s=>observer.observe(s));
 function tick(){const n=Math.max(0,Math.floor((new Date('2026-11-26T17:00:00-05:00')-Date.now())/1000)),v=[Math.floor(n/86400),Math.floor(n%86400/3600),Math.floor(n%3600/60),n%60];['days','hours','minutes','seconds'].forEach((id,i)=>document.getElementById(id).textContent=String(v[i]).padStart(2,'0'));if(!n){document.getElementById('count-label').textContent='¡LLEGÓ EL GRAN DÍA!';document.getElementById('countdown').hidden=true}}tick();setInterval(tick,1000);
-if(!matchMedia('(prefers-reduced-motion: reduce)').matches){for(let i=0;i<18;i++){const p=document.createElement('i');p.className='particle';p.style.cssText='--x:'+Math.random()*100+'%;--w:'+(2+Math.random()*4)+'px;--h:'+(4+Math.random()*8)+'px;--t:'+(12+Math.random()*18)+'s;--d:'+(-Math.random()*30)+'s;--drift:'+(Math.random()*120-60)+'px';document.getElementById('particles').append(p)}}if(location.hash){history.replaceState(null,'',location.pathname+location.search);window.scrollTo(0,0)}
+if(!matchMedia('(prefers-reduced-motion: reduce)').matches){for(let i=0;i<28;i++){const p=document.createElement("i");p.className="particle party-confetti";const colors=["#ffcf47","#ff5bad","#59e6f2","#a77cff","#65ff9c","#f9f7ff"];p.style.cssText="--x:"+Math.random()*100+"%;--w:"+(9+Math.random()*9)+"px;--h:"+(14+Math.random()*13)+"px;--t:"+(8+Math.random()*12)+"s;--d:"+(-Math.random()*24)+"s;--drift:"+(Math.random()*160-80)+"px;--confetti:"+colors[i%colors.length];document.getElementById("particles").append(p)}}if(location.hash){history.replaceState(null,'',location.pathname+location.search);window.scrollTo(0,0)}
 </script><script id="mrfiesta-music-settings">
 (function(){const music=document.querySelector("audio#music")||document.querySelector("audio");if(!music)return;const start=5;function jump(){if(music.duration&&start<music.duration&&music.currentTime<start-0.25)music.currentTime=start}music.addEventListener("loadedmetadata",jump);music.addEventListener("timeupdate",()=>{if(!music.paused)jump()});if(music.readyState>=1)jump()})();
 </script>
