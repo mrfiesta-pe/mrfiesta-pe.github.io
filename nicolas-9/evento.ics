@@ -1,0 +1,12 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Nicolas//Fiesta Neon//ES
+BEGIN:VEVENT
+UID:nicolas-9-20261121@invitacion.local
+DTSTAMP:20261113T220000Z
+DTSTART:20261121T233000Z
+SUMMARY:¡Nicolás cumple 9! Fiesta neón
+LOCATION:Lote 5\, Mz. A\, Grupo 9\, Sector 6\, Villa El Salvador
+DESCRIPTION:¡Ven a bailar y celebrar los 9 años de Nicolás!
+END:VEVENT
+END:VCALENDAR
