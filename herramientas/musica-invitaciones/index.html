@@ -91,4 +91,5 @@ say('✅ Invitación actualizada. Revisa en unos minutos: \\nhttps://'+repo.spli
 }catch(e){say('❌ '+e.message+'\\nSi se subió la canción pero falló el HTML, puedes pulsar Aplicar de nuevo.')}
 finally{btn.disabled=false}
 });
+if($('token').value.trim())loadLibrary();
 </script></body></html>
