@@ -30,7 +30,8 @@
 
 
 
+
 <script id="mrfiesta-music-settings">
-(function(){const music=document.querySelector("audio#music")||document.querySelector("audio");if(!music)return;const start=5;function jump(){if(music.duration&&start<music.duration&&music.currentTime<start-0.25)music.currentTime=start}music.addEventListener("loadedmetadata",jump);music.addEventListener("timeupdate",()=>{if(!music.paused)jump()});if(music.readyState>=1)jump()})();
+(function(){const music=document.querySelector("audio#music")||document.querySelector("audio");if(!music)return;const start=5;let initialized=false;function seek(){if(Number.isFinite(music.duration)&&start<music.duration&&music.currentTime<start-.25)music.currentTime=start;}music.addEventListener("loadedmetadata",seek);music.addEventListener("play",seek);if(music.readyState>=1)seek();})();
 </script>
 </body></html>
