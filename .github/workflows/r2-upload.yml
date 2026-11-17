@@ -50,3 +50,5 @@ jobs:
           path: r2-upload-manifest.json
           if-no-files-found: error
           retention-days: 30
+
+# Run migration after R2 connection setup.
