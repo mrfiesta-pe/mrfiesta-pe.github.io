@@ -70,7 +70,7 @@ def main():
             if digest_stream(stream) != checksum:
                 raise RuntimeError("R2 verification failed: " + key)
         public_url = PUBLIC + "/" + quote(key, safe="/")
-        with urlopen(Request(public_url, method="HEAD"), timeout=60) as response:
+        with urlopen(Request(public_url, method="HEAD", headers={"User-Agent": "Mozilla/5.0 (compatible; MrFiestaMediaCheck/1.0)"}), timeout=60) as response:
             if int(response.headers.get("Content-Length", "-1")) != size:
                 raise RuntimeError("Public URL verification failed: " + key)
         manifest.append({"source": relative, "url": public_url, "bytes": size, "sha256": checksum})
