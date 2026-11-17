@@ -11,7 +11,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 BUCKET = "mrfiesta-media"
-PUBLIC = "https://pub-a49268cb19b0442e8336f8bbe0492fbd.r2.dev"
+PUBLIC = "https://pub-ceb0ec49c5c347e5acbcedf277f49d2d.r2.dev"
 EXTENSIONS = {".mp4", ".webm", ".mov", ".mp3", ".m4a", ".ogg", ".wav", ".aac"}
 ROOT = Path(__file__).resolve().parents[1]
 
