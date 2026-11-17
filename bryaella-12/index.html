@@ -49,6 +49,22 @@ img{max-width:100%;height:auto}
 .hero-copy{min-width:0}.hero h1{white-space:nowrap;overflow-wrap:normal;word-break:normal;font-size:clamp(28px,4.4vw,55px);letter-spacing:-2px}
 @media(max-width:700px){.hero h1{font-size:clamp(24px,8vw,55px);letter-spacing:-1.3px}}
 .rsvp-button{background:linear-gradient(120deg,#dbb9f7,#f1c4e6);margin:28px auto 0;gap:10px;font-size:11px;max-width:100%;white-space:normal;line-height:1.5;padding:16px 22px}.rsvp-button svg{flex-shrink:0}.rsvp-help{font-size:11px;color:#bda8ce;line-height:1.6;margin:11px auto 0}.closing .signature{margin-top:35px}
+
+/* KATSEYE lights, floating sparkles and celebration confetti */
+#party-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0;transition:opacity 1.2s}
+body.party-live #party-canvas{opacity:1}
+#invitation{position:relative;z-index:1;isolation:isolate}
+#cover{z-index:2}
+#invitation:before,#invitation:after{content:"";position:fixed;width:65vw;height:90vh;top:-20vh;pointer-events:none;z-index:-1;filter:blur(26px);opacity:.45;transform-origin:top center}
+#invitation:before{left:-26vw;background:conic-gradient(from 150deg at 50% 0,transparent 0deg,#c987ff25 18deg,transparent 32deg);animation:katseye-light-left 12s ease-in-out infinite alternate}
+#invitation:after{right:-26vw;background:conic-gradient(from 150deg at 50% 0,transparent 0deg,#66e7ff24 18deg,transparent 32deg);animation:katseye-light-right 14s ease-in-out infinite alternate}
+#invitation .photo-wrap{box-shadow:0 25px 90px #9a4be62a,0 0 30px #c29bf51c;animation:katseye-photo 7s ease-in-out infinite alternate}
+#invitation .date-card{box-shadow:0 0 35px #9d68e917,inset 0 1px 0 #f3d6ff18}
+#invitation .divider{box-shadow:0 0 16px #b58cff35}
+@keyframes katseye-light-left{to{transform:rotate(-17deg);opacity:.8}}
+@keyframes katseye-light-right{to{transform:rotate(17deg);opacity:.75}}
+@keyframes katseye-photo{to{box-shadow:0 25px 90px #7356da35,0 0 45px #ec99df28}}
+@media(prefers-reduced-motion:reduce){#party-canvas{display:none!important}#invitation:before,#invitation:after{animation:none!important}#invitation .photo-wrap{animation:none!important}}
 </style></head><body><div class="ambience"></div><div class="cover" id="cover">
 <div class="top">KATSEYE · BIRTHDAY EXPERIENCE</div>
 <div class="gate-head"><span class="eyebrow">Estás invitado a una noche para brillar</span></div>
@@ -81,4 +97,20 @@ const locationText='Agua Santa Mz.H - Lt.12, Callao 07001, Perú';document.getEl
 </script><script id="mrfiesta-music-settings">
 (function(){const music=document.querySelector("audio#music")||document.querySelector("audio");if(!music)return;const start=30;let initialized=false;function seek(){if(Number.isFinite(music.duration)&&start<music.duration&&music.currentTime<start-.25)music.currentTime=start;}music.addEventListener("loadedmetadata",seek);music.addEventListener("play",seek);if(music.readyState>=1)seek();})();
 </script>
-</body></html>
+<script id="katseye-party-effects">
+(function(){
+const canvas=document.createElement('canvas');canvas.id='party-canvas';canvas.setAttribute('aria-hidden','true');document.body.appendChild(canvas);
+const ctx=canvas.getContext('2d');if(!ctx)return;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)'),invitation=document.getElementById('invitation');
+const colors=['#d3b4ff','#f5a9df','#8deaff','#fff0b5','#a8aaff'];
+let w=0,h=0,ratio=1,frame=0,last=0,active=false,dust=[],confetti=[];
+function resize(){w=innerWidth;h=innerHeight;ratio=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(w*ratio);canvas.height=Math.round(h*ratio);ctx.setTransform(ratio,0,0,ratio,0,0);dust=Array.from({length:w<600?28:48},(_,i)=>({x:Math.random()*w,y:Math.random()*h,r:.7+Math.random()*1.5,s:5+Math.random()*12,phase:Math.random()*Math.PI*2,color:colors[i%colors.length],star:i%6===0}));}
+function burst(){confetti=Array.from({length:w<600?52:85},(_,i)=>({x:w/2,y:h*.22,vx:(Math.random()-.5)*w*.85,vy:-80-Math.random()*230,r:3+Math.random()*4,angle:Math.random()*6.28,spin:(Math.random()-.5)*6,color:colors[i%colors.length],life:4+Math.random()*2}));}
+function draw(now){frame=0;if(!active||document.hidden||reduce.matches)return;const dt=Math.min((now-(last||now))/1000,.04);last=now;ctx.clearRect(0,0,w,h);
+dust.forEach(p=>{p.y-=p.s*dt;if(p.y< -12){p.y=h+12;p.x=Math.random()*w}p.phase+=dt*.8;const edge=p.x<w*.2||p.x>w*.8;ctx.globalAlpha=(edge?.55:.22)*(.55+.45*Math.sin(p.phase));ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=p.star?12:8;if(p.star){const r=p.r*3;ctx.beginPath();ctx.moveTo(p.x,p.y-r);ctx.quadraticCurveTo(p.x+.7,p.y-.7,p.x+r*.65,p.y);ctx.quadraticCurveTo(p.x+.7,p.y+.7,p.x,p.y+r);ctx.quadraticCurveTo(p.x-.7,p.y+.7,p.x-r*.65,p.y);ctx.quadraticCurveTo(p.x-.7,p.y-.7,p.x,p.y-r);ctx.fill()}else{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()}});
+ctx.shadowBlur=0;confetti=confetti.filter(p=>p.life>0&&p.y<h+30);confetti.forEach(p=>{p.life-=dt;p.vy+=105*dt;p.vx*=Math.pow(.98,dt*60);p.x+=p.vx*dt;p.y+=p.vy*dt;p.angle+=p.spin*dt;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.angle);ctx.globalAlpha=Math.min(.85,p.life/1.5);ctx.fillStyle=p.color;ctx.fillRect(-p.r/2,-p.r,p.r,2*p.r*Math.max(.2,Math.abs(Math.cos(p.angle))));ctx.restore()});ctx.globalAlpha=1;frame=requestAnimationFrame(draw)}
+function schedule(){if(!frame&&active&&!document.hidden&&!reduce.matches){last=0;frame=requestAnimationFrame(draw)}}
+function state(){const on=!invitation.hidden;document.body.classList.toggle('party-live',on);if(on&&!active){active=true;resize();if(!reduce.matches)burst();schedule()}else if(!on){active=false;cancelAnimationFrame(frame);frame=0}}
+new MutationObserver(state).observe(invitation,{attributes:true,attributeFilter:['hidden']});addEventListener('resize',resize,{passive:true});document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0}else schedule()});reduce.addEventListener('change',()=>{if(reduce.matches){cancelAnimationFrame(frame);frame=0;ctx.clearRect(0,0,w,h)}else schedule()});state();
+})();
+</script></body></html>
