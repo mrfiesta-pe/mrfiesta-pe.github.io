@@ -107,7 +107,10 @@ body{background:#fff4fa;color:#452d54}
 #invitation:before{background:conic-gradient(from 150deg at 50% 0,transparent 0deg,#df9bd83b 18deg,transparent 32deg)}
 #invitation:after{background:conic-gradient(from 150deg at 50% 0,transparent 0deg,#8bd2f63b 18deg,transparent 32deg)}
 @media(max-width:700px){.illit-mark{margin:-15px auto 12px;width:125px;max-height:80px}.gate-layout{margin-top:45px;margin-bottom:45px}.lightstick-button{width:155%;margin-left:-27.5%}.gate-name{font-size:clamp(18px,5vw,28px)}.show-time{font-size:11px}}
-</style></head><body><div class="ambience"></div><div class="cover" id="cover">
+
+/* Transparent white areas of the ILLIT logo, preserving colored blocks and black outlines. */
+.illit-mark{filter:url(#illit-transparent-white);mix-blend-mode:normal}
+</style></head><body><svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;pointer-events:none"><defs><filter id="illit-transparent-white" color-interpolation-filters="sRGB" x="0" y="0" width="100%" height="100%"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -20 -20 -20 0 59"/></filter></defs></svg><div class="ambience"></div><div class="cover" id="cover">
 <div class="top">ILLIT · BIRTHDAY EXPERIENCE</div>
 <div class="gate-head"><span class="eyebrow">Estás invitado a una noche para brillar</span></div>
 <div class="gate-layout">
