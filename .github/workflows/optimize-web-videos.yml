@@ -1,0 +1,46 @@
+name: Optimize largest web videos
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/optimize-web-videos.yml'
+permissions:
+  contents: write
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+      - name: Compress and validate the three largest videos
+        shell: python
+        run: |
+          import pathlib, subprocess, json
+          files = sorted(pathlib.Path("media").rglob("*.mp4"), key=lambda p:p.stat().st_size, reverse=True)[:3]
+          for p in files:
+              out = p.with_name(p.stem + ".optimized.mp4")
+              def duration(path):
+                  return float(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration","-of","csv=p=0",str(path)]))
+              before=p.stat().st_size
+              subprocess.run(["ffmpeg","-nostdin","-v","error","-i",str(p),"-map","0:v:0","-map","0:a?","-c:v","libx264","-preset","medium","-crf","24","-pix_fmt","yuv420p","-c:a","aac","-b:a","128k","-movflags","+faststart",str(out)],check=True)
+              if abs(duration(p)-duration(out)) > 0.2:
+                  raise RuntimeError("Duration mismatch: "+str(p))
+              subprocess.run(["ffmpeg","-nostdin","-v","error","-xerror","-i",str(out),"-f","null","-"],check=True)
+              after=out.stat().st_size
+              if after < before:
+                  out.replace(p)
+                  with open(__import__("os").environ["GITHUB_STEP_SUMMARY"],"a") as summary:
+                      summary.write(f"{p}: {before/1e6:.2f} MB → {after/1e6:.2f} MB\n\n")
+              else:
+                  out.unlink()
+      - name: Save optimized files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- media
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Compress three largest web videos with validated playback"
+          git pull --rebase origin main
+          git push origin HEAD:main
