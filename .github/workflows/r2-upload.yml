@@ -52,3 +52,5 @@ jobs:
           retention-days: 30
 
 # Run migration after R2 connection setup.
+
+# Retry with public HTTP client compatibility.
